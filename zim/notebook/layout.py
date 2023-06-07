@@ -95,7 +95,10 @@ class FilesLayout(NotebookLayout):
 			if self.default_extension == '.txt':
 				try:
 					line = file.readline(size=50) # max size to allow for some trailing whitespace and end-of-line
-					return line.strip() == 'Content-Type: text/x-zim-wiki'
+					#return line.strip() == 'Content-Type: text/x-zim-wiki'
+					######## changed commented the line above
+					####### changed added the next line
+					return line.strip() == ''
 				except FileNotFoundError:
 					return True # give file the benefit of the doubt, could be a deleted source file
 			else:

@@ -59,10 +59,11 @@ class NotebookConfig(INIConfigFile):
 			('endofline', Choice(endofline, {'dos', 'unix'})),
 			('disable_trash', Boolean(False)),
 			('default_file_format', String('zim-wiki')),
-			('default_file_extension', String('.txt')),
+			('default_file_extension', String('.md')),
 			('notebook_layout', String('files')),
 		))
-
+####### changed ('default_file_format', String('zim-wiki')), to ('default_file_format', String('markdown')),
+####### changed ('default_file_extension', String('.txt')), to ('default_file_extension', String('.md')),
 
 def _resolve_relative_config(dir, config):
 	# Some code shared between Notebook and NotebookInfo

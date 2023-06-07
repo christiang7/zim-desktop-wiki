@@ -16,13 +16,13 @@ info = {
 	'name': 'plain',
 	'desc': 'Plain text',
 	'mimetype': 'text/plain',
-	'extension': 'txt',
+	'extension': 'md',
 	'native': False,
 	'import': True,
 	'export': True,
 	'usebase': True,
 }
-
+###### changed  'extension': 'md', to 'extension': 'txt',
 
 class Parser(ParserClass):
 

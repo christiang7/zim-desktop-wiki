@@ -535,7 +535,9 @@ class ImportPageDialog(FileDialog):
 		self.navigation = navigation
 		self.notebook = notebook
 
-		self.add_filter(_('Text Files'), '*.txt') # T: File filter for '*.txt'
+		self.add_filter(_('Text Files'), '*.md') # T: File filter for '*.txt'
+
+##### changed self.add_filter(_('Text Files'), '*.txt') to self.add_filter(_('Text Files'), '*.md') 
 
 		if page is not None:
 			self.add_shortcut(notebook, page)
@@ -550,14 +552,14 @@ class ImportPageDialog(FileDialog):
 			return False
 
 		basename = file.basename
-		if basename.endswith('.txt'):
+		if basename.endswith('.md'):
 			basename = basename[:-4]
 
 		path = self.notebook.pages.lookup_from_user_input(basename)
 		page = import_file(file, self.notebook, path)
 		self.navigation.open_page(page)
 		return True
-
+###### changed if basename.endswith('.txt'): to if basename.endswith('.md'):
 
 class SaveCopyDialog(FileDialog):
 
@@ -565,8 +567,10 @@ class SaveCopyDialog(FileDialog):
 		FileDialog.__init__(self, widget, _('Save Copy'), Gtk.FileChooserAction.SAVE)
 			# T: Dialog title of file save dialog
 		self.page = page
-		self.filechooser.set_current_name(page.name + '.txt')
+		self.filechooser.set_current_name(page.name + '.md')
 		self.add_shortcut(notebook, page)
+
+###### changed self.filechooser.set_current_name(page.name + '.txt') to self.filechooser.set_current_name(page.name + '.md')
 
 		# TODO also include headers
 		# TODO add droplist with native formats to choose + hook filters

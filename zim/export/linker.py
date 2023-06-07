@@ -214,10 +214,10 @@ class ExportLinker(BaseLinker):
 			# storage mode of linked notebook...
 			path = url_decode(path) # was already encoded by interwiki_link()
 			path = encode_filename(path).replace(' ', '_')
-			return link + '/' + url_encode(path) + '.txt'
+			return link + '/' + url_encode(path) + '.md'
 		else:
 			return link
-
+######changed return link + '/' + url_encode(path) + '.txt' to return link + '/' + url_encode(path) + '.md'
 
 class StubLayout(ExportLayout):
 	'''Stub implementation of L{ExportLayout} that is used by

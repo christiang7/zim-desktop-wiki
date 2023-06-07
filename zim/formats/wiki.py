@@ -31,14 +31,16 @@ assert WIKI_FORMAT_VERSION != 'zim 0.26' # skip number for historic reasons
 info = {
 	'name': 'wiki',
 	'desc': 'Zim Wiki Format',
-	'mimetype': 'text/x-zim-wiki',
-	'extension': 'txt',
+	'mimetype': 'text/markdown',
+	'extension': 'md',
 	'native': True,
 	'import': True,
 	'export': True,
 	'usebase': True,
 }
 
+#####changed 'mimetype': 'text/zim-wiki', to 'mimetype': 'text/markdown',
+##### changed 'extension': 'txt', to 'extension': 'md',
 
 bullet_pattern = '(?:[\\*\u2022]|\\[[ \\*x><]\\]|\\d+\\.|[a-zA-Z]\\.)[\\ \\t]+'
 	# bullets can be '*' or 0x2022 for normal items
@@ -695,7 +697,9 @@ class Dumper(TextDumper):
 			body = TextDumper.dump(self, tree)
 			if not body[-1].endswith('\n'):
 				body[-1] = body[-1] + '\n'
-			return [dump_header_lines(header, getattr(tree, 'meta', {})), '\n'] + body
+			#return [dump_header_lines(header, getattr(tree, 'meta', {})), '\n'] + body
+			#########
+			return body 
 		else:
 			return TextDumper.dump(self, tree)
 

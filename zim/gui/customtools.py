@@ -313,7 +313,8 @@ class CustomToolDict(DesktopEntryDict):
 		def sub_field_code(m):
 			m = m.group()
 			if m == '%f':
-				self._tmpfile = TmpFile('tmp-page-source.txt')
+				self._tmpfile = TmpFile('tmp-page-source.md')
+####### changed self._tmpfile = TmpFile('tmp-page-source.txt') to self._tmpfile = TmpFile('tmp-page-source.md')
 				self._tmpfile.writelines(page.dump('wiki'))
 				return self._tmpfile.path
 			elif m == '%d':

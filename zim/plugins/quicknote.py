@@ -432,7 +432,7 @@ class QuickNoteDialog(Dialog):
 				return False
 
 			path = self.form['page']
-			self.append_to_page(notebook, path, '\n------\n' + text)
+			self.append_to_page(notebook, path, '\n' + text)
 
 		if self.attachments:
 			self.import_attachments(notebook, path, self.attachments)
