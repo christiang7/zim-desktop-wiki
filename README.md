@@ -1,4 +1,4 @@
-# Zim - A Desktop Wiki Editor
+# Fork of Zim - A Desktop Wiki Editor
 
 ![zim banner](./website/files/images/invade_your_desktop.png)
 
