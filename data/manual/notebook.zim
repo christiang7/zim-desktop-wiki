@@ -9,4 +9,6 @@ shared=True
 endofline=unix
 disable_trash=False
 profile=
-
+default_file_format=zim-wiki
+default_file_extension=.md
+notebook_layout=files
