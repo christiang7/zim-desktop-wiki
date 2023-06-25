@@ -21,6 +21,24 @@ Zim can be used to:
 * Draft blog entries and emails
 * Do brainstorming
 
+- [X] Zim Wiki Markdown Fork
+    - [X] Doing Interput (2)
+    - [X] Doing (2)
+    - [X] Next (2)
+    - [X] Planning (2)
+        - [ ] Using markdown markup instead of zim wiki markup
+            - [ ] instant refresh
+            - [ ] linking
+            - [ ] anchors
+    - [X] Backlog
+
+## Changes in this fork
+
+* Zim uses Markdown files
+* Markdown files does not need the headers in the files
+* Help files are Markdown files
+* searchdialog without loading screens
+
 ## Installing from a Package
 
 Most Linux distributions include zim in their package repository. On Debian and
