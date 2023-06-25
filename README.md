@@ -1,6 +1,6 @@
 # Fork of Zim - A Desktop Wiki Editor
 
-![zim banner](./website/files/images/invade_your_desktop.png)
+![zim banner](./website/files/images/globe.png)
 
 Zim is a graphical text editor used to maintain a collection of wiki pages. Each
 page can contain links to other pages, simple formatting, and images. Pages are
