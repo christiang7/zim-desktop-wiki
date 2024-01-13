@@ -36,11 +36,6 @@ from zim.fs import adapt_from_oldfs
 from zim.newfs import File, Folder, FilePath
 
 
-def md5(f):
-	return _md5(f.raw())
-
-
-
 class TestMultiFileLayout(tests.TestCase):
 
 	#  dir/
@@ -474,7 +469,7 @@ class TestTemplateOptions(tests.TestCase):
 			exporter.export(selection)
 		result = file.read()
 		#~ print result
-		self.assertIn('\section{Head1}', result) # this implies that document_type "article" was indeed used
+		self.assertIn('\\section{Head1}', result) # this implies that document_type "article" was indeed used
 
 
 class TestExportFormat(object):

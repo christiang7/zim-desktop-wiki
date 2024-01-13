@@ -301,7 +301,7 @@ class Application(object):
 
 			p = subprocess.Popen(argv,
 				cwd=cwd,
-				stdout=open(os.devnull, 'w'),
+				stdout=subprocess.DEVNULL,
 				stderr=subprocess.PIPE,
 				startupinfo=info,
 				bufsize=4096,
@@ -311,7 +311,7 @@ class Application(object):
 			try:
 				p = subprocess.Popen(argv,
 					cwd=cwd,
-					stdout=open(os.devnull, 'w'),
+					stdout=subprocess.DEVNULL,
 					stderr=subprocess.PIPE,
 					bufsize=4096,
 					close_fds=True
@@ -320,7 +320,7 @@ class Application(object):
 				if _CAN_CALL_FLATPAK_HOST_COMMAND:
 					p = subprocess.Popen(_FLATPAK_HOSTCOMMAND_PREFIX + argv,
 						cwd=cwd,
-						stdout=open(os.devnull, 'w'),
+						stdout=subprocess.DEVNULL,
 						stderr=subprocess.PIPE,
 						bufsize=4096,
 						close_fds=True
@@ -416,6 +416,11 @@ class Application(object):
 			TEST_MODE_RUN_CB(argv)
 			return None
 
+		# https://github.com/zim-desktop-wiki/zim-desktop-wiki/issues/1697
+		def _callback_wrapper(pid, *args):
+			GLib.spawn_close_pid(pid)
+			callback(*args)
+
 		try:
 			try:
 				pid, stdin, stdout, stderr = \
@@ -437,10 +442,10 @@ class Application(object):
 				# child watch does implicit reaping -> no zombies
 				if data is None:
 					GObject.child_watch_add(pid,
-						lambda pid, status: callback(status))
+						lambda _, status: _callback_wrapper(pid, status))
 				else:
 					GObject.child_watch_add(pid,
-						lambda pid, status, data: callback(status, data), data)
+						lambda _, status, data: _callback_wrapper(pid, status, data), data)
 			return pid
 
 

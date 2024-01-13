@@ -396,6 +396,9 @@ class UIActions(object):
 			dialog = ProgressDialog(self.widget, op)
 			dialog.run()
 
+			if op.exception:
+				raise op.exception
+
 			if update_only or isinstance(op, IndexCheckAndUpdateOperation):
 				return not dialog.cancelled
 			else:
@@ -409,6 +412,9 @@ class UIActions(object):
 			op = IndexCheckAndUpdateOperation(self.notebook)
 			dialog = ProgressDialog(self.widget, op)
 			dialog.run()
+
+			if op.exception:
+				raise op.exception
 
 			return not dialog.cancelled
 
@@ -528,7 +534,8 @@ class NewPageDialog(Dialog):
 
 
 class ImportPageDialog(FileDialog):
-	# TODO how to properly detect file types for other formats ?
+
+	# TODO: extend to selecting multiple files at once, select target location, format etc.
 
 	def __init__(self, widget, navigation, notebook, page=None):
 		FileDialog.__init__(self, widget, _('Import Page')) # T: Dialog title
@@ -542,21 +549,13 @@ class ImportPageDialog(FileDialog):
 		if page is not None:
 			self.add_shortcut(notebook, page)
 
-		# TODO add input for namespace, format
-
 	def do_response_ok(self):
-		from zim.import_files import import_file
+		from zim.import_files import import_file_from_user_input
 
 		file = self.get_file()
 		if file is None:
 			return False
-
-		basename = file.basename
-		if basename.endswith('.md'):
-			basename = basename[:-4]
-
-		path = self.notebook.pages.lookup_from_user_input(basename)
-		page = import_file(file, self.notebook, path)
+		page = import_file_from_user_input(file, self.notebook)
 		self.navigation.open_page(page)
 		return True
 ###### changed if basename.endswith('.txt'): to if basename.endswith('.md'):
@@ -660,8 +659,10 @@ class MovePageDialog(Dialog):
 		)
 		dialog = ProgressDialog(self, op)
 		dialog.run()
-
-		return True
+		if op.exception:
+			raise op.exception
+		else:
+			return True
 
 
 class DeletePageDialogBase(Dialog):

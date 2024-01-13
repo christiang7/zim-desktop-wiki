@@ -25,7 +25,7 @@ import zim.datetimetz as datetime
 _pagename_reduce_colon_re = re.compile('::+')
 _pagename_invalid_char_re = re.compile(
 	'(' +
-		'^[_\W]+|(?<=:)[_\W]+' +
+		r'^[_\W]+|(?<=:)[_\W]+' +
 	'|' +
 		'[' + re.escape(''.join(
 			("?", "#", "/", "\\", "*", '"', "<", ">", "|", "%", "\t", "\n", "\r")
@@ -413,7 +413,14 @@ class HRef():
 		return link
 
 
-class PageReadOnlyError(Error):
+class PageError(Error):
+
+	def __init__(self, path):
+		self.path = path
+		self.msg = self._msg % path.name
+
+
+class PageReadOnlyError(PageError):
 	_msg = _('Can not modify page: %s') # T: error message for read-only pages
 
 
