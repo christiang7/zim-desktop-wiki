@@ -15,6 +15,10 @@ from zim.search import *
 
 logger = logging.getLogger('zim.gui.searchdialog')
 
+HELP_TEXT = _(
+	'For advanced search you can use operators like\n'
+	'AND, OR and NOT. See the help page for more details.'
+) # T: help text for the search dialog
 
 class SearchDialog(Dialog):
 
@@ -33,6 +37,7 @@ class SearchDialog(Dialog):
 		self.vbox.pack_start(hbox, False, True, 0)
 		hbox.pack_start(Gtk.Label(_('Search') + ': '), False, True, 0) # T: input label
 		self.query_entry = InputEntry()
+		self.query_entry.set_tooltip_text(HELP_TEXT)
 		hbox.add(self.query_entry)
 		self.search_button = Gtk.Button.new_with_mnemonic(_('_Find')) # T: Button label
 		hbox.pack_start(self.search_button, False, True, 0)
@@ -60,7 +65,17 @@ class SearchDialog(Dialog):
 		# TODO checkbox _('Whole _word')
 
 		self.results_treeview = SearchResultsTreeView(notebook, navigation)
-		self.vbox.pack_start(ScrolledWindow(self.results_treeview), True, True, 0)
+
+		self._stack = Gtk.Stack()
+		for name, widget in (
+			('ready', StatusPage('edit-find-symbolic', None, HELP_TEXT)),
+			('searching', StatusPage('edit-find-symbolic', _('Searching ...'))), # T: placeholder label when search has started
+			('no-results', StatusPage('edit-find-symbolic', _('No results'), HELP_TEXT)), # T: placeholder label when search has no results
+			('results', ScrolledWindow(self.results_treeview)),
+		):
+			widget.show_all()
+			self._stack.add_named(widget, name)
+		self.vbox.pack_start(self._stack, True, True, 0)
 
 		self.search_button.connect_object('clicked', self.__class__._search, self)
 		self.cancel_button.connect_object('clicked', self.__class__._cancel, self)
