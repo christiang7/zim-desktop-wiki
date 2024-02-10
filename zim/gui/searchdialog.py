@@ -49,12 +49,6 @@ class SearchDialog(Dialog):
 		hbox.pack_start(self.cancel_button, False, True, 0)
 		self._set_state(self.READY)
 
-		help_text = _(
-			'For advanced search you can use operators like\n'
-			'AND, OR and NOT. See the help page for more details.'
-		) # T: help text for the search dialog
-		self.query_entry.set_tooltip_text(help_text)
-
 		self.namespacecheckbox = Gtk.CheckButton.new_with_mnemonic(_('Limit search to the current page and sub-pages'))
 			# T: checkbox option in search dialog
 		if page is not None:
@@ -65,17 +59,7 @@ class SearchDialog(Dialog):
 		# TODO checkbox _('Whole _word')
 
 		self.results_treeview = SearchResultsTreeView(notebook, navigation)
-
-		self._stack = Gtk.Stack()
-		for name, widget in (
-			('ready', StatusPage('edit-find-symbolic', None, HELP_TEXT)),
-			('searching', StatusPage('edit-find-symbolic', _('Searching ...'))), # T: placeholder label when search has started
-			('no-results', StatusPage('edit-find-symbolic', _('No results'), HELP_TEXT)), # T: placeholder label when search has no results
-			('results', ScrolledWindow(self.results_treeview)),
-		):
-			widget.show_all()
-			self._stack.add_named(widget, name)
-		self.vbox.pack_start(self._stack, True, True, 0)
+		self.vbox.pack_start(ScrolledWindow(self.results_treeview), True, True, 0)
 
 		self.search_button.connect_object('clicked', self.__class__._search, self)
 		self.cancel_button.connect_object('clicked', self.__class__._cancel, self)
