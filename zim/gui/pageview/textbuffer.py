@@ -286,7 +286,7 @@ class TextBuffer(Gtk.TextBuffer):
 		'sub': {'rise': -3500, 'scale': 0.7},
 		'sup': {'rise': 7500, 'scale': 0.7},
 		'link': {'foreground': 'blue'},
-		'internal-link': {'foreground': 'green', 'underline': Pango.Underline.DOUBLE},
+		'page-link': {'foreground': 'blue'},
 		'tag': {'foreground': '#ce5c00'},
 		'indent': {},
 		'bullet-list': {},
@@ -798,9 +798,8 @@ class TextBuffer(Gtk.TextBuffer):
 		if hasattr(href, 'uri'):
 			href = href.uri
 		assert isinstance(href, str) or href is None
-		is_internal_link = (link_type(href or '') == 'page')
-		styles = self.tag_styles['internal-link' if is_internal_link else 'link']
-		tag = self.create_tag(None, **styles)
+		link_style = 'page-link' if (link_type(href or '') == 'page') else 'link'
+		tag = self.create_tag(None, **self.tag_styles[link_style])
 		tag.zim_tag = 'link'
 		tag.zim_attrib = attrib
 		if href == text or not href or href.isspace():
