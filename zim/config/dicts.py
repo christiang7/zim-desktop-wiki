@@ -1,5 +1,5 @@
 
-# Copyright 2009-2013 Jaap Karssenberg <jaap.karssenberg@gmail.com>
+# Copyright 2009-2024 Jaap Karssenberg <jaap.karssenberg@gmail.com>
 
 '''This module contains base classes to map config files to dicts
 
@@ -23,19 +23,15 @@ L{ConfigManager} defined in L{zim.config.manager}.
 
 
 
-import sys
-import re
 import logging
-import types
 import ast
 import json
 
 import collections.abc as abc
 
 from zim.signals import SignalEmitter, ConnectorMixin, SIGNAL_NORMAL, init_signals_for_new_object
-from zim.utils import DefinitionOrderedDict
+from zim.base import LastDefinedOrderedDict
 from zim.newfs import FileNotFoundError
-from zim.errors import Error
 
 from .basedirs import XDG_CONFIG_HOME
 
@@ -43,8 +39,8 @@ from .basedirs import XDG_CONFIG_HOME
 logger = logging.getLogger('zim.config')
 
 
-class ControlledDict(DefinitionOrderedDict, SignalEmitter, ConnectorMixin):
-	'''Sub-class of C{DefinitionOrderedDict} that tracks modified state.
+class ControlledDict(LastDefinedOrderedDict, SignalEmitter, ConnectorMixin):
+	'''Sub-class of C{LastDefinedOrderedDict} that tracks modified state.
 	This modified state is recursive for nested C{ControlledDict}s.
 
 	Used as base class for L{SectionedConfigDict} and L{ConfigDict}.
@@ -59,32 +55,32 @@ class ControlledDict(DefinitionOrderedDict, SignalEmitter, ConnectorMixin):
 
 	def __init__(self, E=(), **F):
 		init_signals_for_new_object(self) # Hack, probably needed because we inherit from "dict"
-		DefinitionOrderedDict.__init__(self, E or F)
+		LastDefinedOrderedDict.__init__(self, E or F)
 		self._modified = False
 
 	def __setitem__(self, k, v):
-		DefinitionOrderedDict.__setitem__(self, k, v)
+		LastDefinedOrderedDict.__setitem__(self, k, v)
 		if isinstance(v, ControlledDict):
 			self.connectto(v, 'changed', self.on_child_changed)
 		self.emit('changed')
 
 	def __delitem__(self, k):
-		v = DefinitionOrderedDict.__delitem__(self, k)
-		if isinstance(v, DefinitionOrderedDict):
+		v = LastDefinedOrderedDict.__delitem__(self, k)
+		if isinstance(v, LastDefinedOrderedDict):
 			self.disconnect_from(v)
 		self.emit('changed')
 
 	def pop(self, key, default=None):
 		# Only emit changed once here
 		with self.block_signals('changed'):
-			v = DefinitionOrderedDict.pop(self, key, default)
+			v = LastDefinedOrderedDict.pop(self, key, default)
 		self.emit('changed')
 		return v
 
 	def update(self, E=(), **F):
 		# Only emit changed once here
 		with self.block_signals('changed'):
-			DefinitionOrderedDict.update(self, E, **F)
+			LastDefinedOrderedDict.update(self, E, **F)
 		self.emit('changed')
 
 	def changed(self):
@@ -502,6 +498,13 @@ def build_config_definition(default=None, check=None, allow_empty=False):
 		raise ValueError('Unrecognized check type')
 
 
+def _parse_selector_key(key):
+	i = key.find('[')
+	return key[:i], key[i+1:-1]
+
+assert _parse_selector_key('foo[bar]') == ('foo', 'bar')
+
+
 
 class ConfigDict(ControlledDict):
 	'''The class defines a dictionary of config keys.
@@ -517,7 +520,7 @@ class ConfigDict(ControlledDict):
 	value does not conform to the definition.
 
 	THis class derives from L{ControlledDict} which in turn derives
-	from L{DefinitionOrderedDict} so changes to the config can be tracked by the
+	from L{LastDefinedOrderedDict} so changes to the config can be tracked by the
 	C{changed} signal, and values are kept in the same order so the order
 	in which items are written to the config file is predictable.
 	'''
@@ -525,10 +528,45 @@ class ConfigDict(ControlledDict):
 	def __init__(self, E=None, **F):
 		assert not (E and F)
 		ControlledDict.__init__(self)
-		self.definitions = DefinitionOrderedDict()
+		self.selectors = ()
+		self.definitions = LastDefinedOrderedDict()
 		self._input = {}
 		if E or F:
 			self.input(E or F)
+
+	def set_selectors(self, keys):
+		'''Set selector key for context lookup
+
+		E.g. a dict can have these keys:
+
+			foreground = blue
+			foreground[darktheme] = lightblue
+
+		To support such selectors, they need to be set via this setter method,
+		to make them visible in the dict. This will update the config definitions
+		to support contextualized versions of the config keys. But only for
+		contextualized keys that actually have an input value - no defaults are initialized.
+		Once set, the getter and setter methods of this dict will "translate" the keys to the
+		contextualized version if any is defined.
+		Methods like L{all_items()}, which are used when saving the configuration,
+		will just list the keys as defined without translation.
+
+		@param keys: tuple of string values or None
+		'''
+		keys = () if keys is None else keys
+		assert isinstance(keys, tuple)
+		self.selectors = keys
+		with self.block_signals('changed'):
+			# update definitions for keys with selectors
+			mydefs = {}
+			for k in self.definitions:
+				for s in self.selectors:
+					ks = k + '[%s]' % s
+					if ks in self._input:
+						mydefs[ks] = self.definitions[k]
+			self.define(mydefs)
+
+		self.emit('changed')
 
 	def copy(self):
 		'''Shallow copy of the items
@@ -558,16 +596,54 @@ class ConfigDict(ControlledDict):
 		keys in the dict, but want to preserve all of them when
 		writing back to a file.
 		'''
-		return dict(self.all_items()) # FIXME should be DefinitionOrderedDict, but causes test errors
+		return dict(self.all_items())
 
 	def all_items(self):
-		# Like items() but returns both defined values and input values
+		'''Like `items()` but returns both defined values and uninitialized input values
+		This should be used for saving data
+		'''
 		for k, v in self.items():
 			yield k, v
 		for k,v in self._input.items():
 			yield k, v
 
+	def items_by_selectors(self):
+		'''Like `items()` but includes "translating" selector keys
+		See L{set_selectors()}
+		'''
+		basekeys = [k for k in self.keys() if not '[' in k]
+		for k in basekeys:
+			for s in self.selectors:
+				ks = k + '[%s]' % s
+				if ks in self:
+					yield k, ControlledDict.__getitem__(self, ks)
+					break
+			else:
+				yield k, ControlledDict.__getitem__(self, k)
+
+	def __getitem__(self, k):
+		# Return first exsisting entry
+		for s in self.selectors:
+			ks = k + '[%s]' % s
+			if ks in self:
+				return ControlledDict.__getitem__(self, ks)
+		else:
+			return ControlledDict.__getitem__(self, k)
+
+	def get(self, k, d=None):
+		try:
+			return self[k]
+		except KeyError:
+			return d
+
 	def __setitem__(self, k, v):
+		for s in self.selectors:
+			ks = k + '[%s]' % s
+			if ks in self.definitions and ks in self:
+				# Only use contextualized key if previous assigned, else set non-context version
+				k = ks
+				break
+
 		if k in self.definitions:
 			try:
 				v = self.definitions[k].check(v)
@@ -598,6 +674,11 @@ class ConfigDict(ControlledDict):
 			items = update
 
 		for key, value in items:
+			if '[' in key:
+				# if input comes in that contains selectors, ensure we have definitions
+				basekey, selector = _parse_selector_key(key)
+				if basekey in self.definitions and selector in self.selectors:
+					self.definitions[key] = self.definitions[basekey]
 			if key in self.definitions:
 				self._set_input(key, value)
 			else:
@@ -629,7 +710,14 @@ class ConfigDict(ControlledDict):
 				self._set_input(key, value)
 			else:
 				with self.block_signals('changed'):
-					DefinitionOrderedDict.__setitem__(self, key, definition.default)
+					ControlledDict.__setitem__(self, key, definition.default)
+
+			for s in self.selectors:
+				ks = key + '[%s]' % s
+				if ks in self._input:
+					self.definitions[ks] = definition
+					value = self._input.pop(ks)
+					self._set_input(ks, value)
 
 	def _set_input(self, key, value):
 		try:
@@ -648,7 +736,7 @@ class ConfigDict(ControlledDict):
 			value = self.definitions[key].default
 
 		with self.block_signals('changed'):
-			DefinitionOrderedDict.__setitem__(self, key, value)
+			ControlledDict.__setitem__(self, key, value)
 
 	def setdefault(self, key, default, check=None, allow_empty=False):
 		'''Set the default value for a configuration item.
@@ -733,8 +821,26 @@ class SectionedConfigDict(ControlledDict):
 	Sections are handled automatically when a non-existing item is retrieved.
 	'''
 
+	_section_klass = ConfigDict
+
+	def __init__(self, E=(), **F):
+		self.selectors = ()
+		ControlledDict.__init__(self, E=(), **F)
+
+	def set_selectors(self, keys):
+		'''Set a series of selector keys which are set for all sections
+		@param keys: tuple of string values or None
+		'''
+		keys = () if keys is None else keys
+		assert isinstance(keys, tuple)
+		self.selectors = keys
+		with self.block_signals('changed'):
+			for section in self:
+				self[section].set_selectors(keys)
+		self.emit('changed')
+
 	def __setitem__(self, k, v):
-		assert isinstance(v, (ControlledDict, list)) # FIXME shouldn't we get rid of the list option here ?
+		assert isinstance(v, self._section_klass, self._section_klass)
 		ControlledDict.__setitem__(self, k, v)
 
 	def __getitem__(self, k):
@@ -742,8 +848,11 @@ class SectionedConfigDict(ControlledDict):
 			return ControlledDict.__getitem__(self, k)
 		except KeyError:
 			with self.block_signals('changed'):
-				ControlledDict.__setitem__(self, k, ConfigDict())
-			return ControlledDict.__getitem__(self, k)
+				ControlledDict.__setitem__(self, k, self._section_klass())
+				section = ControlledDict.__getitem__(self, k)
+				section.set_selectors(self.selectors)
+				section.set_modified(False)
+			return section
 
 
 class INIConfigFile(SectionedConfigDict):
@@ -886,11 +995,7 @@ class INIConfigFile(SectionedConfigDict):
 
 		for name, section in list(self.items()):
 			if not name.startswith('_'):
-				if isinstance(section, list):
-					for s in section:
-						dump_section(name, s)
-				else:
-					dump_section(name, section)
+				dump_section(name, section)
 
 		return lines
 
