@@ -79,10 +79,10 @@ import logging
 
 import collections
 
-from zim.parsing import link_type, is_url_re, is_www_link_re, \
-	url_encode, url_decode, URL_ENCODE_READABLE, URL_ENCODE_DATA
+from zim.parse.encode import url_decode, url_encode, URL_ENCODE_READABLE, URL_ENCODE_DATA
+from zim.parse.links import link_type, is_url_re, is_www_link_re
 from zim.parser import Builder
-from zim.config import data_file, ConfigDict
+from zim.config import ConfigDict
 from zim.plugins import PluginManager
 
 import zim.plugins
@@ -534,7 +534,7 @@ class ParseTree(object):
 
 	def encode_urls(self, mode=URL_ENCODE_READABLE):
 		'''Calls encode_url() on all links that contain urls.
-		See zim.parsing for details. Modifies the parse tree.
+		See zim.parse.links for details. Modifies the parse tree.
 		'''
 		for link in self._etree.iter('link'):
 			href = link.attrib['href']
@@ -545,7 +545,7 @@ class ParseTree(object):
 
 	def decode_urls(self, mode=URL_ENCODE_READABLE):
 		'''Calls decode_url() on all links that contain urls.
-		See zim.parsing for details. Modifies the parse tree.
+		See zim.parse.links for details. Modifies the parse tree.
 		'''
 		for link in self._etree.iter('link'):
 			href = link.attrib['href']

@@ -12,14 +12,14 @@ import time
 
 from zim.fs import adapt_from_oldfs
 from zim.newfs import LocalFile, LocalFolder, Folder, FileChangedError
-from zim.newfs.mock import MockFile, MockFolder
+from zim.newfs.mock import MockFile
 from zim.config import ConfigManager, XDG_CONFIG_HOME
 from zim.formats import ParseTree
 from zim.formats.wiki import Parser as WikiParser
+from zim.parse.links import is_interwiki_keyword_re
 
 from zim.notebook import *
 from zim.notebook.notebook import NotebookConfig, IndexNotUptodateError, PageExistsError
-from zim.notebook.index import Index
 from zim.notebook.layout import FilesLayout, FILE_TYPE_PAGE_SOURCE, FILE_TYPE_ATTACHMENT
 
 
@@ -50,6 +50,18 @@ class TestNotebookInfo(tests.TestCase):
 		icon = './my_icon.png'
 		info = NotebookInfo(uri, icon=icon)
 		self.assertEqual(info.icon, uri + '/my_icon.png')
+
+	def testCreateValidInterwikiKey(self):
+		for name, key in (
+			('Foo', 'Foo'),
+			('Foo Bar', 'Foo_Bar'),
+			('Foo*Bar', 'Foo_Bar'),
+			('Foo-Bar', 'Foo-Bar'),
+			('Foo.Bar', 'Foo.Bar'),
+			('.Foo.Bar', '_Foo.Bar'),
+		):
+			self.assertEqual(create_valid_interwiki_key(name), key)
+			self.assertTrue(is_interwiki_keyword_re.match(key))
 
 
 @tests.slowTest

@@ -10,7 +10,7 @@ from .page import Path
 from zim.newfs import File, Folder, _EOL, SEP, FileNotFoundError
 from zim.formats import get_format
 
-import zim.parsing # we use "error=urlencode"
+import zim.parse.links # we use "error=urlencode"
 
 FILE_TYPE_PAGE_SOURCE = 1
 FILE_TYPE_ATTACHMENT = 2

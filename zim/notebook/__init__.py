@@ -37,11 +37,11 @@ logger = logging.getLogger('notebook.zim')
 
 
 from zim.newfs import FileNotFoundError, localFileOrFolder, LocalFolder, FilePath
-from zim.parsing import url_decode
+from zim.parse.encode import url_decode
 
 
 from .info import NotebookInfo, NotebookInfoList, \
-	resolve_notebook, get_notebook_list, get_notebook_info, interwiki_link
+	resolve_notebook, get_notebook_list, get_notebook_info, interwiki_link, create_valid_interwiki_key
 
 from .operations import NotebookOperation, SimpleAsyncOperation, \
 	NotebookOperationOngoing, NotebookState

@@ -147,3 +147,50 @@ class Month(DateRange):
 
 	def __str__(self):
 		return '%s-%s' % (self.year, self.month)
+
+
+def old_parse_date(string):
+	'''Returns a tuple of (year, month, day) for a date string or None
+	
+	NOTE: only included for backward compatibility, do not use in new code
+	
+	Current supported formats:
+
+		- C{dd?-mm?}
+		- C{dd?-mm?-yy}
+		- C{dd?-mm?-yyyy}
+		- C{yyyy-mm?-dd?}
+
+	Where '-' can be replaced by any separator. Any preceding or
+	trailing text will be ignored (so we can parse journal page names
+	correctly).
+
+	TODO: Some setting to prefer US dates with mm-dd instead of dd-mm
+	TODO: More date formats ?
+	'''
+	m = re.search(r'(\d{1,4})\D(\d{1,2})(?:\D(\d{1,4}))?', string)
+	if m:
+		d, m, y = m.groups()
+		if len(d) == 4:
+			y, m, d = d, m, y
+		if not d:
+			return None # yyyy-mm not supported
+
+		if not y:
+			# Guess year, based on time delta
+			from datetime import date
+			today = date.today()
+			if today.month - int(m) >= 6:
+				y = today.year + 1
+			else:
+				y = today.year
+		else:
+			y = int(y)
+			if y < 50:
+				y += 2000
+			elif y < 1000:
+				y += 1900
+
+		return tuple(map(int, (y, m, d)))
+	else:
+		return None

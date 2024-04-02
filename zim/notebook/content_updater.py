@@ -11,7 +11,7 @@ from . import Path, HRef
 
 from zim.newfs import LocalFile, SEP
 from zim.formats import IMAGE, LINK, OBJECT, TEXT
-from zim.parsing import link_type
+from zim.parse.links import link_type
 
 
 logger = logging.getLogger('zim.notebook.updater')

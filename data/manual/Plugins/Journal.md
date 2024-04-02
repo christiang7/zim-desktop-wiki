@@ -29,19 +29,20 @@ The [[Task List|Task List plugin]] has an option to automatically set the due da
 ===== Template Properties =====
 The Calendar plugin adds the following properties to the template for calendar pages:
 
-**journal_plugin.page_type()**
+**''journal_plugin.page_type()''**
 Indicates type of the page for which template was used. Contains one of following values: "''day''", "''week''", "''month''" or "''year''"
 
-**journal_plugin.date**
+**''journal_plugin.date''**
 Date covered by this page
 
-**journal_plugin.start_date**
-First date covered by this page (same as 'calendar_plugin.date')
+**''journal_plugin.start_date''**
+First date covered by this page (same as ''journal_plugin.date'')
 
-**journal_plugin.end_date**
+**''journal_plugin.end_date''**
 Last date covered by this page
 
-**journal_plugin.days()**
-A function that returns a list of all days in the week, month, year covered by this page
+**''journal_plugin.days(first=None, last=None)''**
+A function that returns a list of all days in the week, month, year covered by this page. The ''first'' end ''last'' arguments can be used to provide integer offsets from the first date in the range. This is usefull to e.g. only iterate working days in a week.
+
 
 All these dates can be used with the templates ''strftime()'' function to format the date as text. See [[Help:Templates|Templates]] for details.

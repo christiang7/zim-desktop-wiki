@@ -11,7 +11,7 @@ from zim.errors import Error
 from zim.config import ConfigManager
 from zim.formats import get_format
 from zim.notebook import HRef, PageNotFoundError
-from zim.parsing import link_type
+from zim.parse.links import link_type
 from zim.gui.widgets import Dialog, FileDialog, ErrorDialog, BrowserTreeView, ScrolledWindow
 from zim.gui.base.images import image_file_get_dimensions
 from zim.gui.applications import edit_config_file, open_folder

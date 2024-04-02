@@ -15,7 +15,7 @@ from zim.actions import action
 
 from zim.main import ZIM_APPLICATION
 
-from zim.parsing import url_encode, URL_ENCODE_DATA
+from zim.parse.encode import url_encode, URL_ENCODE_DATA
 from zim.templates import list_templates, get_template
 
 from zim.config import data_file, ConfigManager

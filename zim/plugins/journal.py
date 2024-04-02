@@ -154,17 +154,18 @@ Also adds a calendar widget to access these pages.
 			return None
 
 
-def dateRangeTemplateFunction(start, end):
+def dateRangeTemplateFunction(startdate, enddate):
 	'''Returns a function to be used in templates to iterate a range of dates'''
 
 	@ExpressionFunction
-	def date_range_function():
+	def date_range_function(first=None, last=None):
+		# first and last are integer offsets from the start
 		oneday = datetime.timedelta(days=1)
-		yield start
-		next = start + oneday
-		while next <= end:
-			yield next
-			next += oneday
+		nextdate = startdate + datetime.timedelta(days=first) if first else startdate
+		myenddate = startdate + datetime.timedelta(days=last) if last else enddate
+		while nextdate <= myenddate:
+			yield nextdate
+			nextdate += oneday
 
 	return date_range_function
 

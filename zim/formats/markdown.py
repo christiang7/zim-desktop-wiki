@@ -12,9 +12,10 @@
 # - add \ before line ends to match line breaks from user
 
 import re
+from zim.parse.encode import escape_string
 
 from zim.formats import *
-from zim.parsing import url_re, escape_string
+from zim.parse.links import old_url_link_re
 from zim.formats.plain import Dumper as TextDumper
 
 
@@ -103,7 +104,7 @@ class Dumper(TextDumper):
 			'BUG: link misses href: %s "%s"' % (attrib, strings)
 		href = self.linker.link(attrib['href'])
 		text = ''.join(strings) or href
-		if href == text and url_re.match(href):
+		if href == text and old_url_link_re.match(href):
 			return ['<', href, '>']
 		else:
 			return ['[%s](%s)' % (text, href)]

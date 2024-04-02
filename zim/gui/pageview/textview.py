@@ -9,11 +9,12 @@ import logging
 
 import zim.formats
 
-from zim.parsing import Re
-from zim.formats.wiki import url_re, match_url
+from zim.parse.links import url_link_re, match_url_link
+
 from zim.gui.widgets import strip_boolean_result
 from zim.gui.clipboard import Clipboard, SelectionClipboard
 from zim.gui.insertedobjects import InsertedObjectWidget, POSITION_BEGIN, POSITION_END
+
 
 from .constants import *
 from .objectanchors import LineSeparatorAnchor
@@ -31,9 +32,9 @@ CURSOR_WIDGET = Gdk.Cursor.new_from_name(Gdk.Display.get_default(), 'default')
 
 
 # Regexes used for autoformatting
-heading_re = Re(r'^(={2,7})\s*(.*?)(\s=+)?$')
+heading_re = re.compile(r'^(={2,7})\s*(.*?)(\s=+)?$')
 
-link_to_page_re = Re(r'''(
+link_to_page_re = re.compile(r'''(
 	  [\w\.\-\(\)]*(?: :[\w\.\-\(\)]{2,} )+ (?: : | \#\w[\w_-]+)?
 	| \+\w[\w\.\-\(\)]+(?: :[\w\.\-\(\)]{2,} )* (?: : | \#\w[\w_-]+)?
 )$''', re.X | re.U)
@@ -41,9 +42,9 @@ link_to_page_re = Re(r'''(
 	#      optionally followed by anchor id
 	#      links with only anchor id or page (without ':' or '+') and achor id are matched by 'link_to_anchor_re'
 
-interwiki_re = Re(r'\w[\w\+\-\.]+\?\w\S+$', re.U) # name?page, where page can be any url style
+interwiki_re = re.compile(r'\w[\w\+\-\.]+\?\w\S+$', re.U) # name?page, where page can be any url style
 
-file_re = Re(r'''(
+file_re = re.compile(r'''(
 	  ~/[^/\s]
 	| ~[^/\s]*/
 	| \.\.?/
@@ -63,11 +64,11 @@ markup_re = [
 	('style-sub', re.compile(r'(?<=\w)_\{(\S*)}$')),
 ]
 
-link_to_anchor_re = Re(r'^([\w\.\-\(\)]*#\w[\w_-]+)$', re.U) # before the "#" can be a page name, needs to match logic in 'link_to_page_re'
+link_to_anchor_re = re.compile(r'^([\w\.\-\(\)]*#\w[\w_-]+)$', re.U) # before the "#" can be a page name, needs to match logic in 'link_to_page_re'
 
-anchor_re = Re(r'^(##\w[\w_-]+)$', re.U)
+anchor_re = re.compile(r'^(##\w[\w_-]+)$', re.U)
 
-tag_re = Re(r'^(@\w+)$', re.U)
+tag_re = re.compile(r'^(@\w+)$', re.U)
 
 twoletter_re = re.compile(r'[^\W\d]{2}', re.U) # match letters but not numbers - not non-alphanumeric and not number
 
@@ -941,15 +942,17 @@ class TextView(Gtk.TextView):
 				buffer.set_bullet(line, bullet) # takes care of replacing bullets as well
 				handled = True
 		elif tag_re.match(word):
-			handled = apply_tag(tag_re[0])
+			m = tag_re.match(word)
+			handled = apply_tag(m.group(0))
 		elif self.preferences['autolink_anchor'] and anchor_re.match(word):
-			handled = apply_anchor(anchor_re[0])
-		elif url_re.search(word):
+			m = anchor_re.match(word)
+			handled = apply_anchor(m.group(0))
+		elif url_link_re.search(word):
 			if char == ')':
 				handled = False # to early to call
 			else:
-				m = url_re.search(word)
-				url = match_url(m.group(0))
+				m = url_link_re.search(word)
+				url = match_url_link(m.group(0))
 				tail = word[m.start()+len(url):]
 				handled = apply_link(url, exclude_end=len(tail))
 		elif self.preferences['autolink_anchor'] and link_to_anchor_re.match(word) and word.startswith('#'):
@@ -1010,15 +1013,17 @@ class TextView(Gtk.TextView):
 		l = len(line)
 		is_hr = (l >= 3) and (line == '-' * l)
 
+		m_head = heading_re.match(line)
+
 		if is_hr:
 			with buffer.user_action:
 				offset = start.get_offset()
 				buffer.delete(start, end)
 				iter = buffer.get_iter_at_offset(offset)
 				buffer.insert_objectanchor(iter, LineSeparatorAnchor())
-		elif heading_re.match(line):
-			level = len(heading_re[1]) - 1
-			heading = heading_re[2] + '\n'
+		elif m_head:
+			level = len(m_head.group(1)) - 1
+			heading = m_head.group(2) + '\n'
 			end.forward_line()
 			mark = buffer.create_mark(None, end)
 			buffer.delete(start, end)

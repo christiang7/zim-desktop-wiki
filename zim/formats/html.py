@@ -10,7 +10,7 @@ import re
 import string
 
 from zim.formats import *
-from zim.parsing import TextBuffer, link_type
+from zim.parse.links import link_type
 from zim.config.dicts import Choice
 
 

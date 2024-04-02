@@ -12,11 +12,11 @@ import zim.datetimetz as datetime
 from zim.notebook import Path
 from zim.notebook.index.base import IndexerBase, IndexView
 from zim.notebook.index.pages import PagesViewInternal
-from zim.formats import get_format, \
-	UNCHECKED_BOX, CHECKED_BOX, XCHECKED_BOX, MIGRATED_BOX, TRANSMIGRATED_BOX, BULLET, TAG, ANCHOR, \
-	HEADING, PARAGRAPH, BLOCK, NUMBEREDLIST, BULLETLIST, LISTITEM, STRIKE
+from zim.formats import \
+	UNCHECKED_BOX, CHECKED_BOX, XCHECKED_BOX, MIGRATED_BOX, TRANSMIGRATED_BOX, TAG, ANCHOR, \
+	HEADING, PARAGRAPH, NUMBEREDLIST, BULLETLIST, LISTITEM, STRIKE
 from zim.tokenparser import TEXT, END, \
-	skip_to_end_token, tokens_to_text, tokens_by_line, collect_until_end_token
+	skip_to_end_token, tokens_by_line, collect_until_end_token
 
 from zim.plugins.journal import daterange_from_path
 	# TODO instead of just importing this function we should define
@@ -25,13 +25,10 @@ from zim.plugins.journal import daterange_from_path
 logger = logging.getLogger('zim.plugins.tasklist')
 
 
-from zim.parsing import parse_date as old_parse_date
-from .dates import date_re as _raw_parse_date_re
-from .dates import parse_date
-
+from zim.parse.dates import date_re as _raw_parse_date_re
+from zim.parse.dates import parse_date, old_parse_date
 
 _tag_re = re.compile(r'(?<!\S)@(\w+)\b', re.U)
-_day_re = re.compile(r'(\d{1,2})')
 _date_re = re.compile('[<>] ?' + _raw_parse_date_re.pattern + r'|\[d:.+\]')
 	# "<" and ">" prefixes for dates, "[d: ...]" for backward compatibility
 

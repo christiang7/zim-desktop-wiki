@@ -9,7 +9,6 @@ knowledge about the templates destination file structure.
 '''
 
 
-import locale
 
 import logging
 
@@ -21,8 +20,8 @@ import zim.datetimetz as datetime
 
 from zim.templates.expression import ExpressionFunction
 
+from zim.parse.encode import url_encode, URL_ENCODE_DATA
 from zim.formats.html import html_encode
-from zim.parsing import url_encode, URL_ENCODE_DATA
 
 
 def build_template_functions():

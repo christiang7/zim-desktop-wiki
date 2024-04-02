@@ -26,12 +26,11 @@ from gi.repository import GdkPixbuf
 from zim.fs import adapt_from_oldfs
 
 from zim.errors import Error
-from zim.newfs import File, LocalFile, TmpFile, FileNotFoundError, \
+from zim.newfs import FilePath, File, LocalFile, FileNotFoundError, \
 	cleanup_filename, get_mimetype_from_path
 from zim.config import XDG_CONFIG_HOME, XDG_CONFIG_DIRS, XDG_DATA_HOME, XDG_DATA_DIRS, \
 	data_dirs, SectionedConfigDict, INIConfigFile, Boolean, ConfigManager
-from zim.parsing import uri_scheme, is_win32_share_re, \
-	normalize_win32_share, is_win32_share_re, is_url_re, is_uri_re, is_www_link_re
+from zim.parse.links import uri_scheme, is_uri_re, is_www_link_re, is_win32_share_re, normalize_win32_share
 from zim.applications import Application, WebBrowser, StartFile, split_quoted_strings, ApplicationLookUpError
 from zim.gui.widgets import Dialog, ErrorDialog, MessageDialog, QuestionDialog, strip_boolean_result
 

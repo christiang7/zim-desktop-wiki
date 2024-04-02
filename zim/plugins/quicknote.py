@@ -4,21 +4,20 @@
 from gi.repository import Gtk
 
 import re
-from datetime import date as dateclass
 
+from zim.parse.encode import url_decode, URL_ENCODE_DATA
 from zim.fs import adapt_from_oldfs
 from zim.newfs import LocalFolder
 from zim.plugins import PluginClass
 from zim.actions import action
-from zim.config import data_file, ConfigManager
+from zim.config import ConfigManager
 from zim.notebook import Path, Notebook, NotebookInfo, \
 	resolve_notebook, build_notebook
 from zim.templates import get_template
 from zim.main import GtkCommand, ZIM_APPLICATION
 
 from zim.gui.mainwindow import MainWindowExtension
-from zim.gui.widgets import Dialog, ScrolledTextView, IconButton, \
-	InputForm, QuestionDialog
+from zim.gui.widgets import Dialog, ScrolledTextView, InputForm, QuestionDialog
 from zim.gui.clipboard import Clipboard, SelectionClipboard
 from zim.gui.notebookdialog import NotebookComboBox
 
@@ -117,7 +116,6 @@ class QuickNotePluginCommand(GtkCommand):
 				import base64
 				text = base64.b64decode(text).decode('UTF-8')
 			elif self.opts['encoding'] == 'url':
-				from zim.parsing import url_decode, URL_ENCODE_DATA
 				text = url_decode(text, mode=URL_ENCODE_DATA)
 			else:
 				raise AssertionError('Unknown encoding: %s' % self.opts['encoding'])

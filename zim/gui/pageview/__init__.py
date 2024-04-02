@@ -37,7 +37,7 @@ from zim.config import \
 	String, Boolean, Choice, ConfigManager, XDG_TEMPLATES_DIR, ConfigDefinitionConstant
 from zim.notebook import Path, interwiki_link, HRef
 from zim.notebook.operations import NotebookState, ongoing_operation
-from zim.parsing import link_type
+from zim.parse.links import link_type
 from zim.signals import callback
 
 from zim.actions import get_gtk_actiongroup, action, get_actions, \

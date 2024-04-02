@@ -16,12 +16,10 @@ import logging
 
 logger = logging.getLogger('zim.newfs')
 
-
 from . import FS_CASE_SENSITIVE
 from .base import *
 from .base import _EOL, SEP
 
-from zim.parsing import url_encode, URL_ENCODE_READABLE
 from zim.errors import Error
 
 

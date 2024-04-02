@@ -11,7 +11,7 @@ from typing import Generator, Generic, List, Optional, Union
 logger = logging.getLogger('zim.notebook')
 
 
-from zim.parsing import link_type
+from zim.parse.links import link_type
 from zim.errors import Error
 
 import zim.formats

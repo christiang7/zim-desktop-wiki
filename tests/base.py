@@ -1,12 +1,14 @@
 
-# Copyright 2012-2013 Jaap Karssenberg <jaap.karssenberg@gmail.com>
+# Copyright 2009-2013 Jaap Karssenberg <jaap.karssenberg@gmail.com>
 
 
 import tests
 
 from copy import copy
+
 from zim.base import LastDefinedOrderedDict, MovingWindowIter
 from zim.base.naturalsort import natural_sort, natural_sorted
+
 
 class TestNaturalSorting(tests.TestCase):
 

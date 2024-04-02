@@ -2,19 +2,16 @@
 # Copyright 2008-2015 Jaap Karssenberg <jaap.karssenberg@gmail.com>
 
 
-import os
 import re
 import logging
+from zim.parse.encode import url_encode
 
 logger = logging.getLogger('zim.notebook')
 
 
 from zim.newfs import SEP, FilePath, LocalFolder
 from zim.config import ConfigManager, INIConfigFile, XDGConfigFileIter, String
-from zim.parsing import is_url_re, is_win32_path_re, url_encode, \
-	is_interwiki_keyword_re, valid_interwiki_key
-
-from .notebook import NotebookConfig, _resolve_relative_config
+from zim.parse.links import is_url_re, is_interwiki_keyword_re
 
 
 def get_notebook_list():
@@ -67,6 +64,13 @@ def get_notebook_info(path):
 		return None
 
 
+def create_valid_interwiki_key(name):
+	key = re.sub(r'[^\w+\-.]', '_', name)
+	if key[0] in ('-', '.'):
+		key = '_' + key[1:] # "_" matches \w
+	return key
+
+
 def interwiki_link(link):
 	'''Convert an interwiki link into an url'''
 	assert isinstance(link, str) and '?' in link
@@ -95,7 +99,7 @@ def interwiki_link(link):
 				except ValueError:
 					continue
 
-				mykey = valid_interwiki_key(mykey)
+				mykey = create_valid_interwiki_key(mykey)
 				if mykey.lower() == lkey:
 					url = myurl.strip()
 					break
@@ -195,6 +199,8 @@ class NotebookInfo(object):
 		@returns: C{True} when data was updated, C{False} otherwise
 		'''
 		# TODO support for paths that turn out to be files
+		from .notebook import NotebookConfig, _resolve_relative_config
+		
 		dir = LocalFolder(self.uri)
 		file = dir.file('notebook.zim')
 		if file.exists() and file.mtime() != self.mtime:
@@ -477,9 +483,9 @@ class NotebookInfoList(list):
 		lkey = key.lower()
 		by_name = []
 		for info in self:
-			if info.interwiki and valid_interwiki_key(info.interwiki.lower()) == lkey:
+			if info.interwiki and create_valid_interwiki_key(info.interwiki.lower()) == lkey:
 				return info
-			elif valid_interwiki_key(info.name.lower()) == lkey:
+			elif create_valid_interwiki_key(info.name.lower()) == lkey:
 				by_name.append(info)
 		else:
 			if by_name:

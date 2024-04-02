@@ -14,12 +14,11 @@ logger = logging.getLogger('zim.exporter')
 
 from .layouts import ExportLayout
 
+from zim.parse.encode import url_decode, url_encode
 from zim.formats import BaseLinker
-
 from zim.newfs import SEP, LocalFile, LocalFolder
-from zim.config import data_file
 from zim.notebook import interwiki_link, encode_filename, HRef, PageNotFoundError
-from zim.parsing import link_type, is_win32_path_re, url_decode, url_encode
+from zim.parse.links import link_type
 from zim.formats import BaseLinker
 
 

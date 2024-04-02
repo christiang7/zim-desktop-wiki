@@ -10,13 +10,15 @@ import contextlib
 
 import logging
 
+from zim.parse.encode import url_encode
+
 logger = logging.getLogger('zim.newfs')
 
 
 from . import FS_SUPPORT_NON_LOCAL_FILE_SHARES
 
 from zim.errors import Error
-from zim.parsing import url_encode, url_decode
+from zim.parse.encode import url_decode
 
 
 is_url_re = re.compile(r'^\w{2,}:/')

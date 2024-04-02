@@ -24,9 +24,10 @@ from zim.errors import Error
 from zim.base.naturalsort import natural_sort_key
 from zim.newfs.helpers import TrashNotSupportedError
 from zim.config import HierarchicDict
-from zim.parsing import link_type, is_win32_path_re, valid_interwiki_key
+from zim.parse.links import link_type, is_win32_path_re
 from zim.signals import ConnectorMixin, SignalEmitter, SIGNAL_NORMAL
 
+from .info import create_valid_interwiki_key
 from .operations import notebook_state, NOOP, SimpleAsyncOperation, ongoing_operation
 from .page import Path, Page, PageError, HRef, HREF_REL_ABSOLUTE, HREF_REL_FLOATING, HREF_REL_RELATIVE
 from .index import IndexNotFoundError, LINK_DIR_BACKWARD, ROOT_PATH
@@ -360,7 +361,7 @@ class Notebook(ConnectorMixin, SignalEmitter):
 			self.icon = None
 		self.document_root = document_root
 
-		self.interwiki = valid_interwiki_key(properties['interwiki'] or self.name)
+		self.interwiki = create_valid_interwiki_key(properties['interwiki'] or self.name)
 
 	def suggest_link(self, source, word):
 		'''Suggest a link Path for 'word' or return None if no suggestion is

@@ -21,7 +21,7 @@ import zim.errors
 
 from zim.fs import adapt_from_oldfs
 from zim.newfs import SEP, is_abs_filepath, FilePath, LocalFile
-from zim.parsing import is_uri_re, is_win32_path_re
+from zim.parse.links import is_uri_re, is_win32_path_re
 
 
 logger = logging.getLogger('zim.applications')

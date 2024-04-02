@@ -54,7 +54,7 @@ from zim.fs import adapt_from_oldfs
 from zim.newfs import FileNotFoundError, localFileOrFolder, File
 from zim.errors import Error
 from zim.config import data_dirs
-from zim.parsing import is_path_re
+from zim.parse.links import is_path_re
 from zim.signals import SignalEmitter
 
 

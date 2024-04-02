@@ -48,7 +48,7 @@ For content '*' can occur on both sides, but does not match whitespace
 import re
 import logging
 
-from zim.parsing import Re, unescape_string
+from zim.parse.encode import unescape_string
 from zim.notebook import Path, \
 	PageNotFoundError, IndexNotFoundError, \
 	LINK_DIR_BACKWARD, LINK_DIR_FORWARD
@@ -77,9 +77,9 @@ KEYWORDS = (
 	'links', 'linksfrom', 'linksto', 'tag'
 )
 
-keyword_re = Re('(' + '|'.join(KEYWORDS) + '):(.*)', re.I)
-operators_re = Re(r'^(\|\||\&\&|\+|\-)')
-tag_re = Re(r'^\@(\w+)$', re.U)
+keyword_re = re.compile('(' + '|'.join(KEYWORDS) + '):(.*)', re.I)
+operators_re = re.compile(r'^(\|\||\&\&|\+|\-)')
+tag_re = re.compile(r'^\@(\w+)$', re.U)
 
 class QueryTerm(object):
 	'''Wrapper for a single term in a query. Consists of a keyword,
@@ -177,21 +177,23 @@ class Query(object):
 		words = split_quoted_strings(string)
 		tokens = []
 		while words:
-			if operators_re.match(words[0]):
-				w = operators_re[0]
+			m_op = operators_re.match(words[0])
+			if m_op:
+				w = m_op.group()
 				words[0] = words[0][len(w):]
 			else:
 				w = words.pop(0)
 
+			m_key = keyword_re.match(w)
 			if w.lower() in operators:
 				tokens.append(operators[w.lower()])
-			elif keyword_re.match(w):
-				keyword = keyword_re[1].lower()
-				if not (keyword_re[2] or words):
+			elif m_key:
+				keyword = m_key.group(1).lower()
+				if not (m_key.group(2) or words):
 					# edge case - something ending in ":" but nothing following
-					tokens.append(QueryTerm('contentorname', keyword_re[1]+":")) # default keyword
+					tokens.append(QueryTerm('contentorname', m_key.group(1)+":")) # default keyword
 				else:
-					string = keyword_re[2] or words.pop(0)
+					string = m_key.group(2) or words.pop(0)
 					string = unescape_quoted_string(string)
 					if keyword == 'links':
 						keyword = 'linksfrom'

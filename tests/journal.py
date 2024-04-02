@@ -1,5 +1,5 @@
 
-# Copyright 2008,2014 Jaap Karssenberg <jaap.karssenberg@gmail.com>
+# Copyright 2008,2014,2024 Jaap Karssenberg <jaap.karssenberg@gmail.com>
 
 
 
@@ -15,7 +15,7 @@ from zim.notebook import Path
 from zim.templates import get_template
 from zim.formats import get_dumper
 
-from zim.plugins.journal import JournalNotebookExtension, JournalNotebookViewExtension
+from zim.plugins.journal import JournalNotebookExtension, JournalNotebookViewExtension, dateRangeTemplateFunction
 
 from tests.mainwindow import setUpMainWindow
 
@@ -169,6 +169,14 @@ class TestJournalPlugin(tests.TestCase):
 
 		path = plugin.path_for_month_from_date(notebook, date)
 		self.assertEqual(path.name, 'Calendar:2012:04')
+
+	def testDateRangeTemplateFunction(self):
+		start = dateclass(2024, 1, 1)
+		end = dateclass(2024, 1, 7)
+		mylist = [dateclass(2024, 1, i) for i in range(1, 8)]
+		f = dateRangeTemplateFunction(start, end)
+		self.assertEqual(list(f()), mylist)
+		self.assertEqual(list(f(1, 5)), mylist[1:6])
 
 	def testTemplate(self):
 		plugin = PluginManager.load_plugin('journal')

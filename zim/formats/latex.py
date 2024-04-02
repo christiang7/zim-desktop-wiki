@@ -4,15 +4,15 @@
 
 '''This modules handles export of LaTeX Code'''
 
-import os
 import re
 import string
 import logging
 
+
 from zim.newfs import FilePath
+from zim.parse.encode import url_encode, URL_ENCODE_READABLE
 from zim.formats import *
 from zim.formats.plain import Dumper as TextDumper
-from zim.parsing import url_encode, URL_ENCODE_READABLE
 from zim.config.dicts import Choice
 
 logger = logging.getLogger('zim.formats.latex')

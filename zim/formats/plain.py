@@ -9,7 +9,7 @@ import zim.parser
 from zim.parser import fix_unicode_chars, Rule
 
 from zim.formats import *
-from zim.parsing import url_re
+from zim.parse.links import old_url_link_re
 
 
 info = {
@@ -41,7 +41,7 @@ class Parser(ParserClass):
 		input = fix_unicode_chars(input)
 
 		parser = zim.parser.Parser(
-			Rule(LINK, url_re.r, process=self.parse_url) # FIXME need .r attribute because url_re is a Re object
+			Rule(LINK, old_url_link_re.pattern, process=self.parse_url) # FIXME need .r attribute because url_re is a Re object
 		)
 
 		builder = ParseTreeBuilder()

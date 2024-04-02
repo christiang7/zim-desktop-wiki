@@ -18,10 +18,7 @@ the standalone server.
 # TODO: redirect server logging to logging module + set default level to -V in server process
 
 
-import sys
-import socket
 import logging
-from gi.repository import GObject
 
 from functools import partial
 
@@ -33,9 +30,9 @@ import urllib.error
 from zim.fs import adapt_from_oldfs
 from zim.newfs import SEP, FileNotFoundError
 from zim.errors import Error
-from zim.notebook import Notebook, Path, Page, encode_filename, PageNotFoundError
+from zim.notebook import Notebook, Path, encode_filename, PageNotFoundError
 from zim.config import data_file
-from zim.parsing import url_encode
+from zim.parse.encode import url_encode
 
 from zim.templates import get_template
 from zim.export.linker import ExportLinker, StubLayout

@@ -9,6 +9,7 @@
 import tests
 
 from zim.formats import *
+from zim.parse.links import is_url_link
 from zim.tokenparser import skip_to_end_token
 from zim.notebook import Path
 from zim.templates import Template
@@ -867,86 +868,6 @@ dus ja.
 1.3
 </p></zim-tree>'''
 		self.assertListParsing(text, xml)
-
-
-class TestGFMAutolinks(tests.TestCase):
-	# See https://github.github.com/gfm/#autolinks-extension-
-
-	examples = (
-		# Basic match
-		('www.commonmark.org', True, None),
-		('www.commonmark.org/help', True, None),
-		('http://commonmark.org', True, None),
-		('http://commonmark.org/help', True, None),
-		('commonmark.org', False, None),
-		('commonmark.org/help', False, None),
-
-
-		# No "_" in last two parts domain
-		('www.common_mark.org', False, None),
-		('www.commonmark.org_help', False, None),
-		('www.test_123.commonmark.org', True, None),
-
-		# Trailing punctuation
-		('www.commonmark.org/a.b.', True, '.'),
-		('www.commonmark.org.', True, '.'),
-		('www.commonmark.org?', True, '?'),
-
-		# Trailing ")"
-		('www.google.com/search?q=Markup+(business)', True, None),
-		('www.google.com/search?q=Markup+(business))', True, ')'),
-		('www.google.com/search?q=Markup+(business)))', True, '))'),
-		('www.google.com/search?q=(business))+ok', True, None),
-
-		# Trailing entity reference
-		('www.google.com/search?q=commonmark&hl=en', True, None),
-		('www.google.com/search?q=commonmark&hl;', True, '&hl;'),
-
-		# A "<" always breaks the link
-		('www.commonmark.org/he<lp', True, '<lp'),
-
-		# Email
-		('foo@bar.baz', True, None),
-		('hello@mail+xyz.example', False, None),
-		('hello+xyz@mail.example', True, None),
-		('a.b-c_d@a.b', True, None),
-		('a.b-c_d@a.b.', True, '.'),
-		('a.b-c_d@a.b-', False, None),
-		('a.b-c_d@a.b_', False, None),
-		('@tag', False, None),
-
-		# Examples from bug tracker
-		('https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#container-core-v1-', True, None),
-		('https://da.sharelatex.com/templates/books/springer\'s-monograph-type-svm', True, None),
-		('https://en.wikipedia.org/wiki/80/20_(framing_system)', True, None),
-		('https://bugs.kde.org/buglist.cgi?resolution=---', True, None),
-		#('https://vimhelp.org/options.txt.html#\'iskeyword\'', True, None),
-		#	-> this example is overruled by new behavior
-		('https://example.com/foo]', True, None),
-
-		# Zim extensions
-		('https://localhost', True, None),
-		('https://localhost/path', True, None),
-		('file:///home/foo', True, None),
-		('file://home/foo', True, None),
-		('file:/home/foo', True, None),
-		('foo://bar', True, None),
-	)
-
-	def testFunctions(self):
-		from zim.formats.wiki import match_url, is_url
-
-		for input, input_is_url, tail in self.examples:
-			if input_is_url:
-				if tail:
-					self.assertEqual(match_url(input), input[:-len(tail)])
-					self.assertFalse(is_url(input))
-				else:
-					self.assertEqual(match_url(input), input)
-					self.assertTrue(is_url(input))
-			else:
-				self.assertEqual(match_url(input), None)
-				self.assertFalse(is_url(input))
 
 
 class TestHtmlFormat(tests.TestCase, TestFormatMixin):

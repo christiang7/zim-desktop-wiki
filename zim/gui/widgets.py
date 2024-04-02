@@ -61,7 +61,7 @@ from zim.fs import adapt_from_oldfs
 from zim.newfs import FilePath, LocalFile, LocalFolder
 from zim.config import value_is_coord
 from zim.notebook import Notebook, Path, HRef, PageNotFoundError
-from zim.parsing import link_type
+from zim.parse.links import link_type
 from zim.signals import ConnectorMixin
 from zim.notebook.index import IndexNotFoundError
 from zim.actions import action

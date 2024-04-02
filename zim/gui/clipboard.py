@@ -16,10 +16,11 @@ import logging
 
 
 from zim.fs import adapt_from_oldfs
+from zim.parse.encode import url_encode, URL_ENCODE_READABLE
 from zim.newfs import FilePath, LocalFile, LocalFolder
 from zim.notebook import Path, HRef, set_parsetree_attributes_to_resolve_links, \
 	replace_parsetree_links_and_copy_images
-from zim.parsing import is_url_re, url_encode, link_type, URL_ENCODE_READABLE
+from zim.parse.links import is_url_re, link_type
 from zim.formats import get_format, ParseTree, ParseTreeBuilder, \
 	FORMATTEDTEXT, IMAGE, LINK, TAG, OBJECT
 from zim.export.linker import StaticExportLinker

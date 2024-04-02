@@ -18,13 +18,13 @@ import os
 import re
 import sys
 import shutil
-import tempfile
 import errno
 import logging
 
 
+
 from zim.errors import Error
-from zim.parsing import url_encode, url_decode, URL_ENCODE_READABLE
+from zim.parse.encode import url_decode, url_encode
 from zim.signals import SignalEmitter, SIGNAL_AFTER
 
 logger = logging.getLogger('zim.fs')

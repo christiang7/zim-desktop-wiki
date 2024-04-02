@@ -7,18 +7,13 @@ import tests
 
 from functools import partial
 
-import zim.plugins
-import zim.config
-import zim.formats
-
 from zim.plugins import PluginManager
-from zim.parsing import parse_date
 from zim.plugins.tasklist import *
 from zim.plugins.tasklist.indexer import *
+from zim.plugins.tasklist.indexer import _MAX_DUE_DATE, _MIN_START_DATE
 
-
-from zim.tokenparser import TokenBuilder, testTokenStream
-from zim.formats import ParseTreeBuilder
+from zim.parse.dates import old_parse_date
+from zim.tokenparser import testTokenStream
 from zim.formats.wiki import Parser as WikiParser
 
 WIKI_TEXT = '''\
@@ -126,8 +121,6 @@ Edge case with wrongly nested list
 
 '''
 
-from zim.plugins.tasklist.indexer import TaskParser, _MAX_DUE_DATE, _MIN_START_DATE
-from zim.parsing import parse_date
 
 def t(desc, status=TASK_STATUS_OPEN, waiting=False, start=_MIN_START_DATE, due=_MAX_DUE_DATE, prio=0, tags=''):
 	# Generate a task tuple
@@ -154,7 +147,7 @@ class TestTaskParser(tests.TestCase):
 		self.assertEqual(tasks, wanted)
 
 	def testAllCheckboxes(self):
-		mydate = '%04i-%02i-%02i' % parse_date('11/12')
+		mydate = '%04i-%02i-%02i' % old_parse_date('11/12')
 
 		wanted = [
 			(t('TODO: test heading with label'), []),
@@ -231,7 +224,7 @@ class TestTaskParser(tests.TestCase):
 		self.assertWikiTextToTasks(WIKI_TEXT, wanted)
 
 	def testLabelledCheckboxes(self):
-		mydate = '%04i-%02i-%02i' % parse_date('11/12')
+		mydate = '%04i-%02i-%02i' % old_parse_date('11/12')
 
 		wanted = [
 			(t('TODO: test heading with label'), []),

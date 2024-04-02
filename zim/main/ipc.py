@@ -33,7 +33,9 @@ except ImportError:
 
 
 import zim
-from zim.parsing import url_encode, URL_ENCODE_READABLE
+
+from zim.parse.encode import url_encode, URL_ENCODE_READABLE
+
 
 logger = logging.getLogger('zim.ipc')
 

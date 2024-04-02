@@ -3,47 +3,45 @@
 
 import tests
 
-from zim.parsing import *
+import zim.datetimetz as datetime
+
+from zim.parse.encode import \
+	escape_string, unescape_string, split_escaped_string, \
+	url_decode, url_encode, \
+	URL_ENCODE_READABLE, URL_ENCODE_PATH, URL_ENCODE_DATA
+from zim.parse.links import *
+from zim.parse.dates import *
+from zim.parse.dates import old_parse_date
+
 from zim.parser import *
 
-class TestParsing(tests.TestCase):
 
-	def testParseDate(self):
-		'''Test parsing dates'''
-		from datetime import date
-		today = date.today()
-		year = today.year
-		if today.month > 6:
-			year += 1 # Starting July next year January is closer
-		self.assertEqual(parse_date('1/1'), (year, 1, 1))
-		self.assertEqual(parse_date('1-1'), (year, 1, 1))
-		self.assertEqual(parse_date('1:1'), (year, 1, 1))
-		self.assertEqual(parse_date('11/11/99'), (1999, 11, 11))
-		self.assertEqual(parse_date('11/11/11'), (2011, 11, 11))
-		self.assertEqual(parse_date('1/11/2001'), (2001, 11, 1))
-		self.assertEqual(parse_date('1-11-2001'), (2001, 11, 1))
-		self.assertEqual(parse_date('1:11:2001'), (2001, 11, 1))
-		self.assertEqual(parse_date('2001/11/1'), (2001, 11, 1))
+class TestEscapeStringFunctions(tests.TestCase):
 
-	def testRe(self):
-		'''Test parsing Re class'''
-		string = 'foo bar baz'
-		re = Re(r'f(oo)\s*(bar)')
-		if re.match(string):
-			self.assertEqual(len(re), 3)
-			self.assertEqual(re[0], 'foo bar')
-			self.assertEqual(re[1], 'oo')
-			self.assertEqual(re[2], 'bar')
-		else:
-			assert False, 'fail'
+	def testEscapeString(self):
+		for raw, escaped in (
+			('Newline \n', 'Newline \\n'),
+			('Tab \t', 'Tab \\t'),
+			('Special char |', 'Special char \\|'),
+			('Backslash \\', 'Backslash \\\\'),
+			('Backslashed special char \\|', 'Backslashed special char \\\\\\|'),
+			('Not a newline \\n', 'Not a newline \\\\n'),
+		):
+			self.assertEqual(escape_string(raw, chars='|'), escaped)
+			self.assertEqual(unescape_string(escaped), raw)
 
-	def testTextBuffer(self):
-		'''Test parsing TextBuffer class'''
-		buffer = TextBuffer()
-		buffer += ['test 123\n test !', 'fooo bar\n', 'duss']
-		self.assertEqual(
-			buffer.get_lines(),
-			['test 123\n', ' test !fooo bar\n', 'duss\n'])
+	def testSplitEscapedString(self):
+		for string, parts in (
+			('Part A|Part B|Part C', ['Part A', 'Part B', 'Part C']),
+			('Part A\\| with pipe|Part B|Part C', ['Part A\\| with pipe', 'Part B', 'Part C']),
+			('Part A\\\\\\| with multiple backslash|Part B|Part C', ['Part A\\\\\\| with multiple backslash', 'Part B', 'Part C']),
+			('Part A with backslash\\\\|Part B|Part C', ['Part A with backslash\\\\', 'Part B', 'Part C']),
+			('No agressive strip \\', ['No agressive strip \\'])
+		):
+			self.assertEqual(split_escaped_string(string, '|'), parts)
+
+
+class TestURLEncode(tests.TestCase):
 
 	def testURLEncoding(self):
 		'''Test encoding and decoding urls'''
@@ -83,6 +81,9 @@ class TestParsing(tests.TestCase):
 		self.assertEqual(url_decode(encoded), data)
 		self.assertEqual(url_encode(decoded), encoded)
 
+
+class TestParseLinks(tests.TestCase):
+
 	def testLinkType(self):
 		'''Test link_type()'''
 		for href, type in (
@@ -113,43 +114,145 @@ class TestParsing(tests.TestCase):
 			# print('>>', href)
 			self.assertEqual(link_type(href), type)
 
-	def testValidInterwikiKey(self):
-		for name, key in (
-			('Foo', 'Foo'),
-			('Foo Bar', 'Foo_Bar'),
-			('Foo*Bar', 'Foo_Bar'),
-			('Foo-Bar', 'Foo-Bar'),
-			('Foo.Bar', 'Foo.Bar'),
-			('.Foo.Bar', '_Foo.Bar'),
+
+class TestGFMAutolinks(tests.TestCase):
+	# See https://github.github.com/gfm/#autolinks-extension-
+
+	examples = (
+		# Basic match
+		('www.commonmark.org', True, None),
+		('www.commonmark.org/help', True, None),
+		('http://commonmark.org', True, None),
+		('http://commonmark.org/help', True, None),
+		('commonmark.org', False, None),
+		('commonmark.org/help', False, None),
+
+
+		# No "_" in last two parts domain
+		('www.common_mark.org', False, None),
+		('www.commonmark.org_help', False, None),
+		('www.test_123.commonmark.org', True, None),
+
+		# Trailing punctuation
+		('www.commonmark.org/a.b.', True, '.'),
+		('www.commonmark.org.', True, '.'),
+		('www.commonmark.org?', True, '?'),
+
+		# Trailing ")"
+		('www.google.com/search?q=Markup+(business)', True, None),
+		('www.google.com/search?q=Markup+(business))', True, ')'),
+		('www.google.com/search?q=Markup+(business)))', True, '))'),
+		('www.google.com/search?q=(business))+ok', True, None),
+
+		# Trailing entity reference
+		('www.google.com/search?q=commonmark&hl=en', True, None),
+		('www.google.com/search?q=commonmark&hl;', True, '&hl;'),
+
+		# A "<" always breaks the link
+		('www.commonmark.org/he<lp', True, '<lp'),
+
+		# Email
+		('foo@bar.baz', True, None),
+		('hello@mail+xyz.example', False, None),
+		('hello+xyz@mail.example', True, None),
+		('a.b-c_d@a.b', True, None),
+		('a.b-c_d@a.b.', True, '.'),
+		('a.b-c_d@a.b-', False, None),
+		('a.b-c_d@a.b_', False, None),
+		('@tag', False, None),
+
+		# Examples from bug tracker
+		('https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#container-core-v1-', True, None),
+		('https://da.sharelatex.com/templates/books/springer\'s-monograph-type-svm', True, None),
+		('https://en.wikipedia.org/wiki/80/20_(framing_system)', True, None),
+		('https://bugs.kde.org/buglist.cgi?resolution=---', True, None),
+		#('https://vimhelp.org/options.txt.html#\'iskeyword\'', True, None),
+		#	-> this example is overruled by new behavior
+		('https://example.com/foo]', True, None),
+
+		# Zim extensions
+		('https://localhost', True, None),
+		('https://localhost/path', True, None),
+		('file:///home/foo', True, None),
+		('file://home/foo', True, None),
+		('file:/home/foo', True, None),
+		('foo://bar', True, None),
+	)
+
+	def testFunctions(self):
+		for input, input_is_url, tail in self.examples:
+			if input_is_url:
+				if tail:
+					self.assertEqual(match_url_link(input), input[:-len(tail)])
+					self.assertFalse(is_url_link(input))
+				else:
+					self.assertEqual(match_url_link(input), input)
+					self.assertTrue(is_url_link(input))
+			else:
+				self.assertEqual(match_url_link(input), None)
+				self.assertFalse(is_url_link(input))
+
+
+class TestParseDates(tests.TestCase):
+
+	def testParseDate(self):
+		date = datetime.date(2017, 3, 27)
+		for text in (
+			'2017-03-27', '2017-03',
+			'2017-W13', '2017-W13-1',
+			'2017W13', '2017W13-1',
+			'2017w13', '2017w13-1',
+			'W1713', 'W1713-1', 'W1713.1',
+			'Wk1713', 'Wk1713-1', 'Wk1713.1',
+			'wk1713', 'wk1713-1', 'wk1713.1',
 		):
-			self.assertEqual(valid_interwiki_key(name), key)
-			self.assertTrue(is_interwiki_keyword_re.match(key))
+			m = date_re.match(text)
+			self.assertIsNotNone(m, 'Failed to match: %s' % text)
+			self.assertEqual(m.group(0), text)
+			obj = parse_date(m.group(0))
+			self.assertIsInstance(obj, (Day, Week, Month))
+			self.assertTrue(obj.first_day <= date <= obj.last_day)
 
-
-class TestEscapeStringFunctions(tests.TestCase):
-
-	def testEscapeString(self):
-		for raw, escaped in (
-			('Newline \n', 'Newline \\n'),
-			('Tab \t', 'Tab \\t'),
-			('Special char |', 'Special char \\|'),
-			('Backslash \\', 'Backslash \\\\'),
-			('Backslashed special char \\|', 'Backslashed special char \\\\\\|'),
-			('Not a newline \\n', 'Not a newline \\\\n'),
+		for text in (
+			'foo', '123foo', '2017-03-270',
+			'20170317', '17-03-27', '17-03'
+			'17W', '2017W131', '2017-W131'
 		):
-			self.assertEqual(escape_string(raw, chars='|'), escaped)
-			self.assertEqual(unescape_string(escaped), raw)
+			m = date_re.match(text)
+			if m:
+				print('>>', m.group(0))
+			self.assertIsNone(m, 'Did unexpectedly match: %s' % text)
 
-	def testSplitEscapedString(self):
-		for string, parts in (
-			('Part A|Part B|Part C', ['Part A', 'Part B', 'Part C']),
-			('Part A\\| with pipe|Part B|Part C', ['Part A\\| with pipe', 'Part B', 'Part C']),
-			('Part A\\\\\\| with multiple backslash|Part B|Part C', ['Part A\\\\\\| with multiple backslash', 'Part B', 'Part C']),
-			('Part A with backslash\\\\|Part B|Part C', ['Part A with backslash\\\\', 'Part B', 'Part C']),
-			('No agressive strip \\', ['No agressive strip \\'])
-		):
-			self.assertEqual(split_escaped_string(string, '|'), parts)
+	def testWeekNumber(self):
+		self.assertEqual(
+			Day(2017, 3, 27),
+			Day.new_from_weeknumber(2017, 13, 1)
+		)
+		self.assertEqual(
+			Day(2017, 3, 27).weekformat(),
+			('2017-W13-1')
+		)
+		self.assertEqual(
+			Day.new_from_weeknumber(2017, 13, 7),
+			Day.new_from_weeknumber(2017, 14, 0)
+		)
 
+	def testOldParseDate(self):
+		'''Test parsing dates'''
+		from datetime import date
+		today = date.today()
+		year = today.year
+		if today.month > 6:
+			year += 1 # Starting July next year January is closer
+		self.assertEqual(old_parse_date('1/1'), (year, 1, 1))
+		self.assertEqual(old_parse_date('1-1'), (year, 1, 1))
+		self.assertEqual(old_parse_date('1:1'), (year, 1, 1))
+		self.assertEqual(old_parse_date('11/11/99'), (1999, 11, 11))
+		self.assertEqual(old_parse_date('11/11/11'), (2011, 11, 11))
+		self.assertEqual(old_parse_date('1/11/2001'), (2001, 11, 1))
+		self.assertEqual(old_parse_date('1-11-2001'), (2001, 11, 1))
+		self.assertEqual(old_parse_date('1:11:2001'), (2001, 11, 1))
+		self.assertEqual(old_parse_date('2001/11/1'), (2001, 11, 1))
 
 
 class TestSimpleTreeBuilder(tests.TestCase):
