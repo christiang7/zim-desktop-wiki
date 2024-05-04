@@ -2169,6 +2169,10 @@ class WindowSidePane(Gtk.VBox):
 	def add_tab(self, key, widget):
 		assert isinstance(widget, WindowSidePaneWidget)
 		assert widget.title is not None
+		if self.key in (TOP_PANE, BOTTOM_PANE):
+			widget.set_orientation(Gtk.Orientation.HORIZONTAL)
+		else:
+			widget.set_orientation(Gtk.Orientation.VERTICAL)
 		widget.tab_key = key
 		self.notebook.append_page(widget, widget.get_title_label())
 		self.notebook.set_tab_reorderable(widget, True)
@@ -2317,6 +2321,16 @@ class WindowSidePaneWidget(ConnectorMixin):
 		@returns: C{True} if supported and successfull
 		'''
 		return False
+
+	def set_orientation(self, orientation):
+		'''Set orientation of the widget
+		This method will be called when the widget is added to the pane.
+        Widgets can use this to better align to the orientation of the
+        enclosing pane. If the widget is a C{Gtk.Box} or a different
+		C{Gtk.Orientable} this method is already implemented in the Gtk widget.
+		@param orientation: one of C{Gtk.Orientation.VERTICAL} or C{Gtk.Orientation.HORIZONTAL}
+		'''
+		pass
 
 
 from zim.config import ConfigDefinition, ConfigDefinitionByClass, StringAllowEmpty
