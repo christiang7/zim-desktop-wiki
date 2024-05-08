@@ -195,7 +195,7 @@ class AttachmentBrowserPluginWidget(Gtk.Box, WindowSidePaneWidget):
 
 	def update_status(self):
 		n = len(self.iconview.get_model())
-		self.set_title(ngettext('%i Atta_chment', '%i Atta_chments', n) % n)
+		self.set_info(ngettext('%i Atta_chment', '%i Atta_chments', n) % n)
 		# T: Label for the statusbar, %i is the number of attachments for the current page
 
 		if n == 0:
@@ -210,6 +210,9 @@ class AttachmentBrowserPluginWidget(Gtk.Box, WindowSidePaneWidget):
 	def set_embeded_closebutton(self, button):
 		if self._close_button:
 			self.buttonbox.remove(self._close_button)
+
+		if self.get_orientation() == Gtk.Orientation.VERTICAL:
+			return False
 
 		if button is not None:
 			self.buttonbox.pack_start(button, False, True, 0)
