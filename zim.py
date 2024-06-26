@@ -62,22 +62,19 @@ def _parse_environment_param(value, installdir):
 
 	return os.pathsep.join(parts)
 
-
 def init_logging():
 	import logging
 
 	# Win32: must setup log file or it tries to write to $PROGRAMFILES
 	# See http://www.py2exe.org/index.cgi/StderrLog
-	# If startup is OK, this will be overruled in zim/main with per user log file
-	if os.name == "nt" and (
-		sys.argv[0].endswith('.exe')
-		or sys.executable.endswith('pythonw.exe')
-	):
-		import tempfile
-		dir = tempfile.gettempdir()
-		if not os.path.isdir(dir):
-			os.makedirs(dir)
-		err_stream = open(dir + "\\zim.exe.log", "w")
+	# Do the same for other platforms if not running from a terminal
+	py2exe = os.name == "nt" and (sys.argv[0].endswith('.exe') or sys.executable.endswith('pythonw.exe'))
+	if py2exe or not (sys.stdout.isatty() and sys.stderr.isatty()):
+		import zim
+		import zim.newfs
+		dir = zim.newfs.get_tmpdir()
+		zim.debug_log_file = os.path.join(dir.path, "zim.log")
+		err_stream = open(zim.debug_log_file, "w")
 		sys.stdout = err_stream
 		sys.stderr = err_stream
 
@@ -120,12 +117,20 @@ def main():
 	try:
 		import zim
 		import zim.main
+		import zim.config
 	except ImportError:
 		sys.excepthook(*sys.exc_info())
 		print('ERROR: Could not find python module files in path:', file=sys.stderr)
 		print(' '.join(map(str, sys.path)), file=sys.stderr)
 		print('\nTry setting PYTHONPATH', file=sys.stderr)
 		sys.exit(1)
+
+	# Check if we can find our own data files
+	_file = zim.config.data_file('zim.png')
+	if not (_file and _file.exists()): #pragma: no cover
+		print('ERROR: Could not find data files in path:', file=sys.stderr)
+		print(list(map(str, zim.config.data_dirs(include_non_existing=True))), file=sys.stderr)
+		print('\nTry setting XDG_DATA_DIRS', file=sys.stderr)
 
 	# Run the application and handle some exceptions
 	exit_code = 1

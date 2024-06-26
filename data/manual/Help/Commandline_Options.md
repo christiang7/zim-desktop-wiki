@@ -41,7 +41,8 @@ GUI Options:
                     opening the default notebook
   --geometry        window size and position as WxH+X+Y
   --fullscreen      start in fullscreen mode
-  --standalone      start a single instance, no background process
+  --non-unique      start a new process, do not connect to an existing process
+  --standalone      start a new process per notebook, implies --non-unique
 
 Server Options:
   --port            port to use (defaults to 8080)

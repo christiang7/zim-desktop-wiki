@@ -496,7 +496,7 @@ class WindowContext(DialogContext):
 
 	def _default_handler(self, cls, window):
 		if not isinstance(window, cls):
-			raise AssertionError('Expected window of class %s, but got %s instead' % (cls, dialog.__class__))
+			raise AssertionError('Expected window of class %s, but got %s instead' % (cls, window.__class__))
 
 
 class ApplicationContext(object):
@@ -522,33 +522,6 @@ class ApplicationContext(object):
 		import zim.gui.widgets
 		zim.applications.TEST_MODE = self.old_test_mode
 		zim.applications.TEST_MODE_RUN_CB = self.old_callback
-
-		if self.stack and not any(error):
-			raise AssertionError('%i expected command(s) not run' % len(self.stack))
-
-		return False # Raise any errors again outside context
-
-
-class ZimApplicationContext(object):
-
-	def __init__(self, *callbacks):
-		self.stack = list(callbacks)
-
-	def __enter__(self):
-		from zim.main import ZIM_APPLICATION
-		self.apps_obj = ZIM_APPLICATION
-		self.old_run = ZIM_APPLICATION._run_cmd
-		ZIM_APPLICATION._run_cmd = self._callback
-
-	def _callback(self, cmd, args):
-		if not self.stack:
-			raise AssertionError('Unexpected command run: %s %r' % (cmd, args))
-
-		handler = self.stack.pop(0)
-		handler(cmd, args)
-
-	def __exit__(self, *error):
-		self.apps_obj._run_cmd = self.old_run
 
 		if self.stack and not any(error):
 			raise AssertionError('%i expected command(s) not run' % len(self.stack))
@@ -706,7 +679,7 @@ class MockObject(object):
 	def __getattr__(self, name):
 		'''Automatically mock methods'''
 		if not name in self.__return_values:
-			raise AttributeError('No such method defined for MockObject: %s' % name)
+			raise AttributeError('No such method defined for MockObject: %s (we do know %r)' % (name, self.__return_values.keys()))
 
 		return_value = self.__return_values[name]
 		def my_mock_method(*arg, **kwarg):

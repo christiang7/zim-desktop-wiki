@@ -3016,6 +3016,16 @@ class Dialog(Gtk.Dialog, ConnectorMixin):
 		self.disconnect_all()
 		self.destroyed = True
 
+	def get_application(self):
+		app = Gtk.Dialog.get_application(self)
+		if app:
+			return app
+		else:
+			window = self.get_transient_for()
+			if not window:
+				raise AssertionError('No application set and no transient window for dialog: %s' % self)
+		return window.get_application()
+
 	#{ Layout methods
 
 	def add_extra_button(self, button, pack_start=True):
@@ -3046,8 +3056,8 @@ class Dialog(Gtk.Dialog, ConnectorMixin):
 		@param page: the manual page, if C{None} the page as set with
 		L{set_help()} is used
 		'''
-		from zim.main import ZIM_APPLICATION
-		ZIM_APPLICATION.run('--manual', page or self.help_page)
+		application = self.get_application()
+		application.open_manual(page or self.help_page)
 
 	def add_help_text(self, text):
 		'''Adds a label with an info icon in front of it. Intended for

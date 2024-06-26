@@ -112,7 +112,7 @@ class TestCoding(tests.TestCase):
 
 	def testWrongDependencies(self):
 		'''Check clean dependencies'''
-		allow_gtk = ('zim/gui/', 'zim/inc/', 'zim/plugins/', 'tests/')
+		allow_gtk = ('zim/gui/', 'zim/inc/', 'zim/plugins/', 'tests/', 'zim/main/application')
 		#import_re = re.compile('^from gi.repository import (Gtk|Gdk|Gio|GObject)', re.M)
 		import_re = re.compile('^from gi.repository import (Gtk|Gdk|Gio)', re.M)
 			# only match global imports - allow import in limited scope

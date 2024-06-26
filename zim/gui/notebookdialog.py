@@ -396,7 +396,8 @@ class NotebookDialog(Dialog):
 		# explicitly _no_ model.write()
 
 	def show_help(self, page=None):
-		zim.main.ZIM_APPLICATION.run('--manual', page or self.help_page)
+		application = self.get_application()
+		application.open_manual(page or self.help_page)
 
 
 class AddNotebookDialog(Dialog):

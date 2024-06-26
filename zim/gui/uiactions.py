@@ -13,8 +13,6 @@ logger = logging.getLogger('zim.gui')
 import zim
 from zim.actions import action
 
-from zim.main import ZIM_APPLICATION
-
 from zim.parse.encode import url_encode, URL_ENCODE_DATA
 from zim.templates import list_templates, get_template
 
@@ -123,21 +121,7 @@ class UIActions(object):
 	def show_open_notebook(self):
 		'''Show the L{NotebookDialog} dialog'''
 		from zim.gui.notebookdialog import NotebookDialog
-		NotebookDialog.unique(self, self.widget, callback=self.open_notebook).present()
-
-	def open_notebook(self, location, pagelink=None):
-		'''Open another notebook.
-		@param location: notebook location as uri or object with "uri" attribute
-		@param pagelink: optional page name (including optional anchor ID) as string
-		'''
-		assert isinstance(location, str) or hasattr(location, 'uri')
-		assert pagelink is None or isinstance(pagelink, str)
-
-		uri = location.uri if hasattr(location, 'uri') else location
-		if pagelink:
-			ZIM_APPLICATION.run('--gui', uri, pagelink)
-		else:
-			ZIM_APPLICATION.run('--gui', uri)
+		NotebookDialog.unique(self, self.widget, callback=self.navigation.open_notebook).present()
 
 	@action(_('_Import Page...'), menuhints='notebook:edit') # T: Menu item
 	def import_page(self):
@@ -243,13 +227,10 @@ class UIActions(object):
 
 	@action(_('_Quit'), '<Primary>Q') # T: Menu item
 	def quit(self):
-		'''Menu action for quit.
-		@emits: quit
+		'''Menu action for quitting the application
 		'''
-		if Gtk.main_level() > 0:
-			Gtk.main_quit()
-		# We expect the application to call "destroy" on all windows once
-		# it is bumped out of the main loop
+		application = self.widget.get_toplevel().get_application()
+		application.quit()
 
 	@action(_('Copy _Location'), accelerator='<shift><Primary>L') # T: Menu item
 	def copy_location(self):
@@ -363,7 +344,11 @@ class UIActions(object):
 		'''Menu action to show the server interface from
 		L{zim.gui.server}. Spawns a new zim instance for the server.
 		'''
-		ZIM_APPLICATION.run('--server', '--gui', self.notebook.uri)
+		from zim.gui.server import ServerWindow
+		window = ServerWindow(self.notebook.uri)
+		window.show_all()
+		application = self.widget.get_toplevel().get_application()
+		application.add_window(window)
 
 	@action(_('View Debug Log'), menuhints='tools') # T: menu item
 	def show_debug_log(self):
@@ -430,10 +415,7 @@ class UIActions(object):
 		instance showing the notebook with the manual.
 		@param page: manual page to show (string)
 		'''
-		if page:
-			ZIM_APPLICATION.run('--manual', page)
-		else:
-			ZIM_APPLICATION.run('--manual')
+		self.navigation.open_manual(page)
 
 	@action(_('_FAQ')) # T: Menu item
 	def show_help_faq(self):

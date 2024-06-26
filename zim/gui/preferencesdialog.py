@@ -18,7 +18,6 @@ from zim.gui.applications import CustomizeOpenWithDialog, open_folder_prompt_cre
 from zim.plugins import PLUGIN_FOLDER
 from zim.config import String, ConfigManager
 from zim.plugins import PluginManager
-from zim.main import ZIM_APPLICATION
 
 from zim.gui.applications import ui_preferences as application_preferences
 from zim.gui.mainwindow import ui_preferences as interface_preferences
@@ -378,7 +377,8 @@ class PluginsTab(Gtk.VBox):
 		klass = self.plugins.get_plugin_class(self._current_plugin)
 		page = klass.plugin_info['help']
 		if page:
-			ZIM_APPLICATION.run('--manual', page)
+			application = self.get_toplevel().get_application()
+			application.open_manual(page)
 
 	def on_configure_button_clicked(self, button):
 		plugin = self.plugins[self._current_plugin]

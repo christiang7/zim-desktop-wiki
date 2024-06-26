@@ -20,7 +20,6 @@ from zim.actions import action
 from zim.signals import SignalEmitter, ConnectorMixin, SIGNAL_RUN_LAST
 from zim.base.naturalsort import natural_sort_key
 from zim.config import String
-from zim.main import ZIM_APPLICATION
 from zim.formats import ElementTreeModule as ElementTree
 from zim.formats import TABLE, HEADROW, HEADDATA, TABLEROW, TABLEDATA
 from zim.formats.wiki import Parser as WikiParser
@@ -719,7 +718,8 @@ class TableViewWidget(InsertedObjectWidget):
 
 	def on_open_help(self, action):
 		''' Context menu: Open help '''
-		ZIM_APPLICATION.run('--manual', 'Plugins:Table Editor')
+		application = self.get_toplevel().get_application()
+		application.open_manual('Plugins:Table Editor')
 
 	def on_change_columns(self, action):
 		''' Context menu: Edit table, run the EditTableDialog '''

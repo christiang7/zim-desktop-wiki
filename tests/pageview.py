@@ -32,7 +32,7 @@ def setUpPageView(notebook, text=''):
 	page.parse('wiki', text)
 	notebook.store_page(page)
 
-	navigation = tests.MockObject(methods=('open_page',))
+	navigation = tests.MockObject(methods=('open_page', 'open_notebook'))
 	pageview = PageView(notebook, navigation)
 	pageview.set_page(page)
 	return pageview
@@ -3011,11 +3011,8 @@ Baz
 				('open_page', Path(href), {'new_window': False, 'anchor': anchor})
 			)
 
-		def check_zim_cmd(cmd, args):
-			self.assertEqual(args, ('--gui', 'file://foo/bar', 'dus.txt'))
-
-		with tests.ZimApplicationContext(check_zim_cmd):
-			pageview.activate_link('zim+file://foo/bar?dus.txt')
+		pageview.activate_link('zim+file://foo/bar?dus.txt')
+		self.assertEqual(pageview.navigation.lastMethodCall, ('open_notebook', 'file://foo/bar', 'dus.txt'))
 
 		file = self.setUpFolder(mock=tests.MOCK_ALWAYS_REAL).file('test.txt')
 		file.touch()
@@ -3043,7 +3040,6 @@ Baz
 
 			with tests.ApplicationContext(check_url):
 				pageview.activate_link(href)
-
 
 	def testPluginCanHandleURL(self):
 		pageview = setUpPageView(self.setUpNotebook())

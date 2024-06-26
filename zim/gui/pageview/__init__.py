@@ -1284,17 +1284,15 @@ class PageView(GSignalEmitterMixin, Gtk.VBox):
 			path = self.notebook.resolve_file(link, self.page)
 			open_file(self, path)
 		elif type == 'notebook':
-			from zim.main import ZIM_APPLICATION
-
 			if link.startswith('zim+'):
 				uri, pagelink = link[4:], None
 				if '?' in uri:
 					uri, pagelink = uri.split('?', 1) # pagelink part can include # anchor
 
-				ZIM_APPLICATION.run('--gui', uri, pagelink)
+				self.navigation.open_notebook(uri, pagelink)
 
 			else:
-				ZIM_APPLICATION.run('--gui', FilePath(link).uri)
+				self.navigation.open_notebook(FilePath(link).uri)
 
 		else:
 			if type == 'mailto' and not link.startswith('mailto:'):

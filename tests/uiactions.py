@@ -35,15 +35,6 @@ class EmptyWindowObject(object):
 		return None
 
 
-class MockNavigation(object):
-
-	def __init__(self):
-		self.opened = None
-
-	def open_page(self, page):
-		self.opened = page
-
-
 class TestUIActions(tests.TestCase):
 
 	def setUp(self):
@@ -55,7 +46,7 @@ class TestUIActions(tests.TestCase):
 			}
 		)
 		self.page = self.notebook.get_page(Path('Test'))
-		self.navigation = MockNavigation()
+		self.navigation = tests.MockObject(methods=('open_page', 'open_notebook', 'open_manual'))
 		self.uiactions = UIActions(
 			window,
 			self.notebook,
@@ -75,7 +66,7 @@ class TestUIActions(tests.TestCase):
 			self.uiactions.new_page()
 
 		self.assertTrue(page.exists())
-		self.assertEqual(self.navigation.opened, page)
+		self.assertEqual(self.navigation.lastMethodCall, ('open_page', page))
 
 	def testCreateNewPageFailsForExistingPage(self):
 		from zim.notebook import PageExistsError
@@ -125,7 +116,7 @@ class TestUIActions(tests.TestCase):
 				self.uiactions.new_page()
 
 			self.assertTrue(page.exists())
-			self.assertEqual(self.navigation.opened, page)
+			self.assertEqual(self.navigation.lastMethodCall, ('open_page', page))
 
 	def testCreateNewChildPage(self):
 		page = self.notebook.get_page(Path('Test:Child'))
@@ -139,7 +130,7 @@ class TestUIActions(tests.TestCase):
 			self.uiactions.new_sub_page()
 
 		self.assertTrue(page.exists())
-		self.assertEqual(self.navigation.opened, page)
+		self.assertEqual(self.navigation.lastMethodCall, ('open_page', page))
 
 	def testOpenAnotherNotebook(self):
 		from zim.gui.notebookdialog import NotebookDialog
@@ -640,19 +631,21 @@ class TestUIActions(tests.TestCase):
 		with tests.DialogContext(use_recent_changes):
 			self.uiactions.show_recent_changes()
 
-		# self.assertEqual(self.navigation.opened, Path('NewPage')) # FIXME: fails at random in automated tests
+		# self.assertEqual(self.navigation.lastMethodCall, ('open_page', Path('NewPage'))) # FIXME: fails at random in automated tests
 
 	def testShowServerDialog(self):
-		from zim.main import ZIM_APPLICATION
-		ZIM_APPLICATION._running = True # HACK
+		application = tests.MockObject(methods=('add_window',))
+		window = tests.MockObject(return_values={'get_application': application})
+		self.uiactions.widget = tests.MockObject(return_values={'get_toplevel': window})
 
 		from zim.gui.server import ServerWindow
 		ServerWindow.show_all = tests.CallBackLogger()
-		ServerWindow.present = tests.CallBackLogger()
 
 		self.uiactions.show_server_gui()
 
-		self.assertTrue(ServerWindow.present.hasBeenCalled)
+		self.assertTrue(ServerWindow.show_all.hasBeenCalled)
+		self.assertEqual(application.lastMethodCall[0], 'add_window')
+		self.assertIsInstance(application.lastMethodCall[1], ServerWindow)
 
 	def testReloadIndex(self):
 		self.uiactions.check_and_update_index()
@@ -682,17 +675,8 @@ class TestUIActions(tests.TestCase):
 		# more tests in tests/customtools.py
 
 	def testOpenHelp(self, page=None):
-		from zim.main import ZIM_APPLICATION
-		ZIM_APPLICATION._running = True # HACK
-
-		def check_window(window):
-			self.assertEqual(window.notebook.folder.basename, 'manual')
-			if page:
-				self.assertEqual(window.page, page)
-
-		with tests.LoggingFilter('zim', 'Exception while loading plugin:'):
-			with tests.WindowContext(check_window, check_window): # window.present() called twice
-				self.uiactions.show_help()
+		self.uiactions.show_help()
+		self.assertEqual(self.navigation.lastMethodCall, ('open_manual', None))
 
 	@tests.expectedFailure  # page opened after window.present
 	def testOpenHelpFAQ(self):
@@ -753,7 +737,7 @@ class TestUIActionsRealFile(tests.TestCase):
 			content={'Test': 'Test 123'}
 		)
 		self.page = self.notebook.get_page(Path('Test'))
-		self.navigation = MockNavigation()
+		self.navigation = tests.MockObject(methods=('open_page', 'open_notebook'))
 		self.uiactions = UIActions(
 			window,
 			self.notebook,

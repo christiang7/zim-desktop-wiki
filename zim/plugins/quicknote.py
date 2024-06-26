@@ -14,7 +14,7 @@ from zim.config import ConfigManager
 from zim.notebook import Path, Notebook, NotebookInfo, \
 	resolve_notebook, build_notebook
 from zim.templates import get_template
-from zim.main import GtkCommand, ZIM_APPLICATION
+from zim.main import GtkCommand
 
 from zim.gui.mainwindow import MainWindowExtension
 from zim.gui.widgets import Dialog, ScrolledTextView, InputForm, QuestionDialog
@@ -27,7 +27,23 @@ import logging
 logger = logging.getLogger('zim.plugins.quicknote')
 
 
-usagehelp = '''\
+class QuickNotePluginCommand(GtkCommand):
+
+	options = (
+		('notebook=', '', 'Select the notebook in the dialog'),
+		('page=', '', 'Fill in full page name'),
+		('section=', '', 'Fill in the page section in the dialog'),
+		('namespace=', '', 'Fill in the page section in the dialog'), # backward compatibility
+		('basename=', '', 'Fill in the page name in the dialog'),
+		('append=', '', 'Set whether to append or create new page ("true" or "false")'),
+		('text=', '', 'Provide the text directly'),
+		('input=', '', 'Provide the text on stdin ("stdin") or take the text from the clipboard ("clipboard")'),
+		('encoding=', '', 'Text encoding ("base64" or "url")'),
+		('attachments=', '', 'Import all files in FOLDER as attachments, wiki input can refer these files relatively'),
+		('option=', '', 'Set template parameter, e.g. "url=URL"'),
+	)
+
+	cmdhelp = '''\
 usage: zim --plugin quicknote [OPTIONS]
 
 Options:
@@ -48,41 +64,17 @@ Options:
   --option url=STRING    Set template parameter
 '''
 
-
-class QuickNotePluginCommand(GtkCommand):
-
-	options = (
-		('help', 'h', 'Print this help text and exit'),
-		('notebook=', '', 'Select the notebook in the dialog'),
-		('page=', '', 'Fill in full page name'),
-		('section=', '', 'Fill in the page section in the dialog'),
-		('namespace=', '', 'Fill in the page section in the dialog'), # backward compatibility
-		('basename=', '', 'Fill in the page name in the dialog'),
-		('append=', '', 'Set whether to append or create new page ("true" or "false")'),
-		('text=', '', 'Provide the text directly'),
-		('input=', '', 'Provide the text on stdin ("stdin") or take the text from the clipboard ("clipboard")'),
-		('encoding=', '', 'Text encoding ("base64" or "url")'),
-		('attachments=', '', 'Import all files in FOLDER as attachments, wiki input can refer these files relatively'),
-		('option=', '', 'Set template parameter, e.g. "url=URL"'),
-	)
+	def handle_local_commandline(self, args):
+		text = self.get_text_local()
+		args.extend(['--text', text])
+			# In subsequent parsing, this argument should supersede already in the input
+			# cleanup of the inputs is not trivial, so just leave un-used arguments in
+		return args
 
 	def parse_options(self, *args):
 		self.opts['option'] = [] # allow list
 
-		if all(not a.startswith('-') for a in args):
-			# Backward compartibility for options not prefixed by "--"
-			# used "=" as separator for values
-			# template options came as "option:KEY=VALUE"
-			for arg in args:
-				if arg.startswith('option:'):
-					self.opts['option'].append(arg[7:])
-				elif arg == 'help':
-					self.opts['help'] = True
-				else:
-					key, value = arg.split('=', 1)
-					self.opts[key] = value
-		else:
-			GtkCommand.parse_options(self, *args)
+		GtkCommand.parse_options(self, *args)
 
 		self.template_options = {}
 		for arg in self.opts['option']:
@@ -97,19 +89,20 @@ class QuickNotePluginCommand(GtkCommand):
 			folderpath = LocalFolder(self.pwd).get_abspath(self.opts['attachments'])
 			self.opts['attachments'] = LocalFolder(folderpath)
 
-	def get_text(self):
-		if 'input' in self.opts:
+	def get_text_local(self):
+		if 'text' in self.opts: 
+			# Check this one first, to allow parse_local_commandline() to work
+			text = self.opts['text']
+		elif 'input' in self.opts:
 			if self.opts['input'] == 'stdin':
 				import sys
 				text = sys.stdin.read()
 			elif self.opts['input'] == 'clipboard':
-				text = \
-					SelectionClipboard.get_text() \
-					or Clipboard.get_text()
+				text = SelectionClipboard.get_text() or Clipboard.get_text()
 			else:
 				raise AssertionError('Unknown input type: %s' % self.opts['input'])
 		else:
-			text = self.opts.get('text', '')
+			text = ''
 
 		if text and 'encoding' in self.opts:
 			if self.opts['encoding'] == 'base64':
@@ -123,23 +116,7 @@ class QuickNotePluginCommand(GtkCommand):
 		assert isinstance(text, str), '%r is not decoded' % text
 		return text
 
-	def run_local(self):
-		# Try to run dialog from local process
-		# - prevents issues where dialog pop behind other applications
-		#   (desktop preventing new window of existing process to hijack focus)
-		# - e.g. capturing stdin requires local process
-		if self.opts.get('help'):
-			print(usagehelp) # TODO handle this in the base class
-		else:
-			dialog = self.build_dialog()
-			dialog.run()
-		return True # Done - Don't call run() as well
-
 	def run(self):
-		# If called from primary process just run the dialog
-		return self.build_dialog()
-
-	def build_dialog(self):
 		if 'notebook' in self.opts:
 			notebook = resolve_notebook(self.opts['notebook'])
 		else:
@@ -150,7 +127,7 @@ class QuickNotePluginCommand(GtkCommand):
 			namespace=self.opts.get('namespace'),
 			basename=self.opts.get('basename'),
 			append=self.opts.get('append'),
-			text=self.get_text(),
+			text=self.opts.get('text', ''),
 			template_options=self.template_options,
 			attachments=self.opts.get('attachments')
 		)
@@ -186,7 +163,6 @@ class QuickNoteMainWindowExtension(MainWindowExtension):
 
 
 class QuickNoteDialog(Dialog):
-	'''Dialog bound to a specific notebook'''
 
 	def __init__(self, window, notebook=None,
 		page=None, namespace=None, basename=None,
@@ -437,7 +413,7 @@ class QuickNoteDialog(Dialog):
 
 		if self.open_page_check.get_active():
 			self.hide()
-			ZIM_APPLICATION.present(notebook, path)
+			self.get_application().open_notebook(notebook, path)
 
 		return True
 
