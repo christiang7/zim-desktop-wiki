@@ -5,6 +5,7 @@ It borrows a lot from the task list plugin which also needs to index all
 page contents.
 '''
 
+import contextlib
 import sqlite3
 import logging
 
@@ -52,14 +53,20 @@ sqlite.
 
 	@classmethod
 	def check_dependencies(klass):
-		conn = sqlite3.connect(":memory:")
-		has_fts5 = (
-			len(conn.execute(
-				"SELECT name FROM pragma_module_list() "
-				"WHERE name = ?;", ("fts5",)
-				).fetchall()
-			) == 1
-		)
+		with contextlib.closing(sqlite3.connect(':memory:')) as connection:
+			with connection:
+				try:
+					with contextlib.closing(connection.cursor()) as cursor:
+						cursor.execute('SELECT name FROM pragma_module_list() WHERE name = ?;', ('fts5',))
+						data = cursor.fetchall()
+						has_fts5 = ('fts5',) in data
+				except sqlite3.Error:
+					with contextlib.closing(connection.cursor()) as cursor:
+						cursor.execute('pragma compile_options;')
+						data = cursor.fetchall()
+						has_fts5 = ('ENABLE_FTS5',) in data
+
+		# this is the smallest version with available feature ``contentless-delete tables``
 		has_min_version = compare_version(
 			sqlite3.sqlite_version_info, (3, 43, 0)
 		)

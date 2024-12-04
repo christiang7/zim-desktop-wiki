@@ -282,7 +282,7 @@ class QuickNoteDialog(Dialog):
 		buffer = self.textview.get_buffer()
 		buffer.set_text(''.join(lines))
 		begin, end = buffer.get_bounds()
-		buffer.place_cursor(begin)
+		buffer.place_cursor(end)
 
 		buffer.set_modified(False)
 
@@ -364,13 +364,18 @@ class QuickNoteDialog(Dialog):
 			# Automatically generate a (valid) page name
 			self._updating_title = True
 			start, end = buffer.get_bounds()
-			title = start.get_text(end).strip()[:50]
-				# Cut off at 50 characters to prevent using a whole paragraph
-			title = title.replace(':', '')
-			if '\n' in title:
-				title, _ = title.split('\n', 1)
+			text = start.get_text(end).strip()
+			# Limit page name to contents of first line
+			title = text.split('\n')[0]
+			# Get heading 1 as the page name, if present
+			heading_pattern = r'={1,}\s*(.*?)\s*={1,}'
+			heading_match = re.search(heading_pattern, title)
+			if heading_match:
+				title = heading_match.group(1)
+			# Remove colons and limit to 50 characters
+			title = title.replace(':', '')[:50]
 			try:
-				title = Path.makeValidPageName(title.replace(':', ''))
+				title = Path.makeValidPageName(title)
 				self.form['basename'] = title
 			except ValueError:
 				pass

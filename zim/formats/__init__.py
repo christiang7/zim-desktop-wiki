@@ -1235,7 +1235,7 @@ class TableParser():
 		Each cell in a list of rows is split by "\n" and a 3-dimensional list is returned,
 		whereas each tuple represents a line and multiple lines represents a row and multiple rows represents the table
 		c11a = Cell in Row 1 in Column 1 in first = a line
-		:param strings: format like (('c11a \n c11b', 'c12a \n c12b'), ('c21', 'c22a \n 22b'))
+		:param rows: format like (('c11a \n c11b', 'c12a \n c12b'), ('c21', 'c22a \n 22b'))
 		:return: format like (((c11a, c12a), (c11b, c12b)), ((c21, c22a), ('', c22b)))
 		'''
 		multi_rows = [[cell.split("\n") for cell in row] for row in rows]
@@ -1300,6 +1300,7 @@ class TableParser():
 		:param row: tuple of cells
 		:param maxwidths: list of column length
 		:param aligns:  list of alignments
+		:param wraps: 0 for not wrapped, 1 for auto-wrapped line display
 		:param x:  point-separator
 		:param y: space-separator
 		:return: a textline

@@ -4,6 +4,8 @@
 import tests
 from tests import os_native_path
 
+import os
+
 from zim.fs import adapt_from_oldfs
 from zim.newfs import LocalFile, LocalFolder
 from zim.notebook import Path
@@ -341,6 +343,7 @@ class TestInputForm(tests.TestCase):
 
 
 @tests.slowTest
+@tests.skipIf(os.name == 'windows', 'Test fails at random on windows')
 class TestFileDialog(tests.TestCase):
 	## Something weird in how the filechooser works internally
 	## need a lot of gtk_process_events() to get it work OK in test

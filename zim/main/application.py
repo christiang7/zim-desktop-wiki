@@ -5,6 +5,7 @@
 
 import logging
 import signal
+from typing import List, Optional
 
 logger = logging.getLogger('zim')
 
@@ -54,7 +55,7 @@ class ZimGtkApplication(Gtk.Application):
 		# and it exits while primary process keeps running as long as there are windows
 		return self.run_commandline(gcommandline.get_arguments()[1:], gcommandline.get_cwd())
 
-	def run_commandline(self, args: list[str], pwd: str|None = None) -> int:
+	def run_commandline(self, args: List[str], pwd: Optional[str] = None) -> int:
 		'''Run a commandline in the current process
 		@param args: the commandline options
 		@param pwd: the working directory as string path
@@ -105,7 +106,7 @@ class ZimGtkApplication(Gtk.Application):
 		from zim import ZIM_EXECUTABLE
 		from zim.applications import Application
 
-		args = [ZIM_EXECUTABLE] + [a for a in args if a is not None]
+		args = [ZIM_EXECUTABLE] + [a for a in arg if a is not None]
 		if not '--standalone' in args:
 			args.append('--standalone')
 

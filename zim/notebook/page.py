@@ -350,7 +350,7 @@ class HRef():
 		return klass.new_from_wiki_link(href).to_wiki_link()
 
 	@classmethod
-	def new_from_wiki_link(klass, href: str) -> 'Href':
+	def new_from_wiki_link(klass, href: str) -> 'HRef':
 		'''Constructor that constructs a L{HRef} object for a link as
 		written in zim's wiki syntax.
 		@param href: a string for the link

@@ -194,7 +194,7 @@ class Dumper(DumperClass):
 		text = alt if alt else src
 		return [text]
 
-	def dump_object_fallback(self, tag, attrib, strings):
+	def dump_object_fallback(self, tag, attrib, strings=None):
 		return strings
 
 	def dump_table(self, tag, attrib, strings):

@@ -678,15 +678,12 @@ class TestUIActions(tests.TestCase):
 		self.uiactions.show_help()
 		self.assertEqual(self.navigation.lastMethodCall, ('open_manual', None))
 
-	@tests.expectedFailure  # page opened after window.present
 	def testOpenHelpFAQ(self):
 		self.testOpenHelp(page='FAQ')
 
-	@tests.expectedFailure  # page opened after window.present
 	def testOpenHelpKeys(self):
 		self.testOpenHelp(page='Help:Key Bindings')
 
-	@tests.expectedFailure  # page opened after window.present
 	def testOpenHelpBugs(self):
 		self.testOpenHelp(page='Bugs')
 

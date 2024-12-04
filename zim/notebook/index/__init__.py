@@ -138,7 +138,8 @@ class Index(SignalEmitter):
 	def _db_init(self):
 		tables = [r[0] for r in self._db.execute(
 			'SELECT name FROM sqlite_master '
-			'WHERE type="table" and name NOT LIKE "sqlite%"'
+			'WHERE type=? and name NOT LIKE ?',
+			('table', 'sqlite%')
 		)]
 		for table in tables:
 			self._db.execute('DROP TABLE %s' % table)
