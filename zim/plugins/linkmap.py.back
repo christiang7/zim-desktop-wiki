@@ -68,7 +68,7 @@ This is a core plugin shipping with zim.
 
 class LinkMap(object):
 
-	def __init__(self, notebook, path, depth=0):
+	def __init__(self, notebook, path, depth=1):
 		self.notebook = notebook
 		self.path = path
 		self.depth = depth
@@ -104,10 +104,7 @@ class LinkMap(object):
 	def get_dotcode(self):
 		dotcode = [
 			'digraph LINKS {',
-			#'  layout=circo;',
-			'  nodesep=0.01;' ,
 			'  size="6,6";',
-			'  mindist="0.1";',
 			'  node [shape=box, style="rounded,filled", color="#204a87", fillcolor="#729fcf"];',
 			#'  node [shape=note, style="filled", color="#204a87", fillcolor="#729fcf"];',
 			'  "%s" [color="#4e9a06", fillcolor="#8ae234", URL="%s"]' % (self.path.name, self.path.name), # special node
@@ -121,7 +118,7 @@ class LinkMap(object):
 					dotcode.append('  "%s" [URL="%s"];' % (name, name))
 					seen.add(name)
 			dotcode.append(
-				'  "%s" -> "%s" [style="bold", penwidth="7.0", color="#ff000050"];' % (link.source.name, link.target.name))
+				'  "%s" -> "%s" [style="bold", penwidth="7.0", color="#00000050"];' % (link.source.name, link.target.name))
 
 		dotcode.append('}')
 
@@ -152,8 +149,6 @@ class LinkMapWidget(DotWidget):
 		if element and event.button != 1:
 			try:
 				self.emit('clicked', element.url, event)
-				#dialog = LinkMapDialog(self.pageview, self.navigation, self.preferences)
-				#dialog.show_all()
 				return True
 			except Exception:
 				return False
@@ -196,7 +191,6 @@ class LinkMapDialog(Dialog):
 			button = IconButton(stock)
 			button.connect('clicked', method)
 			vbox.pack_start(button, False, True, 0)
-
 
 	def set_dotcode(self, page):
 		logger.debug('Load dotcode for page %s', page.name)
