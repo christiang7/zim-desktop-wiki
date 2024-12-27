@@ -12,8 +12,7 @@ from zim.actions import action
 from zim.base.naturalsort import natural_sort_key
 
 from zim.gui.pageview import PageViewExtension
-from zim.gui.widgets import MessageDialog
-
+from zim.gui.pageview.serialize import textbuffer_internal_serialize_range, textbuffer_internal_insert_at_cursor
 
 import logging
 
@@ -131,7 +130,7 @@ class LineSorterPageViewExtension(PageViewExtension):
 			cursor_offset = cursor.get_line_offset()
 
 		# get copy tree
-		tree = buffer.get_parsetree(bounds=(start, end), raw=True)
+		linedata = textbuffer_internal_serialize_range(buffer, start, end)
 
 		with buffer.user_action:
 			# delete lines and insert at target
@@ -152,7 +151,7 @@ class LineSorterPageViewExtension(PageViewExtension):
 
 			# actual insert
 			insert_line = iter.get_line()
-			buffer.insert_parsetree_at_cursor(tree)
+			textbuffer_internal_insert_at_cursor(buffer, linedata)
 
 			# Fixup line end if selection happened to be end of buffer without newline
 			# and moving up

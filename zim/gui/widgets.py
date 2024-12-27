@@ -721,10 +721,16 @@ class BrowserTreeView(SingleClickTreeView):
 			return Gtk.TreeView.do_key_press_event(self, event)
 
 
-def widget_set_css(widget, name, css):
-	text = '#%s {%s}' % (name, css)
+def widget_set_css(widget: Gtk.Widget, name: str, css: str) -> None:
+	'''Set the widget name and CSS style
+	@param widget: a C{Gtk.Widget}
+	@param name: the name for the widget, can be used in CSS as `#name`
+	@param css: the CSS for this widget, if it contains a `{` it is taken as "raw" CSS, 
+	else it is wrapped in a template like `#name {..}`
+	'''
+	css = css if '{' in css else '#%s {%s}' % (name, css)
 	css_provider = Gtk.CssProvider()
-	css_provider.load_from_data(text.encode('UTF-8'))
+	css_provider.load_from_data(css.encode('UTF-8'))
 	widget_style = widget.get_style_context()
 	widget_style.add_provider(css_provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 	widget.set_name(name)
@@ -732,11 +738,11 @@ def widget_set_css(widget, name, css):
 
 def button_set_statusbar_style(button):
 	# Set up a style for the statusbar variant to decrease spacing of the button
-	widget_set_css(button, 'zim-statusbar-button',	'''
-													border: none;
-													border-radius: 0px;
-													padding: 0px 8px 0px 8px;
-													''')
+	widget_set_css(button, 'zim-statusbar-button',
+		'border: none; '
+		'border-radius: 0px; '
+		'padding: 0px 8px 0px 8px; '
+	)
 	button.set_relief(Gtk.ReliefStyle.NONE)
 
 

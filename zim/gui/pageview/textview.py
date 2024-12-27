@@ -181,7 +181,7 @@ class TextView(Gtk.TextView):
 		Gtk.TextView.set_buffer(self, buffer)
 
 		# Connect new widgets
-		for anchor in buffer.list_objectanchors():
+		for iter, anchor in buffer.list_objectanchors():
 			self.on_insert_object(buffer, anchor)
 
 		buffer.connect('insert-objectanchor', self.on_insert_object)

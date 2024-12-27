@@ -112,7 +112,7 @@ class Index(SignalEmitter):
 			self.set_property('db_version', DB_VERSION) # Ensure we can write
 		except sqlite3.OperationalError:
 			# db is there but table does not exist
-			logger.debug('Operational error, init tabels')
+			logger.debug('Operational error, init tables')
 			try:
 				self._db_init()
 			except:

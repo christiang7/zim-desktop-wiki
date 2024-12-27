@@ -40,13 +40,13 @@ def compare_version(curv, minv):
 class IndexedFTSPlugin(PluginClass):
 
 	plugin_info = {
-		'name': _('Indexed Full-Text Search'),
+		'name': _('Indexed Full-Text Search'), # T: plugin name
 		'description': _('''\
 This plugin provides full-text indexing of
 page contents for fast full-text search,
 based on the FTS5 virtual table module of
 sqlite.
-'''),
+'''), # T: plugin description
 		'author': 'Nimrod Maclomhair',
 		'help': 'Plugins:Indexed Full Text Search'
 	}

@@ -819,6 +819,7 @@ class PageView(GSignalEmitterMixin, Gtk.VBox):
 				for k in section._input if k in TextBuffer.tag_attributes]
 			section.define(defs)
 			tag = key[4:]
+			tag = tag.replace('-checkbox', '-box') # backward compatibility after renaming constants
 
 			try:
 				if not tag in TextBuffer.tag_styles:
@@ -917,7 +918,6 @@ class PageView(GSignalEmitterMixin, Gtk.VBox):
 
 		# Teardown connection with current page buffer
 		prev_buffer = self.textview.get_buffer()
-		finderstate = prev_buffer.finder.get_state()
 		for id in self._buffer_signals:
 			prev_buffer.disconnect(id)
 		self._buffer_signals = ()
@@ -954,8 +954,6 @@ class PageView(GSignalEmitterMixin, Gtk.VBox):
 				buffer.connect('modified-changed', lambda o: self.on_modified_changed(o)),
 				buffer.connect_after('mark-set', self.do_mark_set),
 			)
-
-			buffer.finder.set_state(*finderstate) # maintain state
 
 			self.set_sensitive(True)
 			self._update_readonly()
@@ -2054,17 +2052,6 @@ class PageView(GSignalEmitterMixin, Gtk.VBox):
 		buffer = self.textview.get_buffer()
 		MoveTextDialog(self, self.notebook, self.page, buffer, self.navigation).run()
 
-	def find(self, string, flags=0):
-		'''Find some string in the text, scroll there and select it
-
-		@param string: the text to find
-		@param flags: options for find behavior, see L{TextFinder.find()}
-		'''
-		self.hide_find() # remove previous highlighting etc.
-		buffer = self.textview.get_buffer()
-		buffer.finder.find(string, flags)
-		self.textview.scroll_to_mark(buffer.get_insert(), SCROLL_TO_MARK_MARGIN, False, 0, 0)
-
 	@action(_('_Find...'), '<Primary>F', alt_accelerator='<Primary>F3') # T: Menu item
 	def show_find(self, string=None, flags=0, highlight=False):
 		'''Show the L{FindBar} widget
@@ -2076,10 +2063,7 @@ class PageView(GSignalEmitterMixin, Gtk.VBox):
 		self.find_bar.show()
 		if string:
 			self.find_bar.find(string, flags, highlight)
-			self.textview.grab_focus()
-		else:
-			self.find_bar.set_from_buffer()
-			self.find_bar.grab_focus()
+		self.find_bar.grab_focus()
 
 	def hide_find(self):
 		'''Hide the L{FindBar} widget'''
@@ -2102,7 +2086,7 @@ class PageView(GSignalEmitterMixin, Gtk.VBox):
 	def show_find_and_replace(self):
 		'''Menu action to show the L{FindAndReplaceDialog}'''
 		dialog = FindAndReplaceDialog.unique(self, self, self.textview)
-		dialog.set_from_buffer()
+		# TODO copy settings from find bar if "pop-out" action ?
 		dialog.present()
 
 	@action(_('Word Count...')) # T: Menu item

@@ -104,6 +104,10 @@ class Dumper(TextDumper):
 		# OPEN ISSUE: no indent for verbatim blocks
 		return self.prefix_lines('\t', strings)
 
+	def dump_anchor(self, tag, attrib, strings=None):
+		# Syntax of the pandoc header attributes extension
+		return ('{#%s}' % attrib['name'],)
+
 	def dump_link(self, tag, attrib, strings=None):
 		assert 'href' in attrib, \
 			'BUG: link misses href: %s "%s"' % (attrib, strings)

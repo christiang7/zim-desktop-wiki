@@ -1202,7 +1202,7 @@ class TaskListTreeView(BrowserTreeView):
 		text = self._get_raw_text(model[path])
 
 		pageview = self.opener.open_page(page)
-		pageview.find(text)
+		pageview.show_find(text)
 
 	def _get_raw_text(self, task):
 		id = task[TASKID_COL]

@@ -299,15 +299,11 @@ TokenListElement = collections.namedtuple('TokenListElement', ('tag', 'attrib', 
 class ParseTree(object):
 	'''Wrapper for zim parse trees.'''
 
-	# No longer derives from ElementTree, internals are now private
-
-	# TODO, also remove etree args from init
-	# TODO, rename to FormattedText
-
 	def __init__(self, *arg, **kwarg):
 		self._etree = ElementTreeModule.ElementTree(*arg, **kwarg)
 		self._object_cache = {}
 		self.meta = LastDefinedOrderedDict()
+		assert not (self._etree.getroot() and self._etree.getroot().attrib.get('raw', False)), 'Deprecated "raw" attribute'
 
 	@classmethod
 	def new_from_tokens(klass, tokens):
@@ -329,13 +325,6 @@ class ParseTree(object):
 		return root is not None and (
 			bool(list(root)) or (root.text and not root.text.isspace())
 		)
-
-	@property
-	def israw(self):
-		'''Returns True when this is a raw tree (which is representation
-		of TextBuffer, but not really valid).
-		'''
-		return self._etree.getroot().attrib.get('raw', False)
 
 	def _set_root_attrib(self, key, value):
 		self._etree.getroot().attrib[key] = value

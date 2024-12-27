@@ -171,16 +171,16 @@ class TestLineSorterWindowExtension(tests.TestCase, TextBufferTestCaseMixin):
 		# in the test suite.
 		# Doubles as test for content other than pure text
 		self.set_buffer(self.buffer, '''\
-<li bullet="*" indent="0"> line A
-</li><li bullet="*" indent="0"> line B
+<li indent="0" style="bullet-list">\u2022 line A
+\u2022 line B
 </li><h level="2">Heading</h>
 ''')
 		self.place_cursor(10)
 		self.extension.duplicate_line()
-		self.assertBufferEquals(self.buffer, '''\
-<li bullet="*" indent="0"> line A
-</li><li bullet="*" indent="0"> line B
-</li><li bullet="*" indent="0"> line B
+		self.assertBufferEqual(self.buffer, '''\
+<li indent="0" style="bullet-list">\u2022 line A
+\u2022 line B
+\u2022 line B
 </li><h level="2">Heading</h>
 '''
 )
