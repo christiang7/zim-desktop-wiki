@@ -35,6 +35,35 @@
     <screenshot type="default">http://zim-wiki.org/screenshots/zim-normal.png</screenshot>
   </screenshots>
   <releases>
+    <release date="2024-12-29" version="0.76.0">
+      <description>
+        <ul>
+          <li>Add Indexed Full-Text Search plugin</li>
+          <li>Add Window Title Editor plugin</li>
+          <li>Add Mermaid diagrams plugin</li>
+          <li>Add preference to toggle dark theme variant</li>
+          <li>Add separate style for page links</li>
+          <li>Add commandline page import</li>
+          <li>Add preferences menu for side pane widgets</li>
+          <li>Diagram plugin: add preference for default text</li>
+          <li>Journal plugin: add range offsets to `journal_plugin.days()` in template</li>
+          <li>Search: add option to output scores on the command line</li>
+          <li>Spellcheck plugin: add Gspell support</li>
+          <li>Quicknote plugin: support wiki heading format as page name</li>
+          <li>Arithmetic plugin: add option for limiting output decimals</li>
+          <li>Markdown export: use blockquote to export indented paragraphs</li>
+          <li>Markdown export: include image dimensions and ID</li>
+          <li>Windows: fix high CPU usage by storing child process PID</li>
+          <li>Windows: Fix unicode handling of strftime for windows</li>
+          <li>Refactor to use Gtk.Application</li>
+          <li>Refactor zim.parser to zim.parse.regexparser</li>
+          <li>Refactor find API for pageview</li>
+          <li>Refactor internal serialization for textbuffer</li>
+          <li>Refactor parsing modules and utils</li>
+          <li>Port setup.py from distutils to setuptools</li>
+        </ul>
+      </description>
+    </release>
     <release date="2023-07-06" version="0.75.2">
       <description>
         <ul>

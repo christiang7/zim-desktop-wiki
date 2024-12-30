@@ -343,13 +343,13 @@ class TestInputForm(tests.TestCase):
 
 
 @tests.slowTest
-@tests.skipIf(os.name == 'windows', 'Test fails at random on windows')
 class TestFileDialog(tests.TestCase):
 	## Something weird in how the filechooser works internally
 	## need a lot of gtk_process_events() to get it work OK in test
 	## and still it fails at random :(
 	## Maybe fixes in Gtk3 - let's see if we encounter more failures
 
+	@tests.expectedFailureIf(os.name == 'nt') # Fails at random in automated tests
 	def runTest(self):
 		tmp_dir = self.setUpFolder(mock=tests.MOCK_ALWAYS_REAL)
 

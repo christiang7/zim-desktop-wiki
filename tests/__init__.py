@@ -34,6 +34,14 @@ import unittest
 from unittest import skip, skipIf, skipUnless, expectedFailure
 
 
+def expectedFailureIf(condition):
+	'''Decorator to do a conditional expected failure'''
+	if condition:
+		return expectedFailure
+	else:
+		return lambda method: method # do nothing
+
+
 os.environ['LANGUAGE'] = 'C.UTF-8'
 gettext.install('zim', names=('_', 'gettext', 'ngettext'))
 
