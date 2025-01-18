@@ -1,6 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-
 ====== Task List ======
 
 The Task List plugin adds a dialog that lists open items across all pages of the current notebook. In a way, it is a specialized search function. An open item or task is defined by a single line and can have tags and a priority.
@@ -17,7 +14,7 @@ The option **Show "GTD-style" inbox & next actions lists** determines what lists
 
 The options **Show tasklist in sidepane** and **Position in the window** allow you to embed the tasklist in one of the side panes of the window. **Show due date in sidepane**, **Show start date in sidepane** & **Show page column in the sidepane** determine which columns are shown in the side pane.
 
-In addition to the these preference, the colors used in the tasklist to indicate priority can be configured in the "''style.conf''" [[Config_Files|config file]]. For this the following groups can be defined:
+In addition to the these preference, the colors used in the tasklist to indicate priority can be configured in the "''style.conf''" [[Help:Config Files|config file]]. For this the following groups can be defined:
 
 * "TaskList Prio High" - only support the "background" property
 * "TaskList Prio Medium" - only support the "background" property

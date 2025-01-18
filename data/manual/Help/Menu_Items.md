@@ -1,6 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-
 ====== Menu Items ======
 
 
@@ -205,7 +202,7 @@ Only available if the [[Plugins:Insert Screenshot|Insert Screenshot plugin]] is 
 **Equation**
 Prompt for an equation written in latex and insert it as an image.
 
-Only available if the [[:Plugins:Equation Editor|Equation Editor plugin]] is enabled.
+Only available if the [[manual:Plugins:Equation Editor|Equation Editor plugin]] is enabled.
 
 **Diagram**
 Prompt for a diagram defined in the dot language and insert it as an image.

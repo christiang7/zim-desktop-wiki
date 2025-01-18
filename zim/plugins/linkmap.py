@@ -68,7 +68,7 @@ This is a core plugin shipping with zim.
 
 class LinkMap(object):
 
-	def __init__(self, notebook, path, depth=0):
+	def __init__(self, notebook, path, depth=1):
 		self.notebook = notebook
 		self.path = path
 		self.depth = depth
@@ -105,12 +105,19 @@ class LinkMap(object):
 		dotcode = [
 			'digraph LINKS {',
 			#'  layout=circo;',
-			'  nodesep=0.01;' ,
-			'  size="6,6";',
-			'  mindist="0.1";',
-			'  node [shape=box, style="rounded,filled", color="#204a87", fillcolor="#729fcf"];',
-			#'  node [shape=note, style="filled", color="#204a87", fillcolor="#729fcf"];',
-			'  "%s" [color="#4e9a06", fillcolor="#8ae234", URL="%s"]' % (self.path.name, self.path.name), # special node
+			'  ratio="0.2";',
+			'  nojustify=true;',
+			'  rankdir="LR";',
+			'  pagedir="LR";',
+			#'  concentrate=true;',
+			#'  ranksep="0.1 equally";',
+			'  nodesep=0.5;' , # it separates the edges not the nodes
+			#'  size="2,2";',
+			#'  mindist="1.";',
+			'  node [shape=box, rank="min", style="rounded,filled", color="#204a87", fillcolor="#33b3e2"];',
+			#'  node [shape=note, style="filled", color="#204a87", fillcolor="#729fcf"];', # #00ff55
+			#'  "%s" [color="#4e9a06", rank="min", fillcolor="#8ae234", URL="%s"]' % (self.path.name, self.path.name), # special node
+			'  "%s" [color="#4e9a06", rank="min", fillcolor="#8ae234", URL="%s"]' % (self.path.name, self.path.name), # special node
 		]
 
 		seen = set()
@@ -121,7 +128,7 @@ class LinkMap(object):
 					dotcode.append('  "%s" [URL="%s"];' % (name, name))
 					seen.add(name)
 			dotcode.append(
-				'  "%s" -> "%s" [style="bold", penwidth="7.0", color="#ff000050"];' % (link.source.name, link.target.name))
+				'  "%s" -> "%s" [style="bold", penwidth="7.0", color="#ff000025"];' % (link.source.name, link.target.name))
 
 		dotcode.append('}')
 
@@ -165,7 +172,7 @@ class LinkMapDialog(Dialog):
 		# LinkMap can't navigate across notebooks
 		self.title_ending = ' - ' + parent.notebook.name + ' - LinkMap'
 		Dialog.__init__(self, parent, parent.page.name + self.title_ending,
-			defaultwindowsize=(400, 400), buttons=Gtk.ButtonsType.CLOSE)
+			defaultwindowsize=(1200, 1200), buttons=Gtk.ButtonsType.CLOSE)
 		self.pageview = parent
 		self.page = parent.page
 		self.navigation = navigation

@@ -1,6 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-
 ====== About Zim ======
 
 **Zim** aims to bring the concept of a wiki to your desktop. Every page is saved as a text file with wiki markup. Pages can contain links to other pages, and are saved automatically. Creating a new page is as easy as linking to a non-existing page. This tool is intended to keep track of TODO lists or to serve as a personal scratch book. But it will also serve you when writing longer and more complicated documents.
@@ -45,4 +42,4 @@ A few other things I would like to mention:
 
 * You can [[Help:Export|export]] your notes to Html if you want to publish them
 
-See [[:Usage:Getting Started|Getting Started]] for some practical tips on using zim.
+See [[manual:Usage:Getting Started|Getting Started]] for some practical tips on using zim.
