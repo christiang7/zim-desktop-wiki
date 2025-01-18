@@ -458,7 +458,7 @@ class TextView(Gtk.TextView):
 			iter = buffer.get_iter_at_mark(buffer.get_insert())
 			home, ourhome = self.get_visual_home_positions(iter)
 			if home.starts_line() and iter.compare(ourhome) < 1 \
-			and not buffer.get_iter_in_verbatim(iter):
+			and not buffer.get_iter_in_verbatim_block(iter):
 				bullet = buffer.get_bullet_at_iter(home)
 				indent = buffer.get_indent(home.get_line())
 				if keyval in KEYVALS_BACKSPACE \

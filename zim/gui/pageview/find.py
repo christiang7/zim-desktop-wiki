@@ -552,10 +552,10 @@ class FindWidget(object):
 			flags = flags | FIND_REGEX
 		return FindQuery(string, flags)
 
-	def on_find_entry_changed(self, clear=True):
+	def on_find_entry_changed(self, match_at_cursor=True):
 		query = self._get_query()
 		buffer = self.textview.get_buffer()
-		if clear:
+		if match_at_cursor:
 			buffer.find_clear() # prevent skipping past current cursor if cursor matches
 
 		if not query:
@@ -575,7 +575,7 @@ class FindWidget(object):
 			self.textview.scroll_to_mark(buffer.get_insert(), SCROLL_TO_MARK_MARGIN, False, 0, 0)
 
 	def on_find_entry_activate(self):
-		self.on_find_entry_changed(clear=False)
+		self.on_find_entry_changed(match_at_cursor=False)
 
 	def on_highlight_toggled(self):
 		buffer = self.textview.get_buffer()
@@ -632,9 +632,11 @@ class FindBar(FindWidget, Gtk.ActionBar):
 		self.find_entry.grab_focus()
 
 	def show(self):
-		self.on_highlight_toggled()
-		self.set_no_show_all(False)
-		self.show_all()
+		if not self.get_visible():
+			self.set_no_show_all(False)
+			self.show_all()
+			self.on_find_entry_changed(match_at_cursor=True)
+		# else avoid changing state
 
 	def hide(self):
 		Gtk.ActionBar.hide(self)

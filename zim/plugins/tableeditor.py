@@ -210,6 +210,11 @@ class TableViewObjectType(InsertedObjectTypeExtension):
 			rows.append(row)
 		return headers, rows
 
+	def data_from_model(self, model):
+		# XXX incomplete stub to enable find interface - do not use for actual serializing
+		headers, attrib, rows = model.get_object_data()
+		return {'type': 'table'}, '\n'.join('|'.join(r) for r in rows)
+
 	def create_widget(self, model):
 		widget = TableViewWidget(model)
 		widget.set_preferences(self.preferences)

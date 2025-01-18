@@ -1039,18 +1039,22 @@ class TextBuffer(TextBufferFindMixin, Gtk.TextBuffer):
 			return None
 
 	def _get_implict_anchor_if_heading(self, iter):
-		text = self.get_heading_text(iter)
+		i, text = self.get_heading(iter.get_line())
 		return heading_to_anchor(text) if text else None
 
-	def get_heading_text(self, iter):
-		line_start = iter.copy() if iter.starts_line() else self.get_iter_at_line(iter.get_line())
-		is_heading = any(filter(_is_heading_tag, line_start.get_tags()))
-		if not is_heading:
-			return None
+	def get_heading(self, line: int) -> (int, str):
+		'''Returns the heading level and text or C{(None, None)}'''
+		line_start = self.get_iter_at_line(line)
+		heading_tags = list(filter(_is_heading_tag, line_start.get_tags()))
+		if not heading_tags:
+			return None, None
+
+		level = int(heading_tags[0].zim_attrib['level'])
 
 		line_end = line_start.copy()
 		line_end.forward_line()
-		return line_start.get_text(line_end).strip()
+		text = line_start.get_text(line_end).strip()
+		return level, text
 
 	#endregion
 

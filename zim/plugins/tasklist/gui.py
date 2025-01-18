@@ -608,9 +608,11 @@ class ListSelectionView(Gtk.ListBox):
 			if row.get_child()._zim_key == key:
 				self.select_row(row)
 				self.emit('row-activated', row)
-				return
+				return True
 		else:
-			raise AssertionError("Could not find key: %s" % key)
+			# NOTE: do not make this a fatal error, might be old uistate in place
+			logger.debug("Could not find selection key: %s" % key)
+			return False
 
 
 class LabelAndTagView(Gtk.ListBox):
