@@ -34,6 +34,7 @@ class ZimGtkApplication(Gtk.Application):
 		else:
 			self.set_flags(Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
 		self.connect('startup', self.__class__._do_startup) # Hack to avoid bug in python-gtk interaction
+		self.connect('shutdown', self.__class__._do_shutdown)
 
 	def _do_startup(self):
 		_application_startup()
@@ -48,6 +49,11 @@ class ZimGtkApplication(Gtk.Application):
 		gtk_window_set_default_icon()
 
 		zim.errors.set_use_gtk(True)
+
+	def _do_shutdown(self):
+		# MainWindow implements saving in the destroy method
+		for window in self.get_windows():
+			window.destroy()
 
 	def do_command_line(self, gcommandline):
 		# Handler in primary process to process commandline and start application

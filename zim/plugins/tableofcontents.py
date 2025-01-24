@@ -174,7 +174,10 @@ class ToCTreeView(BrowserTreeView):
 
 	def select_heading_for_line(self, line: int):
 		'''Select the heading to which C{line} belongs'''
+		selection = self.get_selection()
+		selection.unselect_all()
 		model = self.get_model()
+
 		previous = None
 		for i in model.walk():
 			if model[i][1] > line: # LINE_COL
@@ -184,8 +187,6 @@ class ToCTreeView(BrowserTreeView):
 
 		if previous is not None:
 			treepath = model.get_path(previous)
-			selection = self.get_selection()
-			selection.unselect_all()
 			selection.select_path(treepath)
 
 
