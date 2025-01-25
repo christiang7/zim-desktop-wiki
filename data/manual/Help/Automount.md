@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2011-12-11T19:15:27+01:00
-
 ====== Automount ======
 
 As a special feature notebooks can be "mounted" automatically when opened. This can e.g. be used to connect with remote drives or unlock an encrypted drive when zim is trying to open a specific notebook.

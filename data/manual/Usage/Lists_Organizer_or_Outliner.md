@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-Creation-Date: 2021-11-03T11:56:50+01:00
-
 ====== Lists Organizer or Outliner ======
 
 One way to think about note taking and organization is this: "Everything is a List". 

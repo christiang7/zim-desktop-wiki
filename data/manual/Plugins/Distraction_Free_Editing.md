@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2012-11-30T23:17:54+01:00
-
 ====== Distraction Free Editing ======
 
 This plugin adds settings that help using zim as a distraction-free editor.

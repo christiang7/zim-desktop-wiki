@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-Creation-Date: Wed, 08 Jul 2009 23:26:20 +0200
-
 ====== FAQ ======
 
 Mail [[jaap.karssenberg@gmail.com|me]] if you have questions that you would like to see answered below.

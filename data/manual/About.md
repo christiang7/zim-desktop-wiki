@@ -42,4 +42,4 @@ A few other things I would like to mention:
 
 * You can [[Help:Export|export]] your notes to Html if you want to publish them
 
-See [[manual:Usage:Getting Started|Getting Started]] for some practical tips on using zim.
+See [[Usage:Getting Started|Getting Started]] for some practical tips on using zim.

@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2012-11-30T23:19:54+01:00
-
 ====== Creative Writing ======
 
 First feature to gear zim towards usage for creative writing is the [[Plugins:Distraction Free Editing|Distraction Free Editing plugin.]]

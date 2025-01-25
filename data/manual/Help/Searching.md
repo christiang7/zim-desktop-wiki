@@ -1,6 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-
 ====== Searching ======
 
 There are two kinds of searching in zim: searching within a page, this is called **Find**, and searching through multiple pages, this is called **Search**.

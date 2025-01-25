@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-Creation-Date: Wed, 08 Jul 2009 20:28:15 +0200
-
 ====== Help ======
 
 Pages in this section contain help on using specific parts of the applications.

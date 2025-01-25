@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-Creation-Date: 2021-02-22T13:37:50+01:00
-
 ====== ToolBar ======
 This plugin to customize the toolbar in the main window. It can be a "classic" toolbar at the top of the window or running along the side of the window.
 

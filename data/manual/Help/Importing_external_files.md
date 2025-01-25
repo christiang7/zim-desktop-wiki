@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-Creation-Date: 2010-04-03T23:35:33.816582
-
 ====== Importing External Files ======
 
 

@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: Unknown
-
 ====== Syntax ======
 
 Examples of the wiki syntax as used by zim.

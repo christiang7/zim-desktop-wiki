@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-Creation-Date: 2021-01-19T20:44:59+01:00
-
 ====== Links ======
 
 You can either link pages or URLs. URLs are recognized because they start with e.g. "''https://''" or "''mailto:''". Page names can contain ':' characters to separate the page name from parent pages.

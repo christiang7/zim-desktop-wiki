@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: Wed, 19 Nov 2008 22:58:54 +0100
-
 ====== Zim User Manual ======
 
 For a quick introduction see [[Usage:Getting Started|Getting Started]]

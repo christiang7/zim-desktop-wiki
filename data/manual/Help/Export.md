@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: Unknown
-
 ====== Exporting ======
 
 Zim will be able to export content to various formats. At the moment exporting to [[Help:Export:HTML|HTML]] and [[Help:Export:LaTeX|LaTeX]] is supported, as well as the Markdown and RST text formats.

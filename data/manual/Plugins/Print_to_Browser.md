@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2012-12-11T19:34:32+01:00
-
 ====== Print to Browser ======
 
 This plugin provides a workaround for the lack of printing support in zim. It exports the current page

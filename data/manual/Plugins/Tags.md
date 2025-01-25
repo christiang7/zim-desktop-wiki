@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2011-04-04T21:14:50+02:00
-
 ====== Tags ======
 
 This plugin adds a tag cloud and a page index organized by tags in the side pane.

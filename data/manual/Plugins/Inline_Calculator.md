@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2010-08-31T22:25:42.585662
-
 ====== Inline Calculator ======
 
 This plugin allows you to evaluate simple mathematical expressions in zim.

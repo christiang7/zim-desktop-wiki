@@ -1,6 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-
 ====== Equation Editor ======
 
 The equation editor is a simple dialog that allows you to insert equations into a page using **latex**.

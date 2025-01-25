@@ -1,6 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-
 ====== Table Editor ======
 
 {{./table_demo.png}}[Only a picture]

@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2011-08-13T13:44:14+02:00
-
 ====== Arithmetic ======
 
 This plugin allows you to evaluate arithmetic expressions in a zim page.
@@ -17,7 +13,7 @@ The option **Output precision** sets the maximum number of decimals shown in the
 You may do standard arithmetic operations in a document,
 ending the operation with an equals sign, for example:
 
-     5 x 3 + 1 =
+	 5 x 3 + 1 =
 
 Single spaces may be used between the quantities and the
 operators for clarity.  Two or more spaces, or a colon
@@ -35,18 +31,18 @@ press <F5> to recalculate.
 You may do standard arithmetic operations in a document,
 for example, assign values to two variables:
 
-     height = 20       width = 30
+	 height = 20       width = 30
 
 And define a formula:   area = height x width
 
 To obtain the result of the formula, press <F5>:
 
-     area =
+	 area =
 
 <F5> also updates the result of the area below,
 after one of the values is modified: height = 25
 
-     area =
+	 area =
 
 Other examples of formulas, try modifying the values of f
 and c will change after updating with <F5>:

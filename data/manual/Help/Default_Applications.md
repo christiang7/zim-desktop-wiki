@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2012-07-23T21:59:20+02:00
-
 ====== Default Applications ======
 
 Zim opens files and attachments with other applications. Usually clicking on a link will start the appropriate application for your system. And the "//Open With...//" menu in the context menu (click the right mouse button on the link) gives alternative applications.
@@ -20,11 +16,11 @@ The //Add Application// dialog allows adding a new application for a specific fi
 
 The **Name** is the application name and **Command** is the command to execute. Usually, this is just the name of an executable or a script to execute. The command can also use the following special codes:
 
-*	**%f** a single file path to be opened
-*	**%F** a list of file paths to be opened
-*	**%u** a single URL to be opened
-*	**%U** a list of URLs to be opened
-*	**%c** the application name
+* **%f** a single file path to be opened
+* **%F** a list of file paths to be opened
+* **%u** a single URL to be opened
+* **%U** a list of URLs to be opened
+* **%c** the application name
 
 If "**Make default application**" is enabled the new application will become the new default. This implies that it does not show up in the menu itself. If this is not set the new application will just be added to the menu.
 

@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: Unknown
-
 ====== Key Bindings ======
 
 See also [[Menu Items]].

@@ -1,6 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-
 ====== Plugins ======
 
 The following plugins are standard included with zim:

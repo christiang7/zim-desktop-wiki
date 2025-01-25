@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2017-11-06T14:26:50+01:00
-
 ====== PathBar ======
 This plugin provides a "path bar" on top of the editor window that can show a list of pages.
 

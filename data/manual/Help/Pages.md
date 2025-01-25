@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: Wed, 08 Jul 2009 23:25:25 +0200
-
 ====== Pages ======
 
 Each [[notebooks|notebook]] consists of a set of pages. Each page can contain text, images and links(to other pages or websites). Pages can be arranged in a hierarchical order, which is visible under the "Index" tab in the sidepane.

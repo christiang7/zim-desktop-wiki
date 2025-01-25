@@ -1,6 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-
 ====== Preferences ======
 
 The preferences dialog  can be accessed with the menu item "//Edit//" -> "//Preferences//". The following options can be configured:

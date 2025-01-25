@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-Creation-Date: Wed, 08 Jul 2009 20:27:21 +0200
-
 ====== Getting Things Done ======
 
 The **GTD** methodology is a specific system for maintaining [[ToDo Lists]]. It is coined in the like named book by David Allen. It's main philosophy is that you need to capture **all** loose ends on a list in order to give you peace of mind because you do not have to keep them in your head all the time. This only works if you are diciplined in reviewing your lists and have them accessible so you always know what the next thing is that you can do given the time and tools available at a certain moment.

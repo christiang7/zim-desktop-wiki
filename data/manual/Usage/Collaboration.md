@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2012-09-30T15:25:13+02:00
-
 ====== Collaboration ======
 
 Note that zim by design is a single-user program. So even though you could put a notebook on a shared drive and edit it with multiple people, this will not work very robust (e.g. two people can not edit the same page at the same time).

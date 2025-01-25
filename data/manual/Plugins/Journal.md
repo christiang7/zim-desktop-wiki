@@ -1,6 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-
 ====== Journal ======
 
 The Journal Plugin turns a specific section of the notebook into a journal (the "Journal" section by default, but this is configurable). It can either have a page per day, organized by year and month, or a page per week or month. This "Journal" section is shown in a separate side pane view using a calendar and showing the pages with the latest entry on top.

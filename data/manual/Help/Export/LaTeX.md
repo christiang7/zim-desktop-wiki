@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2010-03-02T11:46:43.066508
-
 ====== LaTeX ======
 
 The [[Plugins:Equation Editor|Equation Editor]] plugin is supported, equations entered with this plugin are automatically placed inside math environments. Embedded Images of types that are not supported by the TeX Engine of your choice may lead to compilation errors. For ''pdflatex'' the supported types are PDF, JPG, JBIG2, and PNG, for ''latex'' it is EPS. Index creation is currently not working.

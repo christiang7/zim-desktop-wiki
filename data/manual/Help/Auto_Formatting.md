@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: Unknown
-
 ====== Auto Formatting ======
 
 Auto-formatting means that zim parses text while you type. Be aware that the syntax for auto-formatting isn't the same as the [[Wiki Syntax|wiki syntax]] for the source formatting (the wiki format as it is saved to the files). If you typed in source syntax and you want to have it rendered you should reload the page (press ^R).

@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2011-04-04T21:14:35+02:00
-
 ====== Tags ======
 
 Zim supports the use of tags to organize pages. Tags are keywords or labels that are used to categorize pages.

@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-Creation-Date: Fri, 24 Jul 2009 19:41:30 +0200
-
 ====== Daily Journal ======
 
 You can use zim a journal notebook by using the [[Plugins:Journal|Journal plugin]]. The plugin can be configured to generate either daily or weekly pages that can be used as a journal. It also has a separate index view with a calendar.

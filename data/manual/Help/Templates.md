@@ -1,6 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-
 ====== Templates ======
 
 Zim uses templates when exporting pages. This way you can for example write your website in zim and export it to HTML using the layout and style definition of your choice.
@@ -181,7 +178,7 @@ A BLOCK can be defined anywhere in the template and then included in other place
 
 If no block with name "name" is defined, "name" will be evaluated as a parameter. If the value of the parameter is a block name, that block will be included. If the value of the parameter is a file path a file include will be done.
 
-=== File INCLUDE ==
+=== File INCLUDE ===
 
 '''
 [% INCLUDE "path/to/file.txt" %]

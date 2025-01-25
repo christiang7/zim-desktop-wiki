@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2012-12-11T19:29:39+01:00
-
 ====== BackLinks Pane ======
 
 This plugin adds an extra widget showing a list of pages linking to the current page.

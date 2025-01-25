@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-Creation-Date: Unknown
-
 ====== Config Files ======
 
 This page documents the various config files used.

@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2010-02-22T15:44:37.508437
-
 ====== Version Control ======
 
 Zim's default installation ships with a Version Control Plugin. To enable it, go to ''Edit -> Preferences -> Plugins'' and check the box next to Version Control. Zim supports [[http://bazaar.canonical.com/|Bazaar]],  [[https://git-scm.com/|Git]], [[http://mercurial.selenic.com/|Mercurial]], and [[https://www.fossil-scm.org/|Fossil]]  as backends.

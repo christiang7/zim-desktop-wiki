@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-Creation-Date: 2021-01-15T15:21:53+01:00
-
 ====== Bullet Journal ======
 
 The [[https://bulletjournal.com/|Bullet Journal Method]] was created as a pen & paper toolbox for rapidly logging whats going on day to day as well as organizing days, moths, years  and projects into meaningful documents. It is a specific way of keeping a [[Daily Journal]].

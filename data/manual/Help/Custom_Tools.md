@@ -1,6 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-
 ====== Custom Tools ======
 
 Zim allows you to define custom tools to extend the basic functionality with simple functions that can be handled by an external program or script. The custom tool manager allows you to quickly extend functionality in zim by shell scripts or other external programs. It is also useful to prototype plugin functionality without having to learn the full API for plugins.

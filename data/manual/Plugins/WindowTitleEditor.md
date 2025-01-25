@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2022-04-24T00:00:00+03:00
-
 ====== Window Title Editor ======
 
 This plugin allows editing the window title.

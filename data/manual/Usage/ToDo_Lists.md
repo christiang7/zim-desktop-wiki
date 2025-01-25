@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-Creation-Date: 2021-11-03T11:56:09+01:00
-
 ====== ToDo Lists ======
 
 One thing Zim notebooks are often used for is to keep track of ongoing activities, including open tasks and "To-Do" lists. There is a [[Plugins:Task List|Task List plugin]] included with Zim to help with organizing tasks. However, you have a lot of freedom in how to use it, and you can also can maintain task list in Zim without using this plugin.

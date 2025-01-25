@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-Creation-Date: 2012-07-18T23:27:53+02:00
-
 ====== Attachments ======
 
 Pages can have attachments, e.g. image files for images that are part of the page, or documents that are referred to in the page.

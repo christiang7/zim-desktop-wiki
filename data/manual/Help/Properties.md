@@ -1,6 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.4
-
 ====== Properties ======
 
 The dialog with notebook properties can be accessed with the menu item "//File//" -> "//Properties//". The following notebook properties can be configured:

@@ -1,7 +1,3 @@
-Content-Type: text/x-zim-wiki
-Wiki-Format: zim 0.6
-Creation-Date: Fri, 13 Mar 2009 22:50:21 +0100
-
 ====== Usage ======
 
 **Zim** can be used in several different ways. In this section, we would like to give some examples of possible usage patterns, but this is in no way an exhaustive list. Also, these styles could be combined in a single notebook, e.g. one could dedicate a notebook to a particular project and combine the organizer and journal styles in using it. However, it is better to have several specialized notebooks than one big dump of unrelated material.
