@@ -1445,7 +1445,11 @@ class PageView(GSignalEmitterMixin, Gtk.VBox):
 				return # No link or image
 
 		if file:
-			file = self.notebook.resolve_file(file, self.page)
+			try:
+				file = self.notebook.resolve_file(file, self.page)
+			except:
+				logger.exception('Could not resolve file link: %s', file)
+				file = None
 
 		menu.prepend(Gtk.SeparatorMenuItem())
 

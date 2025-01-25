@@ -285,12 +285,10 @@ class TextView(Gtk.TextView):
 
 			anchor = iter.get_child_anchor()
 			if iter.get_child_anchor():
-				widgets = anchor.get_widgets()
-				assert len(widgets) == 1, 'TODO: support multiple views of same buffer'
-				widget = widgets[0]
-				if widget.has_cursor():
-					widget.grab_cursor(position)
-					return None
+				for widget in anchor.get_widgets():
+					if widget.is_ancestor(self) and widget.has_cursor():
+						widget.grab_cursor(position)
+						return None
 
 		return Gtk.TextView.do_move_cursor(self, step_size, count, extend_selection)
 
