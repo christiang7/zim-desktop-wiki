@@ -21,7 +21,7 @@ def _xml_to_tag_and_attribute(string):
 	tag = re.match('[\\w-]+', string).group(0)
 	attrib = {}
 	for k, v in re.findall(r'(\w+)="(.*?)"', string):
-		if k in ('href', 'name') and v == 'None':
+		if k in ('href', 'name', 'id') and v == 'None':
 			attrib[k] = None
 		elif k in ('indent', 'level'):
 			attrib[k] = int(v)

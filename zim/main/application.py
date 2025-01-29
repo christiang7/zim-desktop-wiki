@@ -3,6 +3,7 @@
 # This class is in a seperate module to avoid Gtk imports in the main module
 # imports are a bit circular
 
+import os
 import logging
 import signal
 from typing import List, Optional
@@ -15,6 +16,7 @@ from gi.repository import Gio
 from gi.repository import Gtk
 
 from . import _application_startup, build_command, UsageError
+
 
 class ZimGtkApplication(Gtk.Application):
 	
@@ -59,7 +61,12 @@ class ZimGtkApplication(Gtk.Application):
 		# Handler in primary process to process commandline and start application
 		# if started from remote process, the exit code is given back to that process
 		# and it exits while primary process keeps running as long as there are windows
-		return self.run_commandline(gcommandline.get_arguments()[1:], gcommandline.get_cwd())
+		args = gcommandline.get_arguments()
+		if 'python' in os.path.basename(args[0]):
+			args = args[2:] # strip python interpreter and zim script name
+		else:
+			args = args[1:] # strip zim executable name
+		return self.run_commandline(args, gcommandline.get_cwd())
 
 	def run_commandline(self, args: List[str], pwd: Optional[str] = None) -> int:
 		'''Run a commandline in the current process
@@ -76,9 +83,14 @@ class ZimGtkApplication(Gtk.Application):
 			print(err, file=sys.stderr)
 			return 1
 		else:
-			if window:
+			if window and isinstance(window, Gtk.Window):
 				self.add_window(window)
-			window.present()
+				window.present()
+			elif window:
+				# E.g. trayicon, not a window, but we need to hold application
+				self.hold()
+				window.connect('destroy', lambda *a: self.release())
+
 			return 0
 
 	def open_notebook(self, location, pagelink=None):

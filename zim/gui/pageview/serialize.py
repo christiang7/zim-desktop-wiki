@@ -13,8 +13,9 @@ import logging
 logger = logging.getLogger('zim.gui.pageview')
 
 
-from zim.formats import IMAGE, OBJECT, ANCHOR, LINK, TAG, HEADING, LINE
-from zim.parse.tokenlist import TEXT, END
+from zim.plugins import PluginManager
+from zim.formats import IMAGE, OBJECT, ANCHOR, LINK, TAG, HEADING, LINE, TABLE
+from zim.parse.tokenlist import TEXT, END, collect_until_end_token
 from zim.parse.xml import simple_token_to_xml_dumper, simple_xml_to_token_parser
 
 from .constants import PIXBUF_CHR, BULLETS_FROM_STOCK, ICON, BLOCK, LISTITEM
@@ -41,6 +42,8 @@ def _object_to_tag(objectanchor):
 	tokens = builder._tokens
 	if tokens[0][0] == LINE:
 		return [(LINE, None)]
+	elif tokens[0][0] == TABLE:
+		return tokens
 	else:
 		assert tokens[0][0] == OBJECT
 		if len(tokens) > 3:
@@ -343,6 +346,21 @@ def textbuffer_internal_insert_at_cursor(textbuffer, data):
 					break
 			objecttype, model = textbuffer._get_objecttype_and_model_for_object(attrib, data or None)
 			textbuffer._insert_object_model_at_cursor(objecttype, model)
+		elif t[0] == TABLE:
+			try:
+				objecttype = PluginManager.insertedobjects['table']
+			except KeyError:
+				# HACK - if table plugin is not loaded - show table as plain text
+				from zim.formats import ParseTree
+				tree = ParseTree.new_from_tokens(tokens)
+				lines = tree.dump('wiki')
+				objecttype, model = textbuffer._get_objecttype_and_model_for_object({'type': 'table'}, ''.join(lines))
+				textbuffer._insert_object_model_at_cursor(objecttype, model)
+			else:
+				tokens = collect_until_end_token(token_iter, TABLE)
+				tokens.insert(0, t)
+				model = objecttype.model_from_tokens(tokens)
+				textbuffer._insert_object_model_at_cursor(objecttype, model)
 
 		# TextTag types
 		elif t[0] == END:

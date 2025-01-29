@@ -6,8 +6,11 @@ from tests import os_native_path
 import logging
 import os
 
+
 logger = logging.getLogger('tests.pageview')
 
+
+from zim.plugins import PluginManager
 from zim.newfs import LocalFile, LocalFolder
 from zim.formats import get_format, ParseTree
 from zim.notebook import Path
@@ -1323,6 +1326,15 @@ class TestInternalSerialization(tests.TestCase):
 
 		data1 = TextBufferInternalContents.new_from_xml(xml)
 		self.assertEqual(data1._data, data._data)
+
+
+class TestInternalSerializationWithTableObject(TestInternalSerialization):
+	# Table object is special case with respect to serialization
+
+	def setUp(self):
+		PluginManager.load_plugin('tableeditor')
+		TestInternalSerialization.setUp(self)
+
 
 class TestUndoStackManager(tests.TestCase, TextBufferTestCaseMixin):
 

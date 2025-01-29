@@ -65,10 +65,13 @@ Options:
 '''
 
 	def handle_local_commandline(self, args):
+		# This runs in local process before dispatching via GtkApplication
+		# calling get_text_local() here ensures we handle e.g. stdin in local process
+		# In main run() method only the "--text" option is looked at and other ignored.
+		# If "--text" is already in the arguments, the final one in the list will
+		# be used. So no need to "clean up" the arguments.
 		text = self.get_text_local()
 		args.extend(['--text', text])
-			# In subsequent parsing, this argument should supersede already in the input
-			# cleanup of the inputs is not trivial, so just leave un-used arguments in
 		return args
 
 	def parse_options(self, *args):
@@ -91,7 +94,6 @@ Options:
 
 	def get_text_local(self):
 		if 'text' in self.opts: 
-			# Check this one first, to allow parse_local_commandline() to work
 			text = self.opts['text']
 		elif 'input' in self.opts:
 			if self.opts['input'] == 'stdin':
