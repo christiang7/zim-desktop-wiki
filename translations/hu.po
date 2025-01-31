@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Zim 0.48\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-22 21:26+0100\n"
+"POT-Creation-Date: 2025-01-30 19:15+0100\n"
 "PO-Revision-Date: 2024-03-22 13:01+0000\n"
 "Last-Translator: Mukli Krisztián <krisztianmukli@mukli.hu>\n"
 "Language-Team: Hungarian <https://hosted.weblate.org/projects/zim/develop/hu/"
@@ -207,7 +207,7 @@ msgstr "A rendszer alapértelmezése"
 #: zim/gui/applications.py:1286 zim/gui/customtools.py:674
 #: zim/gui/notebookdialog.py:423 zim/gui/pageview/dialogs.py:849
 #: zim/gui/preferencesdialog.py:346 zim/gui/propertiesdialog.py:16
-#: zim/gui/templateeditordialog.py:159 zim/gui/uiactions.py:592
+#: zim/gui/templateeditordialog.py:159 zim/gui/uiactions.py:591
 #: zim/plugins/attachmentbrowser/filebrowser.py:441
 msgid "Name"
 msgstr "Név"
@@ -368,8 +368,8 @@ msgstr "Önálló _oldal"
 #. page label
 #: zim/gui/exportdialog.py:183 zim/gui/pageview/dialogs.py:711
 #: zim/gui/recentchangesdialog.py:59 zim/gui/searchdialog.py:169
-#: zim/plugins/quicknote.py:219 zim/plugins/tasklist/gui.py:753
-#: zim/plugins/tasklist/gui.py:963 zim/plugins/tasklist/gui.py:1241
+#: zim/plugins/quicknote.py:221 zim/plugins/tasklist/gui.py:755
+#: zim/plugins/tasklist/gui.py:965 zim/plugins/tasklist/gui.py:1243
 msgid "Page"
 msgstr "Oldal"
 
@@ -647,12 +647,12 @@ msgid "Menubar"
 msgstr "Menüsáv"
 
 #. short question on open-page if file exists
-#: zim/gui/mainwindow.py:822 zim/gui/uiactions.py:494
+#: zim/gui/mainwindow.py:822 zim/gui/uiactions.py:493
 msgid "File exists, do you want to import?"
 msgstr "Ez a fájl már létezik, szeretnéd felülírni?"
 
 #. longer question on open-page if file exists
-#: zim/gui/mainwindow.py:823 zim/gui/uiactions.py:495
+#: zim/gui/mainwindow.py:823 zim/gui/uiactions.py:494
 #, python-format
 msgid ""
 "The file \"%s\" exists but is not a wiki page.\n"
@@ -751,7 +751,7 @@ msgstr "Ugrás lapra"
 #. Field in web server gui | 
 #. Field to select Notebook from drop down list
 #: zim/gui/notebookdialog.py:192 zim/gui/propertiesdialog.py:58
-#: zim/gui/server.py:102 zim/plugins/quicknote.py:194
+#: zim/gui/server.py:102 zim/plugins/quicknote.py:196
 msgid "Notebook"
 msgstr "Jegyzetfüzet"
 
@@ -891,7 +891,7 @@ msgstr "Kép szerkesztése"
 
 #. Input in 'edit image' dialog | 
 #. Input label for the section to move a page to
-#: zim/gui/pageview/dialogs.py:384 zim/gui/uiactions.py:594
+#: zim/gui/pageview/dialogs.py:384 zim/gui/uiactions.py:593
 msgid "Location"
 msgstr "Hely"
 
@@ -913,7 +913,7 @@ msgstr "Magasság"
 
 #. tooltip label for image with anchor id | 
 #. input label for object ID
-#: zim/gui/pageview/dialogs.py:388 zim/gui/pageview/textview.py:1091
+#: zim/gui/pageview/dialogs.py:388 zim/gui/pageview/textview.py:1089
 #: zim/plugins/sourceview.py:402
 msgid "Id"
 msgstr "Azonosító"
@@ -1061,27 +1061,27 @@ msgid "Find"
 msgstr "Keresés"
 
 #. Dialog title
-#: zim/gui/pageview/find.py:652
+#: zim/gui/pageview/find.py:654
 msgid "Find and Replace"
 msgstr "Keresés és csere"
 
 #. input label in find & replace dialog
-#: zim/gui/pageview/find.py:662
+#: zim/gui/pageview/find.py:664
 msgid "Find what"
 msgstr "Mit keres"
 
 #. input label in find & replace dialog
-#: zim/gui/pageview/find.py:672
+#: zim/gui/pageview/find.py:674
 msgid "Replace with"
 msgstr "Mire cserél"
 
 #. Button in search & replace dialog
-#: zim/gui/pageview/find.py:686
+#: zim/gui/pageview/find.py:688
 msgid "_Replace"
 msgstr "_Csere"
 
 #. Button in search & replace dialog
-#: zim/gui/pageview/find.py:691
+#: zim/gui/pageview/find.py:693
 msgid "Replace _All"
 msgstr "Ö_sszes cseréje"
 
@@ -1286,77 +1286,77 @@ msgid "Su_bscript"
 msgstr "Alsó index"
 
 #. error when unknown interwiki link is clicked
-#: zim/gui/pageview/__init__.py:1260
+#: zim/gui/pageview/__init__.py:1268
 #, python-format
 msgid "No such wiki defined: %s"
 msgstr "Ilyen wiki nincs definiálva: %s"
 
 #. error when anchor location in page not found
-#: zim/gui/pageview/__init__.py:1313
+#: zim/gui/pageview/__init__.py:1321
 #, python-format
 msgid "Id \"%s\" not found on the current page"
 msgstr "\"%s\" azonosító nem található az aktuális oldalon"
 
 #. menu item for context menu of editor
-#: zim/gui/pageview/__init__.py:1372
+#: zim/gui/pageview/__init__.py:1380
 msgid "Copy _As..."
 msgstr "Másolás _mint..."
 
 #. menu item for context menu of editor
-#: zim/gui/pageview/__init__.py:1378
+#: zim/gui/pageview/__init__.py:1386
 msgid "Paste As _Verbatim"
 msgstr "Beszúrás, mint _kód"
 
 #. Context menu item for pageview to move selected text to new/other page | 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1386 zim/gui/pageview/__init__.py:2050
+#: zim/gui/pageview/__init__.py:1394 zim/gui/pageview/__init__.py:2062
 msgid "Move Selected Text..."
 msgstr "Kijelölt szöveg mozgatása..."
 
 #. menu item to copy link to achor location in page | 
 #. menu item
-#: zim/gui/pageview/__init__.py:1409 zim/plugins/tableofcontents.py:416
+#: zim/gui/pageview/__init__.py:1417 zim/plugins/tableofcontents.py:443
 msgid "Copy _link to this location"
 msgstr "Hivatkozás másolása erre a helyre"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1446 zim/gui/pageview/__init__.py:1711
+#: zim/gui/pageview/__init__.py:1458 zim/gui/pageview/__init__.py:1723
 msgid "_Remove Link"
 msgstr "Hivatkozás tö_rlése"
 
 #. menu item in context menu for image
-#: zim/gui/pageview/__init__.py:1453
+#: zim/gui/pageview/__init__.py:1465
 msgid "_Edit Properties"
 msgstr "_Tulajdonságok szerkesztése"
 
 #. menu item in context menu
-#: zim/gui/pageview/__init__.py:1455
+#: zim/gui/pageview/__init__.py:1467
 msgid "_Edit Link"
 msgstr "Hivatkozás _szerkesztése"
 
 #. context menu item
-#: zim/gui/pageview/__init__.py:1480
+#: zim/gui/pageview/__init__.py:1492
 msgid "Copy _Link"
 msgstr "_Hivatkozás másolása"
 
 #. context menu item
-#: zim/gui/pageview/__init__.py:1481
+#: zim/gui/pageview/__init__.py:1493
 msgid "Cut Lin_k"
 msgstr "Hivatkozás kivágása"
 
 #. context menu item
-#: zim/gui/pageview/__init__.py:1494
+#: zim/gui/pageview/__init__.py:1506
 msgid "Copy Email Address"
 msgstr "Levélcím másolása"
 
 #. menu item to open containing folder of files
-#: zim/gui/pageview/__init__.py:1509
+#: zim/gui/pageview/__init__.py:1521
 msgid "Open Folder"
 msgstr "Könyvtár megnyitása"
 
 #. menu item for sub menu with applications | 
 #. menu item
-#: zim/gui/pageview/__init__.py:1518 zim/gui/pageview/__init__.py:1529
+#: zim/gui/pageview/__init__.py:1530 zim/gui/pageview/__init__.py:1541
 #: zim/plugins/attachmentbrowser/filebrowser.py:400
 msgid "Open With..."
 msgstr "Megnyitás mással..."
@@ -1364,246 +1364,246 @@ msgstr "Megnyitás mással..."
 #. menu item to open a link | 
 #. Menu item | 
 #. menu item
-#: zim/gui/pageview/__init__.py:1539 zim/gui/uiactions.py:131
-#: zim/plugins/backlinkpane.py:143 zim/plugins/tableofcontents.py:424
+#: zim/gui/pageview/__init__.py:1551 zim/gui/uiactions.py:131
+#: zim/plugins/backlinkpane.py:143 zim/plugins/tableofcontents.py:451
 msgid "Open in New _Window"
 msgstr "Megnyitás új _ablakban"
 
 #. menu item to open a link or file | 
 #. Button label | 
 #. menu item to open file or folder
-#: zim/gui/pageview/__init__.py:1549 zim/gui/widgets.py:3609
+#: zim/gui/pageview/__init__.py:1561 zim/gui/widgets.py:3609
 #: zim/plugins/attachmentbrowser/filebrowser.py:407
 msgid "_Open"
 msgstr "_Megnyitás"
 
 #. popup menu menuitem
-#: zim/gui/pageview/__init__.py:1564
+#: zim/gui/pageview/__init__.py:1576
 msgid "Check Checkbox '<'"
 msgstr "Jelölőnégyzet beállítása '<'"
 
 #. popup menu menuitem
-#: zim/gui/pageview/__init__.py:1565
+#: zim/gui/pageview/__init__.py:1577
 msgid "Check Checkbox '>'"
 msgstr "Jelölőnégyzet beállítása '>'"
 
 #. popup menu menuitem
-#: zim/gui/pageview/__init__.py:1566
+#: zim/gui/pageview/__init__.py:1578
 msgid "Check Checkbox 'X'"
 msgstr "Jelölőnégyzet beállítása 'X'"
 
 #. popup menu menuitem
-#: zim/gui/pageview/__init__.py:1567
+#: zim/gui/pageview/__init__.py:1579
 msgid "Check Checkbox 'V'"
 msgstr "Jelölőnégyzet beállítása 'V'"
 
 #. popup menu menuitem | 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1568 zim/gui/pageview/__init__.py:1631
+#: zim/gui/pageview/__init__.py:1580 zim/gui/pageview/__init__.py:1643
 msgid "Un-check Checkbox"
 msgstr "Jelölés törlése"
 
 #. Menu item | 
 #. Button label | 
 #. button label
-#: zim/gui/pageview/__init__.py:1577 zim/gui/widgets.py:3611
+#: zim/gui/pageview/__init__.py:1589 zim/gui/widgets.py:3611
 #: zim/plugins/versioncontrol/__init__.py:752
 msgid "_Save"
 msgstr "_Mentés"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1587
+#: zim/gui/pageview/__init__.py:1599
 msgid "_Reload"
 msgstr "_Frissítés"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1597
+#: zim/gui/pageview/__init__.py:1609
 msgid "_Undo"
 msgstr "_Visszavonás"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1604
+#: zim/gui/pageview/__init__.py:1616
 msgid "_Redo"
 msgstr "Új_ra"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1611
+#: zim/gui/pageview/__init__.py:1623
 msgid "Cu_t"
 msgstr "_Kivágás"
 
 #. Menu item | 
 #. Button label | 
 #. menu label
-#: zim/gui/pageview/__init__.py:1616 zim/gui/templateeditordialog.py:46
-#: zim/plugins/tasklist/gui.py:1213
+#: zim/gui/pageview/__init__.py:1628 zim/gui/templateeditordialog.py:46
+#: zim/plugins/tasklist/gui.py:1215
 msgid "_Copy"
 msgstr "_Másolás"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1621
+#: zim/gui/pageview/__init__.py:1633
 msgid "_Paste"
 msgstr "Bei_llesztés"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1626
+#: zim/gui/pageview/__init__.py:1638
 msgid "_Delete"
 msgstr "_Törlés"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1637
+#: zim/gui/pageview/__init__.py:1649
 msgid "Toggle Checkbox 'V'"
 msgstr "Jelölőnégyzet beállítása 'V'"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1646
+#: zim/gui/pageview/__init__.py:1658
 msgid "Toggle Checkbox 'X'"
 msgstr "Jelölőnégyzet beállítása 'X'"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1655
+#: zim/gui/pageview/__init__.py:1667
 msgid "Toggle Checkbox '>'"
 msgstr "Jelölőnégyzet beállítása '>'"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1664
+#: zim/gui/pageview/__init__.py:1676
 msgid "Toggle Checkbox '<'"
 msgstr "Jelölőnégyzet beállítása '<'"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1673
+#: zim/gui/pageview/__init__.py:1685
 msgid "_Edit Link or Object..."
 msgstr "_Hivatkozás vagy objektum szerkesztése..."
 
 #. menu item to copy current line to clipboard
-#: zim/gui/pageview/__init__.py:1729
+#: zim/gui/pageview/__init__.py:1741
 msgid "Copy Line"
 msgstr "Sor másolása"
 
 #. menu item to cut current line to clipboard
-#: zim/gui/pageview/__init__.py:1745
+#: zim/gui/pageview/__init__.py:1757
 msgid "Cut Line"
 msgstr "Sor kivágása"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1758
+#: zim/gui/pageview/__init__.py:1770
 msgid "Date and Time..."
 msgstr "Dátum és idő..."
 
 #. Menu item for Insert menu
-#: zim/gui/pageview/__init__.py:1773
+#: zim/gui/pageview/__init__.py:1785
 msgid "Horizontal _Line"
 msgstr "Vízszintes _vonal"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1782
+#: zim/gui/pageview/__init__.py:1794
 msgid "_Image..."
 msgstr "_Kép..."
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1789
+#: zim/gui/pageview/__init__.py:1801
 msgid "_Attachment..."
 msgstr "Mellékletek..."
 
 #. Menu item | 
 #. Menu item,
-#: zim/gui/pageview/__init__.py:1804 zim/gui/pageview/__init__.py:1831
+#: zim/gui/pageview/__init__.py:1816 zim/gui/pageview/__init__.py:1843
 msgid "Bulle_t List"
 msgstr "_Felsorolás"
 
 #. Menu item | 
 #. Menu item,
-#: zim/gui/pageview/__init__.py:1809 zim/gui/pageview/__init__.py:1836
+#: zim/gui/pageview/__init__.py:1821 zim/gui/pageview/__init__.py:1848
 msgid "_Numbered List"
 msgstr "Számozott _lista"
 
 #. Menu item | 
 #. Menu item,
-#: zim/gui/pageview/__init__.py:1814 zim/gui/pageview/__init__.py:1841
+#: zim/gui/pageview/__init__.py:1826 zim/gui/pageview/__init__.py:1853
 msgid "Checkbo_x List"
 msgstr "_Jelölőgombos lista"
 
 #. Menu item,
-#: zim/gui/pageview/__init__.py:1846
+#: zim/gui/pageview/__init__.py:1858
 msgid "_Remove List"
 msgstr "Hivatkozás törlése"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1874
+#: zim/gui/pageview/__init__.py:1886
 msgid "Text From _File..."
 msgstr "Szöveg _fájlból..."
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:1921
+#: zim/gui/pageview/__init__.py:1933
 msgid "_Link..."
 msgstr "_Hivatkozás..."
 
 #. message when no file templates are found in ~/Templates
-#: zim/gui/pageview/__init__.py:1948
+#: zim/gui/pageview/__init__.py:1960
 msgid "No templates installed"
 msgstr "Nincsenek telepített sablonok"
 
 #. Menu item in "Insert > New File Attachment" submenu
-#: zim/gui/pageview/__init__.py:1997
+#: zim/gui/pageview/__init__.py:2009
 msgid "File _Templates..."
 msgstr "_Fájl sablonok..."
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:2005
+#: zim/gui/pageview/__init__.py:2017
 msgid "_Clear Formatting"
 msgstr "F_ormázás törlése"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:2011
+#: zim/gui/pageview/__init__.py:2023
 msgid "_Remove Heading"
 msgstr "Címsor törlése"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:2055
+#: zim/gui/pageview/__init__.py:2067
 msgid "_Find..."
 msgstr "_Keresés a lapon..."
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:2073
+#: zim/gui/pageview/__init__.py:2085
 msgid "Find Ne_xt"
 msgstr "Következő _találat"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:2079
+#: zim/gui/pageview/__init__.py:2093
 msgid "Find Pre_vious"
 msgstr "Elő_ző találat"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:2085
+#: zim/gui/pageview/__init__.py:2099
 msgid "_Replace..."
 msgstr "_Csere..."
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:2092
+#: zim/gui/pageview/__init__.py:2106
 msgid "Word Count..."
 msgstr "Szavak száma..."
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:2097
+#: zim/gui/pageview/__init__.py:2111
 msgid "_Zoom In"
 msgstr "_Nagyítás"
 
 #. Menu item
-#: zim/gui/pageview/__init__.py:2102
+#: zim/gui/pageview/__init__.py:2116
 msgid "Zoom _Out"
 msgstr "_Kicsinyítés"
 
 #. Menu item to reset zoom
-#: zim/gui/pageview/__init__.py:2130
+#: zim/gui/pageview/__init__.py:2144
 msgid "_Normal Size"
 msgstr "_Normál méret"
 
 #. tooltip for button in anchor popover
-#: zim/gui/pageview/textview.py:828
+#: zim/gui/pageview/textview.py:826
 msgid "Copy link to clipboard"
 msgstr "Hivatkozás másolása a vágólapra"
 
 #. tooltip label for image with href
-#: zim/gui/pageview/textview.py:1089
+#: zim/gui/pageview/textview.py:1087
 msgid "Link"
 msgstr "Hivatkozás"
 
@@ -2008,133 +2008,133 @@ msgstr "_Tulajdonságok"
 
 #. Menu item | 
 #. menu item in tray icon menu
-#: zim/gui/uiactions.py:228 zim/plugins/trayicon.py:147
+#: zim/gui/uiactions.py:228 zim/plugins/trayicon.py:151
 msgid "_Quit"
 msgstr "_Kilépés"
 
 #. Menu item
-#: zim/gui/uiactions.py:235
+#: zim/gui/uiactions.py:234
 msgid "Copy _Location"
 msgstr "He_ly másolása"
 
 #. Menu item
-#: zim/gui/uiactions.py:241
+#: zim/gui/uiactions.py:240
 msgid "_Templates"
 msgstr "_Sablonok"
 
 #. Menu item
-#: zim/gui/uiactions.py:247
+#: zim/gui/uiactions.py:246
 msgid "Pr_eferences"
 msgstr "_Beállítások"
 
 #. Menu item
-#: zim/gui/uiactions.py:257
+#: zim/gui/uiactions.py:256
 msgid "_Search..."
 msgstr "Általáno_s keresés..."
 
 #. Menu item for search a sub-set of the notebook
-#: zim/gui/uiactions.py:278
+#: zim/gui/uiactions.py:277
 msgid "Search this section"
 msgstr "Keresés ebben a szakaszban"
 
 #. Menu item
-#: zim/gui/uiactions.py:283
+#: zim/gui/uiactions.py:282
 msgid "Search _Backlinks..."
 msgstr "_Hivatkozások keresése..."
 
 #. Menu item
-#: zim/gui/uiactions.py:291
+#: zim/gui/uiactions.py:290
 msgid "Recent Changes..."
 msgstr "Legfrissebb változások..."
 
 #. Menu item
-#: zim/gui/uiactions.py:298
+#: zim/gui/uiactions.py:297
 msgid "Open Attachments _Folder"
 msgstr "Mellékletek mappa megnyitása"
 
 #. Error message
-#: zim/gui/uiactions.py:303
+#: zim/gui/uiactions.py:302
 msgid "This page does not have an attachments folder"
 msgstr "Ennek a lapnak nincs könyvtára a mellékletekhez"
 
 #. Menu item
-#: zim/gui/uiactions.py:309
+#: zim/gui/uiactions.py:308
 msgid "Open _Notebook Folder"
 msgstr "Jegyzetfüzet mappa megnyitása"
 
 #. Menu item
-#: zim/gui/uiactions.py:314
+#: zim/gui/uiactions.py:313
 msgid "Open _Document Root"
 msgstr "_Dokumentum gyökere"
 
 #. Error message
-#: zim/gui/uiactions.py:320
+#: zim/gui/uiactions.py:319
 msgid "No document root defined for this notebook"
 msgstr "Nincs dokumentumgyökér megadva ehhez a jegyzetfüzethez"
 
 #. Menu item
-#: zim/gui/uiactions.py:326
+#: zim/gui/uiactions.py:325
 msgid "Edit _Source"
 msgstr "_Forrás szerkesztése"
 
 #. Menu item
-#: zim/gui/uiactions.py:342
+#: zim/gui/uiactions.py:341
 msgid "Start _Web Server"
 msgstr "_Web szerver indítása"
 
 #. menu item
-#: zim/gui/uiactions.py:353
+#: zim/gui/uiactions.py:352
 msgid "View Debug Log"
 msgstr "Hibakeresési nap_ló megtekintése"
 
 #. Menu item
-#: zim/gui/uiactions.py:367
+#: zim/gui/uiactions.py:366
 msgid "Check and Update Index"
 msgstr "Index ellenőrzése és frissítése"
 
 #. Menu item
-#: zim/gui/uiactions.py:406
+#: zim/gui/uiactions.py:405
 msgid "Custom _Tools"
 msgstr "Egyéni eszközök"
 
 #. Menu item
-#: zim/gui/uiactions.py:412
+#: zim/gui/uiactions.py:411
 msgid "_Contents"
 msgstr "_Tartalom"
 
 #. Menu item
-#: zim/gui/uiactions.py:420
+#: zim/gui/uiactions.py:419
 msgid "_FAQ"
 msgstr "_GYIK"
 
 #. Menu item
-#: zim/gui/uiactions.py:425
+#: zim/gui/uiactions.py:424
 msgid "_Keybindings"
 msgstr "_Billentyűkombinációk"
 
 #. Menu item
-#: zim/gui/uiactions.py:430
+#: zim/gui/uiactions.py:429
 msgid "_Bugs"
 msgstr "_Hibák"
 
 #. Menu item
-#: zim/gui/uiactions.py:435
+#: zim/gui/uiactions.py:434
 msgid "_About"
 msgstr "_Névjegy"
 
 #. Dialog title
-#: zim/gui/uiactions.py:451
+#: zim/gui/uiactions.py:450
 #, python-format
 msgid "New Page in %s"
 msgstr "Új lap itt: %s"
 
 #. Dialog title
-#: zim/gui/uiactions.py:453
+#: zim/gui/uiactions.py:452
 msgid "New Page"
 msgstr "Új lap"
 
 #. Dialog text in 'new page' dialog
-#: zim/gui/uiactions.py:457
+#: zim/gui/uiactions.py:456
 msgid ""
 "Please note that linking to a non-existing page\n"
 "also creates a new page automatically."
@@ -2143,43 +2143,43 @@ msgstr ""
 "jöjjenek létre automatikusan."
 
 #. Input label
-#: zim/gui/uiactions.py:471
+#: zim/gui/uiactions.py:470
 msgid "Page Name"
 msgstr "Lap neve"
 
 #. Choice label
-#: zim/gui/uiactions.py:472
+#: zim/gui/uiactions.py:471
 msgid "Page Template"
 msgstr "Oldalsablon"
 
 #. Dialog title
-#: zim/gui/uiactions.py:523
+#: zim/gui/uiactions.py:522
 msgid "Import Page"
 msgstr "Lap importálása"
 
 #. File filter for '*.txt'
-#: zim/gui/uiactions.py:527
+#: zim/gui/uiactions.py:526
 msgid "Text Files"
 msgstr "Szöveg fájlok"
 
 #. Dialog title of file save dialog
-#: zim/gui/uiactions.py:547
+#: zim/gui/uiactions.py:546
 msgid "Save Copy"
 msgstr "Másolat mentése"
 
 #. Dialog title
-#: zim/gui/uiactions.py:571
+#: zim/gui/uiactions.py:570
 msgid "Rename or Move Page"
 msgstr "Lap átnevezése vagy mozgatása"
 
 #. Heading in 'move page' dialog - %s is the page name
-#: zim/gui/uiactions.py:576
+#: zim/gui/uiactions.py:575
 #, python-format
 msgid "Rename page \"%s\""
 msgstr "\"%s\" lap átnevezése"
 
 #. label in MovePage dialog - %i is number of backlinks
-#: zim/gui/uiactions.py:587
+#: zim/gui/uiactions.py:586
 #, python-format
 msgid "Update %i page linking to this page"
 msgid_plural "Update %i pages linking to this page"
@@ -2187,34 +2187,34 @@ msgstr[0] "Az erre az lapra mutató %i oldal frissítése"
 msgstr[1] "Az erre az lapra mutató %i oldalak frissítése"
 
 #. option in 'move page' dialog
-#: zim/gui/uiactions.py:596
+#: zim/gui/uiactions.py:595
 msgid "Update the heading of this page"
 msgstr "Frissítsd az aktuális lap fejlécét"
 
 #. label for progress dialog
-#: zim/gui/uiactions.py:631
+#: zim/gui/uiactions.py:630
 msgid "Updating Links"
 msgstr "Hivatkozás frissítése"
 
 #. label in DeletePageDialog
-#: zim/gui/uiactions.py:669
+#: zim/gui/uiactions.py:668
 #, python-format
 msgid "Remove links to %s"
 msgstr "Hivatkozás eltávolítása a(z) %s oldalra"
 
 #. Dialog title
-#: zim/gui/uiactions.py:713
+#: zim/gui/uiactions.py:712
 msgid "Trash Page"
 msgstr "Lap törlése"
 
 #. Heading in 'trash page' dialog - %s is the page name
-#: zim/gui/uiactions.py:714
+#: zim/gui/uiactions.py:713
 #, python-format
 msgid "Move page \"%s\" to trash?"
 msgstr "\"%s\" lap áthelyezése a lomtárba?"
 
 #. Text in 'trash page' dialog - %s is the page name
-#: zim/gui/uiactions.py:716
+#: zim/gui/uiactions.py:715
 #, python-format
 msgid ""
 "Page \"%s\" and all of it's sub-pages and\n"
@@ -2228,7 +2228,7 @@ msgstr ""
 "A későbbi visszavonáshoz lépjen a rendszer lomtárába."
 
 #. label in the TrashPage dialog to warn user of attachments being deleted
-#: zim/gui/uiactions.py:720
+#: zim/gui/uiactions.py:719
 #, python-format
 msgid "%i file will be trashed"
 msgid_plural "%i files will be trashed"
@@ -2236,23 +2236,23 @@ msgstr[0] "%i fájl fog törlődni"
 msgstr[1] "%i fájl fog törlődni"
 
 #. Title of progressbar dialog
-#: zim/gui/uiactions.py:730 zim/gui/uiactions.py:770
+#: zim/gui/uiactions.py:729 zim/gui/uiactions.py:769
 msgid "Removing Links"
 msgstr "Hivatkozások törlése"
 
 #. Dialog title
-#: zim/gui/uiactions.py:755
+#: zim/gui/uiactions.py:754
 msgid "Delete Page"
 msgstr "Lap törlése"
 
 #. Heading in 'delete page' dialog - %s is the page name
-#: zim/gui/uiactions.py:756
+#: zim/gui/uiactions.py:755
 #, python-format
 msgid "Delete page \"%s\"?"
 msgstr "\"%s\" lap törölhető?"
 
 #. Text in 'delete page' dialog - %s is the page name
-#: zim/gui/uiactions.py:758
+#: zim/gui/uiactions.py:757
 #, python-format
 msgid ""
 "Page \"%s\" and all of it's sub-pages and\n"
@@ -2266,7 +2266,7 @@ msgstr ""
 "Ez a törlés végleges, és nem lehet visszavonni."
 
 #. label in the DeletePage dialog to warn user of attachments being deleted
-#: zim/gui/uiactions.py:762
+#: zim/gui/uiactions.py:761
 #, python-format
 msgid "%i file will be deleted"
 msgid_plural "%i files will be deleted"
@@ -2274,12 +2274,12 @@ msgstr[0] "%i fájlt fogok törölni"
 msgstr[1] "%i fáljt fogok törölni"
 
 #. General description of zim itself
-#: zim/gui/uiactions.py:792
+#: zim/gui/uiactions.py:791
 msgid "A desktop wiki"
 msgstr "Egy asztali wiki"
 
 #. This string needs to be translated with names of the translators for this language
-#: zim/gui/uiactions.py:800
+#: zim/gui/uiactions.py:799
 msgid "translator-credits"
 msgstr "Mukli Krisztián"
 
@@ -2350,14 +2350,14 @@ msgstr "Lent"
 
 #. position of widget in window | 
 #. alignment option
-#: zim/gui/widgets.py:2066 zim/plugins/tableeditor.py:52
-#: zim/plugins/tableeditor.py:869
+#: zim/gui/widgets.py:2066 zim/plugins/tableeditor.py:54
+#: zim/plugins/tableeditor.py:945
 msgid "Left"
 msgstr "Balra zárt"
 
 #. position of widget in window | 
 #. alignment option
-#: zim/gui/widgets.py:2067 zim/plugins/tableeditor.py:54
+#: zim/gui/widgets.py:2067 zim/plugins/tableeditor.py:56
 msgid "Right"
 msgstr "Jobbra zárt"
 
@@ -2656,7 +2656,7 @@ msgstr ""
 #. preferences option
 #: zim/plugins/attachmentbrowser/__init__.py:82 zim/plugins/backlinkpane.py:35
 #: zim/plugins/journal.py:116 zim/plugins/pageindex/__init__.py:61
-#: zim/plugins/tableofcontents.py:106 zim/plugins/tags.py:47
+#: zim/plugins/tableofcontents.py:107 zim/plugins/tags.py:47
 #: zim/plugins/tasklist/__init__.py:51 zim/plugins/toolbar.py:55
 msgid "Position in the window"
 msgstr "Ablakon belüli pozíció"
@@ -3032,17 +3032,25 @@ msgid "GNU R Plot"
 msgstr "GNU R Plot"
 
 #. plugin name
-#: zim/plugins/indexed_fts.py:43
+#: zim/plugins/indexed_fts.py:44
 msgid "Indexed Full-Text Search"
 msgstr ""
 
 #. plugin description
-#: zim/plugins/indexed_fts.py:44
+#: zim/plugins/indexed_fts.py:45
 msgid ""
 "This plugin provides full-text indexing of\n"
 "page contents for fast full-text search,\n"
 "based on the FTS5 virtual table module of\n"
 "sqlite.\n"
+msgstr ""
+
+#: zim/plugins/indexed_fts.py:57
+msgid "Remove diacritics before indexing"
+msgstr ""
+
+#: zim/plugins/indexed_fts.py:58
+msgid "Additional token characters"
 msgstr ""
 
 #. error description
@@ -3173,12 +3181,12 @@ msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
 #. plugin name
-#: zim/plugins/linesorter.py:25
+#: zim/plugins/linesorter.py:20
 msgid "Line Sorter"
 msgstr "Sorrendező"
 
 #. plugin description
-#: zim/plugins/linesorter.py:26
+#: zim/plugins/linesorter.py:21
 msgid ""
 "This plugin sorts selected lines in alphabetical order.\n"
 "If the list is already sorted the order will be reversed\n"
@@ -3191,43 +3199,43 @@ msgstr ""
 "lefelé mozgatása, szövegsorok duplikálása vagy eltávolítása\n"
 
 #. Error message for linesorter plugin
-#: zim/plugins/linesorter.py:40
+#: zim/plugins/linesorter.py:35
 msgid "Please select more than one line of text"
 msgstr "Válassz több szövegsort"
 
 #. menu item
-#: zim/plugins/linesorter.py:70
+#: zim/plugins/linesorter.py:65
 msgid "_Sort lines"
 msgstr "_Sorok rendezése"
 
 #. Menu item
-#: zim/plugins/linesorter.py:174
+#: zim/plugins/linesorter.py:169
 msgid "_Move Line Up"
 msgstr "Sor mozgatása fel"
 
 #. Menu item
-#: zim/plugins/linesorter.py:180
+#: zim/plugins/linesorter.py:175
 msgid "_Move Line Down"
 msgstr "Sor mozgatása le"
 
 #. Menu item
-#: zim/plugins/linesorter.py:186
+#: zim/plugins/linesorter.py:181
 msgid "_Duplicate Line"
 msgstr "Sor duplikálása"
 
 #. Menu item
-#: zim/plugins/linesorter.py:196
+#: zim/plugins/linesorter.py:191
 msgid "_Remove Line"
 msgstr "Sor eltávolítása"
 
 #. plugin name | 
 #. menu item
-#: zim/plugins/linkmap.py:33 zim/plugins/linkmap.py:140
+#: zim/plugins/linkmap.py:39 zim/plugins/linkmap.py:146
 msgid "Link Map"
 msgstr "Hivatkozástérkép"
 
 #. plugin description
-#: zim/plugins/linkmap.py:34
+#: zim/plugins/linkmap.py:40
 msgid ""
 "This plugin provides a dialog with a graphical\n"
 "representation of the linking structure of the\n"
@@ -3244,22 +3252,22 @@ msgstr ""
 "Ez a kiegészítő szerves része a Zim-nek.\n"
 
 #. preferences option
-#: zim/plugins/linkmap.py:49
+#: zim/plugins/linkmap.py:55
 msgid "Show linkmap button in headerbar"
 msgstr "Hivatkozástérkép-gomb megjelenítése a fejlécben"
 
 #. preferences option
-#: zim/plugins/linkmap.py:51
+#: zim/plugins/linkmap.py:57
 msgid "Autozoom to fit map"
 msgstr "Automatikus zoom, hogy a térkép illeszkedjen az ablakba"
 
 #. preferences option
-#: zim/plugins/linkmap.py:53
+#: zim/plugins/linkmap.py:59
 msgid "Follow main window"
 msgstr "Kövesse a fő ablakot"
 
 #. preferences option
-#: zim/plugins/linkmap.py:55
+#: zim/plugins/linkmap.py:61
 msgid "Always open links in new windows"
 msgstr "Mindig új ablakban nyissa meg a hivatkozásokat"
 
@@ -3438,12 +3446,12 @@ msgid "Print tasklist to browser"
 msgstr "Feladatlista nyomtatása a böngészőben"
 
 #. plugin name
-#: zim/plugins/quicknote.py:141 zim/plugins/quicknote.py:176
+#: zim/plugins/quicknote.py:143 zim/plugins/quicknote.py:178
 msgid "Quick Note"
 msgstr "Gyors jegyzet"
 
 #. plugin description
-#: zim/plugins/quicknote.py:142
+#: zim/plugins/quicknote.py:144
 msgid ""
 "This plugin adds a dialog to quickly drop some text or clipboard\n"
 "content into a zim page.\n"
@@ -3456,32 +3464,32 @@ msgstr ""
 "Ez a kiegészítő szerves része a Zim-nek.\n"
 
 #. menu item
-#: zim/plugins/quicknote.py:159
+#: zim/plugins/quicknote.py:161
 msgid "Quick Note..."
 msgstr "Gyors jegyzet..."
 
 #. text entry field
-#: zim/plugins/quicknote.py:220
+#: zim/plugins/quicknote.py:222
 msgid "Page section"
 msgstr "Oldal szekció"
 
 #. checkbox in Quick Note dialog
-#: zim/plugins/quicknote.py:221
+#: zim/plugins/quicknote.py:223
 msgid "Create a new page for each note"
 msgstr "Új lap létrehozása minden jegyzethez"
 
 #. text entry field
-#: zim/plugins/quicknote.py:222 zim/plugins/tableeditor.py:928
+#: zim/plugins/quicknote.py:224 zim/plugins/tableeditor.py:1004
 msgid "Title"
 msgstr "Cím"
 
 #. Option in quicknote dialog
-#: zim/plugins/quicknote.py:259
+#: zim/plugins/quicknote.py:261
 msgid "Open _Page"
 msgstr "_Oldal megnyitása"
 
 #. confirm closing quick note dialog
-#: zim/plugins/quicknote.py:323
+#: zim/plugins/quicknote.py:325
 msgid "Discard note?"
 msgstr "Jegyzet eldobása?"
 
@@ -3692,12 +3700,12 @@ msgid "Display line numbers"
 msgstr "Sorok számának megjelenítése"
 
 #. plugin name
-#: zim/plugins/spell.py:96
+#: zim/plugins/spell.py:103
 msgid "Spell Checker"
 msgstr "Helyesírás-ellenőrző"
 
 #. plugin description
-#: zim/plugins/spell.py:97
+#: zim/plugins/spell.py:104
 #, fuzzy
 #| msgid ""
 #| "Adds spell checking support using gtkspell.\n"
@@ -3715,17 +3723,17 @@ msgstr ""
 "Ez a kiegészítő szerves része a Zim-nek.\n"
 
 #. menu item
-#: zim/plugins/spell.py:159
+#: zim/plugins/spell.py:166
 msgid "Check _spelling"
 msgstr "_Helyesírás ellenőrzés"
 
 #. error message
-#: zim/plugins/spell.py:191
+#: zim/plugins/spell.py:198
 msgid "Could not load spell checking"
 msgstr "Nem lehet betölteni a helyesírás-ellenőrzőt"
 
 #. error message explanation
-#: zim/plugins/spell.py:193
+#: zim/plugins/spell.py:200
 msgid ""
 "This could mean you don't have the proper\n"
 "dictionaries installed"
@@ -3734,22 +3742,22 @@ msgstr ""
 "nincsenek telepítve"
 
 #. alignment option
-#: zim/plugins/tableeditor.py:53
+#: zim/plugins/tableeditor.py:55
 msgid "Center"
 msgstr "Középre zárt"
 
 #. alignment option
-#: zim/plugins/tableeditor.py:55
+#: zim/plugins/tableeditor.py:57
 msgid "Unspecified"
 msgstr "Meghatározatlan"
 
 #. plugin name
-#: zim/plugins/tableeditor.py:82
+#: zim/plugins/tableeditor.py:121
 msgid "Table Editor"
 msgstr "Táblázatszerkesztő"
 
 #. plugin description
-#: zim/plugins/tableeditor.py:83
+#: zim/plugins/tableeditor.py:122
 msgid ""
 "With this plugin you can embed a 'Table' into the wiki page. Tables will be "
 "shown as GTK TreeView widgets.\n"
@@ -3762,92 +3770,92 @@ msgstr ""
 "funkciókat.\n"
 
 #. option value
-#: zim/plugins/tableeditor.py:92
+#: zim/plugins/tableeditor.py:131
 msgid "with lines"
 msgstr "vonalakkal"
 
 #. option value
-#: zim/plugins/tableeditor.py:93
+#: zim/plugins/tableeditor.py:132
 msgid "no grid lines"
 msgstr "vonalak nélkül"
 
 #. option value
-#: zim/plugins/tableeditor.py:94
+#: zim/plugins/tableeditor.py:133
 msgid "horizontal lines"
 msgstr "vízszintes vonalak"
 
 #. option value
-#: zim/plugins/tableeditor.py:95
+#: zim/plugins/tableeditor.py:134
 msgid "vertical lines"
 msgstr "függőleges vonalak"
 
 #. preference description
-#: zim/plugins/tableeditor.py:101
+#: zim/plugins/tableeditor.py:140
 msgid "Show helper toolbar"
 msgstr "Eszköztár megjelenítése"
 
 #. preference description
-#: zim/plugins/tableeditor.py:104
+#: zim/plugins/tableeditor.py:143
 msgid "Grid lines"
 msgstr "Vonalak"
 
 #. menu item
-#: zim/plugins/tableeditor.py:154
+#: zim/plugins/tableeditor.py:193
 msgid "Table"
 msgstr "Táblázat"
 
 #. tooltip on mouse hover | 
 #. menu item
-#: zim/plugins/tableeditor.py:458 zim/plugins/tableeditor.py:614
+#: zim/plugins/tableeditor.py:534 zim/plugins/tableeditor.py:690
 msgid "Add row"
 msgstr "Sor hozzáadása"
 
 #. tooltip on mouse hover
-#: zim/plugins/tableeditor.py:459
+#: zim/plugins/tableeditor.py:535
 msgid "Remove row"
 msgstr "Sor törlése"
 
 #. tooltip on mouse hover | 
 #. menu item
-#: zim/plugins/tableeditor.py:460 zim/plugins/tableeditor.py:616
+#: zim/plugins/tableeditor.py:536 zim/plugins/tableeditor.py:692
 msgid "Clone row"
 msgstr "Sor másolása"
 
 #. tooltip on mouse hover | 
 #. menu item
-#: zim/plugins/tableeditor.py:462 zim/plugins/tableeditor.py:620
+#: zim/plugins/tableeditor.py:538 zim/plugins/tableeditor.py:696
 msgid "Row up"
 msgstr "Mozgatás fel"
 
 #. tooltip on mouse hover | 
 #. menu item
-#: zim/plugins/tableeditor.py:463 zim/plugins/tableeditor.py:621
+#: zim/plugins/tableeditor.py:539 zim/plugins/tableeditor.py:697
 msgid "Row down"
 msgstr "Mozgatás le"
 
 #. tooltip on mouse hover | 
 #. menu item
-#: zim/plugins/tableeditor.py:465 zim/plugins/tableeditor.py:623
+#: zim/plugins/tableeditor.py:541 zim/plugins/tableeditor.py:699
 msgid "Change columns"
 msgstr "Oszlopok módosítása"
 
 #. tooltip on mouse hover
-#: zim/plugins/tableeditor.py:467
+#: zim/plugins/tableeditor.py:543
 msgid "Open help"
 msgstr "Súgó megnyitása"
 
 #. menu item
-#: zim/plugins/tableeditor.py:615
+#: zim/plugins/tableeditor.py:691
 msgid "Delete row"
 msgstr "Sor törlése"
 
 #. menu item
-#: zim/plugins/tableeditor.py:618
+#: zim/plugins/tableeditor.py:694
 msgid "Open cell content link"
 msgstr "Cella tartalmának megnyitása"
 
 #. Popup dialog
-#: zim/plugins/tableeditor.py:681
+#: zim/plugins/tableeditor.py:757
 msgid ""
 "The table must consist of at least on row!\n"
 " No deletion done."
@@ -3856,32 +3864,32 @@ msgstr ""
 " Nem történt törlés."
 
 #. Popup dialog
-#: zim/plugins/tableeditor.py:778 zim/plugins/tableeditor.py:1087
+#: zim/plugins/tableeditor.py:854 zim/plugins/tableeditor.py:1163
 msgid "Please select a row, before you push the button."
 msgstr "Válassz ki egy sort, mielőtt megnyomod a gombot."
 
 #. Dialog title
-#: zim/plugins/tableeditor.py:865
+#: zim/plugins/tableeditor.py:941
 msgid "Insert Table"
 msgstr "Táblázat beszúrása"
 
 #. Dialog title
-#: zim/plugins/tableeditor.py:865
+#: zim/plugins/tableeditor.py:941
 msgid "Edit Table"
 msgstr "Táblázat szerkesztése"
 
 #. Description of "Table-Insert" Dialog
-#: zim/plugins/tableeditor.py:874
+#: zim/plugins/tableeditor.py:950
 msgid "Managing table columns"
 msgstr "Táblázatoszlopok kezelése"
 
 #. Initial data for column title in table
-#: zim/plugins/tableeditor.py:904
+#: zim/plugins/tableeditor.py:980
 msgid "Column 1"
 msgstr "Oszlop 1"
 
 #. table header
-#: zim/plugins/tableeditor.py:937
+#: zim/plugins/tableeditor.py:1013
 msgid ""
 "Auto\n"
 "Wrap"
@@ -3890,42 +3898,42 @@ msgstr ""
 "sortörés"
 
 #. table header
-#: zim/plugins/tableeditor.py:947
+#: zim/plugins/tableeditor.py:1023
 msgid "Align"
 msgstr "Igazítás"
 
 #. hoover tooltip
-#: zim/plugins/tableeditor.py:974
+#: zim/plugins/tableeditor.py:1050
 msgid "Add column"
 msgstr "Oszlop hozzáadása"
 
 #. hoover tooltip
-#: zim/plugins/tableeditor.py:975
+#: zim/plugins/tableeditor.py:1051
 msgid "Remove column"
 msgstr "Oszlop eltávolítása"
 
 #. hoover tooltip
-#: zim/plugins/tableeditor.py:976
+#: zim/plugins/tableeditor.py:1052
 msgid "Move column ahead"
 msgstr "Oszlop mozgatása előre"
 
 #. hoover tooltip
-#: zim/plugins/tableeditor.py:977
+#: zim/plugins/tableeditor.py:1053
 msgid "Move column backward"
 msgstr "Oszlop mozgatása hátra"
 
 #. popup dialog
-#: zim/plugins/tableeditor.py:1061
+#: zim/plugins/tableeditor.py:1137
 msgid "A table needs to have at least one column."
 msgstr "A táblázatnak legalább egy oszlopot tartalmaznia kell."
 
 #. plugin name
-#: zim/plugins/tableofcontents.py:92
+#: zim/plugins/tableofcontents.py:93
 msgid "Table of Contents"
 msgstr "Tartalomjegyzék"
 
 #. plugin description
-#: zim/plugins/tableofcontents.py:93
+#: zim/plugins/tableofcontents.py:94
 msgid ""
 "This plugin adds an extra widget showing a table of\n"
 "contents for the current page.\n"
@@ -3938,48 +3946,48 @@ msgstr ""
 "Ez egy alapvető bővítmény, a Zimmel együtt került telepítésre.\n"
 
 #. option for plugin preferences
-#: zim/plugins/tableofcontents.py:108
+#: zim/plugins/tableofcontents.py:109
 msgid "Show ToC as floating widget instead of in sidepane"
 msgstr "A tartalomjegyzéket lebegő panelként mutatja"
 
 #. option for plugin preferences
-#: zim/plugins/tableofcontents.py:110
+#: zim/plugins/tableofcontents.py:111
 msgid "Show the page title heading in the ToC"
 msgstr "Oldal címének megjelenítése a tartalomjegyzékben"
 
 #. option for plugin preferences
-#: zim/plugins/tableofcontents.py:112
+#: zim/plugins/tableofcontents.py:113
 msgid "Include horizontal lines in the ToC"
 msgstr "Vízszintes vonalak megjelenítése a tartalomjegyzékben"
 
 #. option for plugin preferences
-#: zim/plugins/tableofcontents.py:114
+#: zim/plugins/tableofcontents.py:115
 msgid "Set ToC fontsize"
 msgstr "Tartalomjegyzék betűméretének megadása"
 
 #. action to lower level of heading in the text
-#: zim/plugins/tableofcontents.py:402
+#: zim/plugins/tableofcontents.py:429
 msgid "Demote"
 msgstr "Lejjebb sorol"
 
 #. action to raise level of heading in the text
-#: zim/plugins/tableofcontents.py:404
+#: zim/plugins/tableofcontents.py:431
 msgid "Promote"
 msgstr "Feljebb sorol"
 
 #. widget label
-#: zim/plugins/tableofcontents.py:518
+#: zim/plugins/tableofcontents.py:545
 msgid "T_oC"
 msgstr "Tartalom"
 
 #. small label above Table Of Contents
-#: zim/plugins/tableofcontents.py:548
+#: zim/plugins/tableofcontents.py:575
 msgid "ToC"
 msgstr "Tartalom"
 
 #. plugin name | 
 #. header in selection drop down
-#: zim/plugins/tags.py:37 zim/plugins/tasklist/gui.py:751
+#: zim/plugins/tags.py:37 zim/plugins/tasklist/gui.py:753
 msgid "Tags"
 msgstr "Címkék"
 
@@ -4104,29 +4112,29 @@ msgid "Lists"
 msgstr "Listák"
 
 #. selection of tasks without tags
-#: zim/plugins/tasklist/gui.py:694
+#: zim/plugins/tasklist/gui.py:696
 msgid "Untagged"
 msgstr "Nincs címke"
 
 #. header in selection drop down
-#: zim/plugins/tasklist/gui.py:749
+#: zim/plugins/tasklist/gui.py:751
 msgid "Labels"
 msgstr "Jelölők"
 
 #. Column header Task List dialog
-#: zim/plugins/tasklist/gui.py:893
+#: zim/plugins/tasklist/gui.py:895
 msgid "Task"
 msgstr "Feladat"
 
 #. Column header Task List dialog | 
 #. due date for task
-#: zim/plugins/tasklist/gui.py:944 zim/plugins/tasklist/gui.py:1239
+#: zim/plugins/tasklist/gui.py:946 zim/plugins/tasklist/gui.py:1241
 msgid "Due"
 msgstr "Határidő"
 
 #. Column header Task List dialog | 
 #. start date for task
-#: zim/plugins/tasklist/gui.py:945 zim/plugins/tasklist/gui.py:1237
+#: zim/plugins/tasklist/gui.py:947 zim/plugins/tasklist/gui.py:1239
 msgid "Start"
 msgstr "Kezdet"
 
@@ -4298,12 +4306,12 @@ msgid "Toolbar size"
 msgstr "Eszköztár méret"
 
 #. plugin name
-#: zim/plugins/trayicon.py:68
+#: zim/plugins/trayicon.py:69
 msgid "Tray Icon"
 msgstr "Tálca ikon"
 
 #. plugin description
-#: zim/plugins/trayicon.py:69
+#: zim/plugins/trayicon.py:70
 msgid ""
 "This plugin adds a tray icon for quick access.\n"
 "\n"
@@ -4319,7 +4327,7 @@ msgstr ""
 "Ez a kiegészítő szerves része a Zim-nek.\n"
 
 #. preferences option
-#: zim/plugins/trayicon.py:82
+#: zim/plugins/trayicon.py:83
 msgid ""
 "Classic trayicon,\n"
 "do not use new style status icon on Ubuntu"
@@ -4328,23 +4336,23 @@ msgstr ""
 "nem használ új típusú ikont Ubuntu alatt"
 
 #. menu item in tray icon menu
-#: zim/plugins/trayicon.py:131
+#: zim/plugins/trayicon.py:135
 msgid "_Quick Note..."
 msgstr "_Gyors jegyzet..."
 
 #. menu item in tray icon menu
-#: zim/plugins/trayicon.py:140
+#: zim/plugins/trayicon.py:144
 msgid "_Other..."
 msgstr "_Egyéb..."
 
 #. menu item in tray icon menu
-#: zim/plugins/trayicon.py:196
+#: zim/plugins/trayicon.py:200
 msgid "Notebooks"
 msgstr "Jegyzetfüzetek"
 
 #. tooltip for tray icon | 
 #. short description of zim
-#: zim/plugins/trayicon.py:256 zim/plugins/zeitgeist-logger.py:49
+#: zim/plugins/trayicon.py:259 zim/plugins/zeitgeist-logger.py:49
 msgid "Zim Desktop Wiki"
 msgstr "Zim asztali wiki"
 

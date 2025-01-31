@@ -5,6 +5,18 @@ Jaap Karssenberg <jaap.karssenberg@gmail.com>
 This branch is the Python rewrite and starts with version 0.42.
 Earlier version numbers for zim correspond to the Perl branch.
 
+##  0.76.1 - Fri 31 Jan 2025
+* Fix bug in auto-save on quit
+* Fix bug with find for pages with table object
+* Fix bug with undo deleting table object
+* Fix bug with out-denting verbatim text
+* Fix issue with linesorter plugin
+* Fix issue in commandline parsing for quicknote
+* Fix tray-icon plugin issues
+* Fix bug for Unix style links on Windows
+* Merge fixes for Indexed FTS search plugin
+* Let ToC selection follow cursor
+
 ##  0.76.0 - Sun 29 Dec 2024
 * Add Indexed Full-Text Search plugin
 * Add Window Title Editor plugin

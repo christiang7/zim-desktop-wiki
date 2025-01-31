@@ -37,6 +37,22 @@
     </screenshot>
   </screenshots>
   <releases>
+    <release date="2025-01-31" version="0.76.1">
+      <description>
+        <ul>
+          <li>Fix bug in auto-save on quit</li>
+          <li>Fix bug with find for pages with table object</li>
+          <li>Fix bug with undo deleting table object</li>
+          <li>Fix bug with out-denting verbatim text</li>
+          <li>Fix issue with linesorter plugin</li>
+          <li>Fix issue in commandline parsing for quicknote</li>
+          <li>Fix tray-icon plugin issues</li>
+          <li>Fix bug for Unix style links on Windows</li>
+          <li>Merge fixes for Indexed FTS search plugin</li>
+          <li>Let ToC selection follow cursor</li>
+        </ul>
+      </description>
+    </release>
     <release date="2024-12-29" version="0.76.0">
       <description>
         <ul>
