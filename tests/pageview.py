@@ -215,6 +215,9 @@ class TextBufferTestCaseMixin(object):
 		self.assertEqual(cursor.get_line(), line, msg=msg)
 		self.assertEqual(cursor.get_line_offset(), offset, msg=msg)
 
+	def print_buffer(self, buffer):
+		print(self._buffer_like_to_xml(buffer))
+
 
 class TestTextBuffer(tests.TestCase, TextBufferTestCaseMixin):
 

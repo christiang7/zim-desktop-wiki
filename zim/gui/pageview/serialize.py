@@ -314,6 +314,9 @@ def _split_nesting_style_tags(texttags):
 
 def textbuffer_internal_insert_at_cursor(textbuffer, data):
 	'''Function that inserts L{TextBufferInternalContents} into a L{TextBuffer}'''
+	interactive = False
+	textbuffer.emit('begin-insert-tree', interactive)
+
 	textbuffer._editmode_tags = [] # low level insert method, no carry over of open tags
 	texttag_stack = []
 	
@@ -402,6 +405,7 @@ def textbuffer_internal_insert_at_cursor(textbuffer, data):
 		logger.warn('Tags not closed on insert: %r' % texttag_stack)
 
 	textbuffer.update_editmode() # Ensure we leave buffer ready for interactive editing
+	textbuffer.emit('end-insert-tree')
 
 
 def _get_link_texttag(startiter):

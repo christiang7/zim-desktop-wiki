@@ -344,6 +344,10 @@ class QuickNoteDialog(Dialog):
 		self.textview.grab_focus()
 		Dialog.show(self)
 
+	def show_all(self):
+		self.textview.grab_focus()
+		Dialog.show_all(self)
+
 	def save_uistate(self):
 		notebook = self.notebookcombobox.get_notebook()
 		self.uistate['lastnotebook'] = notebook

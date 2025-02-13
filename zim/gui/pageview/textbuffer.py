@@ -2120,7 +2120,7 @@ class TextBuffer(TextBufferFindMixin, Gtk.TextBuffer):
 
 		# Check if we are at a bullet or checkbox line
 		# if so insert behind the bullet when you type at start of line
-		# FIXME FIXME FIXME - break undo - instead disallow this home position ?
+		# FIXME this should go in move cursor code of the view
 		if not self._insert_tree_in_progress and iter.starts_line() \
 		and not string.endswith('\n'):
 			bullet = self._get_bullet_at_iter(iter)

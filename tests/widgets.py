@@ -251,10 +251,20 @@ class TestLinkEntry(TestPageEntry, TestFileEntry):
 
 	entryklass = LinkEntry
 
-	def runTest(self):
+	def testMain(self):
 		'''Test LinkEntry widget'''
 		#TestPageEntry.runTest(self) # TODO - no longer works because it uses get_path() - alternative coverage needed ?
 		TestFileEntry.runTest(self)
+
+	def testFileToPageMapping(self):
+		updir = self.notebook.layout.root.parent()
+		for file, wanted in (
+			(self.notebook.resolve_file('./Test/doc.pdf'), tests.os_native_path('../doc.pdf')), # file outside notebook, relative to 'Test:foo'
+			(updir.file('Test.text'), tests.os_native_path(updir.file('Test.text').userpath)), # file attachment inside notebook
+			(self.notebook.resolve_file('./Test.txt'), ':Test'), # file mapping to page source
+		):
+			self.entry.set_file_path(file)
+			self.assertEqual(self.entry.get_text(), wanted)
 
 
 class TestInputForm(tests.TestCase):

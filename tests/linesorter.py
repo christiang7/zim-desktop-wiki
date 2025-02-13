@@ -88,16 +88,33 @@ class TestLineSorterWindowExtension(tests.TestCase, TextBufferTestCaseMixin):
 		self.assertEqual(self.get_text(), 'B line\nA line\nC line\n')
 
 	def testMoveUpStyledTextIntoCheckboxList(self):
-		self.set_text('[ ] Checkbox #1\n[ ] Checkbox #2\nLine with **bold** text\n')
+		self.set_buffer(self.buffer,
+			'<li indent="0" style="unchecked-box"><icon stock="zim-unchecked-box" /> Checkbox #1\n'
+			'<icon stock="zim-unchecked-box" /> Checkbox #2\n</li>'
+			'Line with <strong>bold</strong> text\n'
+		)
 		self.place_cursor(32)
 		self.extension.move_line_up()
-		self.assertBufferEqual(self.buffer, '[ ] Checkbox #1\nLine with <strong>bold</strong> text\n[ ] Checkbox #2\n')
+		self.print_buffer(self.buffer)
+		self.assertBufferEqual(self.buffer,
+			'<li indent="0" style="unchecked-box"><icon stock="zim-unchecked-box" /> Checkbox #1\n</li>'
+			'Line with <strong>bold</strong> text\n'
+			'<li indent="0" style="unchecked-box"><icon stock="zim-unchecked-box" /> Checkbox #2\n</li>'
+		)
 
 	def testMoveUpLineWithPageLinkIntoList(self):
-		self.set_text('* List item #1\n* List item #2\nLine containing a [[page link]]\n')
-		self.place_cursor(30)
+		self.set_buffer(self.buffer,
+			'<li indent="0" style="bullet-list">\u2022 List item #1\n'
+			'\u2022 List item #2\n</li>'
+			'Line containing a <link href="None">page link</link>\n'
+		)
+		self.place_cursor(32)
 		self.extension.move_line_up()
-		self.assertBufferEqual(self.buffer, '* List item #1\nLine containing a <link href="None">page link</link>\n* List item #2\n')
+		self.assertBufferEqual(self.buffer,
+			'<li indent="0" style="bullet-list">\u2022 List item #1\n</li>'
+			'Line containing a <link href="None">page link</link>\n'
+			'<li indent="0" style="bullet-list">\u2022 List item #2\n</li>'
+		)
 
 	def testMoveDownNoSelection(self):
 		self.set_text('A line\nB line\nC line\n')
