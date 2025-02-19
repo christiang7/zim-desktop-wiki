@@ -32,19 +32,19 @@ When you type an internet URL like http://perl.org, it will automatically be ide
 
 There are several other link types that can optionally be auto-formatted. See the [[Preferences]] to control these and see [[Links]] for more information on the link syntax
 
-* Words in "CamelCase" can be considered a link automatically. Once again this auto-formatting is done by the editor, your source format does not have to support CamelCase.
-* Wiki page names like ``Page:SubPage``, ``+SubPage``, ``:Page`` or ``Page#heading`` can be auto-formatted
-* Identifiers like ``#heading`` can be auto-formatted
-* Interwiki links like ``wp?Topic`` can be auto-formatted
-* File paths like ``./screenshot.png`` can be auto-formatted
+* Words in ''CamelCase'' can be considered a link automatically. Once again this auto-formatting is done by the editor, your source format does not have to support CamelCase.
+* **Wiki page names** like ''Page:SubPage'', ''+SubPage'', '':Page'' or ''Page#heading'' can be auto-formatted
+* **Identifiers** like ''#heading'' can be auto-formatted
+* **Interwiki links** like ''wp?Topic'' can be auto-formatted
+* **File paths** like ''./screenshot.png'' can be auto-formatted
 
-If auto-formatting is disabled, these links can still be created by the "Insert Link" dialog.
+If auto-formatting is disabled, these links can still be created by the ''Insert Link'' dialog.
 
-When auto-formatting page links the link must have at least 2 letters in the first part of the link to avoid linking strings like e.g. "10:20PM". Also see [[Pages]] for more information on page names.
+When auto-formatting page links the link must have at least 2 letters in the first part of the link to avoid linking strings like e.g. ''10:20PM''. Also see [[Pages]] for more information on page names.
 
 
 ===== Bullets and Checkboxes =====
-Another example of auto-formatting is that "* " at the beginning of a line gets converted to a bullet automatically. Typing either "[] ", "[*] ", "[x] ", "[>] " or "() ", "(*) ", "(x) ", "(>) " will give your different kinds of [[Check Boxes]].
+Another example of auto-formatting is that ''"* "'' at the beginning of a line gets converted to a bullet automatically. Typing either ''"[] ", "[*] ", "[x] ", "[>] " or "() ", "(*) ", "(x) ", "(>)"'' will give your different kinds of [[Check Boxes]].
 
 ===== Horizontal line =====
 Typing five dashes:
@@ -65,5 +65,5 @@ only work if there are no spaces in the sequences.
 
 ===== Anchor objects =====
 
-Typing ``##name`` will insert an special object that can be linked to as an identifier. If enabled, typing ``#name`` will insert a link to the same object.
+Typing ''##name'' will insert an special object that can be linked to as an identifier. If enabled, typing ''#name'' will insert a link to the same object.
 

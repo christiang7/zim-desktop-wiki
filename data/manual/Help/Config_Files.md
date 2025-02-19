@@ -99,7 +99,7 @@ The config file ''environ.ini'' can be used to modify environment parameters bef
 ==== GUI style config file ====
 Zim has certain defaults on how to display styles. For example, it displays links as blue text without underline. To change this style copy "''/usr/share/zim/style.conf''" to "''~/.config/zim/''" and edit it. Each style has it's own section which starts with the style name between square brackets and contains key-value pairs for the various display properties.
 
-**NOTE: **The display styles for the GUI is not used when exporting to HTML. If you want your HTML to show certain custom styles, you should write an HTML [[Templates|template]] with a CSS stylesheet.
+**NOTE:** The display styles for the GUI is not used when exporting to HTML. If you want your HTML to show certain custom styles, you should write an HTML [[Templates|template]] with a CSS stylesheet.
 
 Example:
 
@@ -116,12 +116,12 @@ style = italic
 '''
 
 Known properties for TextView:
-* **indent**: //integer//	- indenting step size in pixels
-* **tabs**: //integer//	- tab size in pixels
-* **linespacing**: //integer// - line spacing in pixels, effectively spacing between paragraphs
-* **wrapped-lines-linespacing**: //integer// - line spacing in pixels between wrapped lines
+* **indent**: ''integer''	- indenting step size in pixels
+* **tabs**: ''integer''	- tab size in pixels
+* **linespacing**: ''integer'' - line spacing in pixels, effectively spacing between paragraphs
+* **wrapped-lines-linespacing**: ''integer'' - line spacing in pixels between wrapped lines
 * **justify**: ''LEFT'', ''RIGHT'', ''CENTER'' or ''FILL''
-* **font**: //string//
+* **font**: ''string''
 * **bullet_icon_size**: ''ICON_SIZE_MENU'', ''ICON_SIZE_LARGE_TOOLBAR'', ...
 
 Known style tags:
@@ -149,28 +149,28 @@ Known properties for Tags:
 * **background**: ''yellow'', ''#cccccc'', etc.
 * **paragraph-background**: ''red'', ''#cccccc'', etc.
 * **weight**: ''PANGO_WEIGHT_BOLD'', ...
-* **scale**: //integer//
+* **scale**: ''integer''
 * **style**: ''italic'', ...
 * **underline**: ''single'', ...
 * **strikethrough**: ''true'', ''false''
 * **wrap-mode**: "''none"'', ...
-* **indent**: //integer//
-* **linespacing**: //integer//
-* **rise**: //integer// (offset from line center, intended for "sup" and "sub")
+* **indent**: ''integer''
+* **linespacing**: ''integer''
+* **rise**: ''integer'' (offset from line center, intended for "sup" and "sub")
 
 
-In the style config, properties can be postfixed with "''[darktheme]''" to define variants that are used when the "Prefer dark theme" [[Preferences|preference]] is enabled.
+In the style config, properties can be postfixed with "''[darktheme]''" to define variants that are used when the "**Prefer dark theme**" [[Preferences|preference]] is enabled.
 
 
 ==== Gtk configuration ====
 
-To change the look of the application beyond what can be done with the ''style.conf'' file you need to modify the Gtk theming. With Gtk3 this can be done using the CSS language similar to how e.g. webpages are styled.
+To change the look of the application beyond what can be done with the ''style.conf'' file you need to modify the Gtk theming. With Gtk3 this can be done using the **CSS language** similar to how e.g. webpages are styled.
 
 The file location of this configuration is: ''$XDG_CONFIG_HOME/gtk-3.0/gtk.css'' . You need to re-start zim to see it take effect. For examples of common things, like changing font or color, please use your search engine of choice. The developer documentation is here: https://developer.gnome.org/gtk3/stable/GtkCssProvider.html
 
 Also, some settings are not in CSS but can be configured via  ''$XDG_CONFIG_HOME/gtk-3.0/settings.ini'' . The developer documentation is here: https://developer.gnome.org/gtk3/stable/GtkSettings.html
 
-	**NOTE:** if you installed zim on Windows using the installer, the location for these files are ''<zim-installation-dir>\etc\gtk-3.0\gtk.css'' and ''<zim-installation-dir>\etc\gtk-3.0\settings.ini ''respectively.
+	**NOTE:** if you installed zim on Windows using the installer, the location for these files are ''<zim-installation-dir>\etc\gtk-3.0\gtk.css'' and ''<zim-installation-dir>\etc\gtk-3.0\settings.ini'' respectively.
 
 Specifically, the Gtk theme can be configured via the ''settings.ini'' file by setting ''gtk-theme-name'' after installing a custom theme on your system.
 
@@ -187,11 +187,11 @@ There are some widgets in zim that have a name set, so they can be addressed spe
 
 Specific ones are:
 
-* zim-sidepane: for any side pane of the application window
-* zim-pageview: for the textview showing the page
-* zim-inserted-object-inline: for objects that are inserted in the text in the middle of a line
-* zim-inserted-object: for objects that are inserted in the text as a block; default is to render a small border line
-* zim-inserted-object-head: for the top bar of such an object; default is to render a small border line at the bottom
+* **zim-sidepane**: for any side pane of the application window
+* **zim-pageview**: for the textview showing the page
+* **zim-inserted-object-inline**: for objects that are inserted in the text in the middle of a line
+* **zim-inserted-object**: for objects that are inserted in the text as a block; default is to render a small border line
+* **zim-inserted-object-head**: for the top bar of such an object; default is to render a small border line at the bottom
 
 More names are documented in the manual page of specific plugins.
 
@@ -231,8 +231,8 @@ The following snippets that can be used directly in ''~/.config/gtk-3.0/gtk.css'
 
 There is a notebook specific config files called "''notebook.zim''" which should be in the notebook folder. This file contains a section "''[Notebook]''" which contains the properties that can be set in the [[properties|properties dialog]].
 
-One hidden property is "''end_of_line''" which determines the end-of-line convention for files written by zim within the scope of this notebook. The value can be either "''dos''" or "''unix''". For newly created notebooks this value is set depending on the platform on which zim is running. The main purpose of this property is to ensure that a notebook that is shared between e.g. Linux and Windows machines does not change the full file on every write. When desired the property can be changed manually, which will affect all pages edited after the change.
+One hidden property is "''end_of_line''" which determines the end-of-line convention for files written by zim within the scope of this notebook. The value can be either "''dos''" or "''unix''". For newly created notebooks this value is set depending on the platform on which zim is running. The main purpose of this property is to ensure that a notebook that is shared between e.g. **Linux** and **Windows** machines does not change the full file on every write. When desired the property can be changed manually, which will affect all pages edited after the change.
 
 A second hidden option is "''disable_trash''" which defaults to ''False''. If enabled this will cause zim to avoid using the system trash for this notebook, see the section about deleting in [[Pages]].
 
-A third hidden option is "''shared" which defaults to True'' (however will be ''False'' for older notebooks). If ''True'', zim stores the notebook cache in the home folder (''$XDG_CACHE_HOME''). Usually, this is what you want, however in particular cases, e.g. when the notebook resides in an encrypted folder, you may want to set this to ''False'' in order to make sure the cache is actually stored in the notebook folder (using a ".zim" hidden folder).
+A third hidden option is "''shared" which defaults to True'' (however will be ''False'' for older notebooks). If ''True'', zim stores the **notebook cache** in the home folder (''$XDG_CACHE_HOME''). Usually, this is what you want, however in particular cases, e.g. when the notebook resides in an encrypted folder, you may want to set this to ''False'' in order to make sure the cache is actually stored in the notebook folder (using a "''.zim''" hidden folder).

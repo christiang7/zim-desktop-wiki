@@ -66,8 +66,8 @@ Zim is written as a "single user" program, so it is not intended for multiple pe
 ===== How do I change the Gtk theme? =====
 On a Linux desktop, you can probably do this via your settings manager.
 
-Windows and macOS users please see the section "Gtk configuration" in [[Help:Config Files|Config Files]]
+Windows and macOS users please see the section "**Gtk configuration**" in [[Help:Config Files|Config Files]]
 
 
 ===== I have a useful trick or tip. How can I share it with other users? =====
-You can have a look at the [[https://www.zim-wiki.org/wiki/|zim documentation wiki]]. It has a section dedicated to tricks and tips. And you can post in the "show and tell" section of discussion forum at https://github.com/zim-desktop-wiki/zim-desktop-wiki/discussions.
+You can have a look at the [[https://www.zim-wiki.org/wiki/|zim documentation wiki]]. It has a section dedicated to tricks and tips. And you can post in the "**show and tell**" section of discussion forum at https://github.com/zim-desktop-wiki/zim-desktop-wiki/discussions.

@@ -1,6 +1,6 @@
 ====== Automount ======
 
-As a special feature notebooks can be "mounted" automatically when opened. This can e.g. be used to connect with remote drives or unlock an encrypted drive when zim is trying to open a specific notebook.
+As a special feature notebooks can be "''mounted''" automatically when opened. This can e.g. be used to connect with remote drives or unlock an encrypted drive when zim is trying to open a specific notebook.
 
 ===== Config file =====
 The paths to be automounted and the commands to mount them are configured in a config file "''~/.config/zim/automount.conf''" (see [[Config Files]] for alternative locations).

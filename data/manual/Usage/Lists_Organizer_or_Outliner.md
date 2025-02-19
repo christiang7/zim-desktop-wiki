@@ -17,7 +17,7 @@ You can simply type a bullet or [[Help:Check Boxes|checkbox]] list in a page.
 
 Typically all of these ways of organizing would be mixed in a real notebook and should compliment each other.
 
-One way of working that works well in Zim is to start with a bullet list and then in each item create a link to a sub-page. This sub-page then can be filled in with more information. For example that list of books that you read can start as a bullet list with just titles and the date you finished them. Later you turn the title into a link to a sub-page (use a "+" prefix, see [[Help:Links]]) and in that sub-page you can add some comments about the book or further information on the author, links to reviews, etc.
+One way of working that works well in Zim is to start with a bullet list and then in each item create a link to a sub-page. This sub-page then can be filled in with more information. For example that list of books that you read can start as a bullet list with just titles and the date you finished them. Later you turn the title into a link to a sub-page (use a "''+''" prefix, see [[Help:Links]]) and in that sub-page you can add some comments about the book or further information on the author, links to reviews, etc.
 
 Another way of working is to look at the organization of your work. E.g. if you run a lot of projects with customers, probably your notes fall naturally in a hierarchy where you create a section per customer and than a page per project for that customer. Each project page then contains lists of things to do, or lists of dates with minutes of meetings.
 
