@@ -351,6 +351,11 @@ class TestTagsView(tests.TestCase):
 		with self.assertRaises(IndexNotFoundError):
 			tags.list_pages('foooo')
 
+		# Test case sensitivity
+		indextag = tags.lookup_by_tagname('tag1')
+		for name in ('Tag1', 'TAG1'):
+			self.assertEqual(tags.lookup_by_tagname(name), indextag)
+
 	def walk_treepaths(self, model, start=()):
 		maxrange = 100
 		for i in range(0, maxrange):

@@ -172,10 +172,15 @@ class TagsView(IndexView):
 		self._pages = PagesViewInternal(db)
 
 	def lookup_by_tagname(self, tag):
-		if isinstance(tag, IndexTag):
-			tag = tag.name
+		'''Returns L{IndexTag} object for a given tag by case-insensitive lookup
+		@param tag: a string or L{IndexTag} object
+		@returns: a L{IndexTag} object
+		'''
+		name = tag.name if isinstance(tag, IndexTag) else tag.lstrip('@')
+		sortkey = natural_sort_key(name)
+
 		row = self.db.execute(
-			'SELECT name, id FROM tags WHERE name=?', (tag.lstrip('@'),)
+			'SELECT name, id FROM tags WHERE sortkey=?', (sortkey,)
 		).fetchone()
 		if not row:
 			raise IndexNotFoundError
