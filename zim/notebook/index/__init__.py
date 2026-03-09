@@ -27,7 +27,7 @@ from .links import *
 from .tags import *
 
 
-DB_VERSION = '0.8'
+DB_VERSION = '0.9'
 DB_SORTKEY_CONTENT = 'text_1.2.3_unicode_αβγ_žžž'
 
 

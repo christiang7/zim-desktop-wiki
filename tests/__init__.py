@@ -279,8 +279,30 @@ class TestCase(unittest.TestCase):
 		@returns: a L{Folder} object (either L{LocalFolder} or L{MockFolder})
 		that is guarenteed non-existing
 		'''
-		path = self._get_tmp_name(name)
+		test_name = self.__class__.__name__
+		if self._testMethodName != 'runTest':
+			test_name += '_' + self._testMethodName
 
+		if name:
+			assert '/' not in name and '\\' not in name, 'Don\'t use this method to get sub folders or files'
+			test_name += '_' + name
+
+		path = os.path.join(TMPDIR, test_name)
+		return self._setUpFolder(path, mock)
+
+	@classmethod
+	def setUpClassFolder(cls, name=None, mock=MOCK_DEFAULT_MOCK):
+		'''Like L{setUpFolder()} but as class method'''
+		test_name = cls.__name__
+		if name:
+			assert '/' not in name and '\\' not in name, 'Don\'t use this method to get sub folders or files'
+			test_name += '_' + name
+
+		path = os.path.join(TMPDIR, test_name)
+		return cls._setUpFolder(path, mock)
+
+	@staticmethod
+	def _setUpFolder(path, mock):
 		if mock == MOCK_ALWAYS_MOCK:
 			use_mock = True
 		elif mock == MOCK_ALWAYS_REAL:
@@ -318,6 +340,17 @@ class TestCase(unittest.TestCase):
 		cases where the folder must be outside of the project folder, like
 		when testing version control logic
 		'''
+		folder = folder or self.setUpFolder(name, mock)
+		return self._setUpNotebook(folder, content, name)
+
+	@classmethod
+	def setUpClassNotebook(cls, name='testnotebook', mock=MOCK_ALWAYS_MOCK, content={}, folder=None):
+		'''Like C{setUpNotebook()} but as class method'''
+		folder = folder or cls.setUpClassFolder(name, mock)
+		return cls._setUpNotebook(folder, content, name)
+
+	@staticmethod
+	def _setUpNotebook(folder, content, name):
 		import datetime
 		from zim.newfs.mock import MockFolder
 		from zim.notebook.notebook import NotebookConfig, Notebook
@@ -326,8 +359,6 @@ class TestCase(unittest.TestCase):
 		from zim.notebook.index import Index
 		from zim.formats.wiki import WIKI_FORMAT_VERSION
 
-		if folder is None:
-			folder = self.setUpFolder(name, mock)
 		folder.touch() # Must exist for sane notebook
 		cache_dir = folder.folder('.zim')
 		layout = FilesLayout(folder, endofline='unix')
@@ -362,17 +393,6 @@ class TestCase(unittest.TestCase):
 		assert notebook.index.is_uptodate
 		return notebook
 
-	def _get_tmp_name(self, postfix):
-		name = self.__class__.__name__
-		if self._testMethodName != 'runTest':
-			name += '_' + self._testMethodName
-
-		if postfix:
-			assert '/' not in postfix and '\\' not in postfix, 'Don\'t use this method to get sub folders or files'
-			name += '_' + postfix
-
-		return os.path.join(TMPDIR, name)
-
 
 class LoggingFilter(logging.Filter):
 	'''Convenience class to surpress zim errors and warnings in the
@@ -398,11 +418,13 @@ class LoggingFilter(logging.Filter):
 		'''
 		self.logger = logger
 		self.message = message
+		self.captured = []
 
 	def __enter__(self):
 		logging.getLogger(self.logger).addFilter(self)
 		for handler in logging.getLogger().handlers:
 			handler.addFilter(self)
+		return self
 
 	def __exit__(self, *a):
 		logging.getLogger(self.logger).removeFilter(self)
@@ -411,16 +433,20 @@ class LoggingFilter(logging.Filter):
 
 	def filter(self, record):
 		if record.name.startswith(self.logger):
+			capture = False
 			msg = record.getMessage()
 			if self.message is None:
-				return False
+				capture = True
 			elif isinstance(self.message, tuple):
-				return not any(msg.startswith(m) for m in self.message)
+				capture = any(msg.startswith(m) for m in self.message)
 			else:
-				return not msg.startswith(self.message)
+				capture = msg.startswith(self.message)
+
+			if capture:
+				self.captured.append(msg)
+			return not capture
 		else:
 			return True
-
 
 	def wrap_test(self, test):
 		self.__enter__()

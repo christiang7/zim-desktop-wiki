@@ -12,6 +12,8 @@ import re
 
 import zim.datetimetz as datetime
 from zim.base.naturalsort import natural_sorted
+from zim.parse.searchquery import parse_search_query, search_tag_re, SearchQuery, SearchQueryTerm, OPERATOR_AND, OPERATOR_OR, \
+		compile_search_query_check_function, check_func_constructor_any_keyword, search_query_pagename_term_to_regex, search_query_tags_term_to_regex
 
 from zim.notebook import Path
 from zim.actions import toggle_action, initialize_actiongroup, PRIMARY_MODIFIER_MASK
@@ -26,6 +28,7 @@ from zim.gui.widgets import \
 	uistate_property
 from zim.gui.actionextension import ActionExtensionBase, populate_toolbar_with_actions
 from zim.gui.clipboard import Clipboard
+from zim.gui.pageview.find import FindQuery
 
 
 logger = logging.getLogger('zim.plugins.tasklist')
@@ -802,6 +805,42 @@ def days_to_str(days, use_workweek, weekday):
 		return '%id' % days
 
 
+def check_func_constructor_label_keyword(term, keywords):
+	# Compile check function that checks label at start of task text
+
+	pattern = re.compile('^(<[^<>]+>)?%s(?!\\w)' % re.escape(term.value.strip(':')), re.I)
+		# Allow for text markup at the start
+
+	def mychecker(record):
+		return bool(pattern.match(record[DESC_COL]))
+
+	return mychecker
+
+
+def check_func_constructor_no_keyword(term, keywords):
+	# Compile check function that checks for no tags or no labels
+	if term.value.lower() in ('tag', 'tags'):
+		return lambda r: not r[TAGS_COL]
+	elif term.value.lower() in ('label', 'labels'):
+		pattern = re.compile('^(<[^<>]+>)?(%s)(?!\\w)' % '|'.join(re.escape(l) for l in keywords['label']['labels']), re.U|re.I)
+			# Allow for text markup at the start, limit to known labels from properties
+		return lambda r: not pattern.match(r[DESC_COL])
+	else:
+		logger.warning('Unknown keyword: "no: %s"' % term.value)
+		return lambda r: False
+
+
+FILTER_QUERY_KEYWORDS = {
+	'page': {'key': PAGE_COL, 'regex_constructor': search_query_pagename_term_to_regex},
+	'text': {'key': DESC_COL},
+	'tags': {'key': TAGS_COL, 'implicit_match': search_tag_re, 'regex_constructor': search_query_tags_term_to_regex},
+	'any': {'check_func_constructor': check_func_constructor_any_keyword, 'include': ('page', 'text', 'tag')},
+	'label': {'check_func_constructor': check_func_constructor_label_keyword, 'labels': ('TODO', 'FIXME')}, # default labels are overwritten on use
+	'no': {'check_func_constructor': check_func_constructor_no_keyword}
+}
+FILTER_QUERY_KEYWORDS['tag'] = FILTER_QUERY_KEYWORDS['tags'] # alias
+
+
 class TaskListTreeView(BrowserTreeView):
 
 	# These default values are overwritten based on "styles.conf" configuration
@@ -833,7 +872,7 @@ class TaskListTreeView(BrowserTreeView):
 		self.text_style.connect('changed', lambda o: self.on_text_style_changed())
 		self.on_text_style_changed()
 
-		self.real_model = Gtk.TreeStore(bool, bool, int, str, str, object, str, str, int, int, str, int, str)
+		self.real_model = Gtk.TreeStore(bool, bool, int, str, str, str, str, str, int, int, str, int, str)
 			# VIS_COL, ACT_COL, PRIO_COL, START_COL, DUE_COL, TAGS_COL, DESC_COL, PAGE_COL, TASKID_COL, PRIO_SORT_COL, PRIO_SORT_LABEL_COL, STATUS_COL, STATUS_ICON_NAME_COL
 		model = self.real_model.filter_new()
 		model.set_visible_column(VIS_COL)
@@ -1045,8 +1084,6 @@ class TaskListTreeView(BrowserTreeView):
 
 		for prio_sort_int, row in enumerate(task_iter):
 			path = Path(row['name'])
-			tags = [t for t in row['tags'].split(',') if t]
-			lowertags = [t.lower() for t in tags]
 			actionable = self._render_waiting_actionable or not row['waiting']
 
 			# Checkbox
@@ -1088,9 +1125,8 @@ class TaskListTreeView(BrowserTreeView):
 				desc = '<span color="%s">%s</span>' % (self.INACTIVE_TEXT_COLOR, desc)
 
 			# Insert all columns
-			modelrow = [False, actionable, row['prio'], row['start'], row['due'], tags, desc, path.name, row['id'], prio_sort_int, prio_sort_label, status, status_icon_name]
+			modelrow = [False, actionable, row['prio'], row['start'], row['due'], row['tags'], desc, path.name, row['id'], prio_sort_int, prio_sort_label, status, status_icon_name]
 				# VIS_COL, ACT_COL, PRIO_COL, START_COL, DUE_COL, TAGS_COL, DESC_COL, PAGE_COL, TASKID_COL, PRIO_SORT_COL, PRIO_SORT_LABEL_COL, STATUS_COL, STATUS_ICON_NAME_COL
-			modelrow[0] = self._filter_item(modelrow)
 			myiter = self.real_model.append(parent_tree_iter, modelrow)
 
 			if row['haschildren']:
@@ -1098,14 +1134,8 @@ class TaskListTreeView(BrowserTreeView):
 				self._append_tasks(child_tasks, myiter) # recurs
 
 	def set_filter(self, string):
-		# TODO allow more complex queries here - same parse as for search
 		if string:
-			inverse = False
-			if string.lower().startswith('not '):
-				# Quick HACK to support e.g. "not @waiting"
-				inverse = True
-				string = string[4:]
-			self.filter = (inverse, string.strip().lower())
+			self.filter = parse_search_query(string, FILTER_QUERY_KEYWORDS)
 		else:
 			self.filter = None
 		self._eval_filter()
@@ -1131,13 +1161,41 @@ class TaskListTreeView(BrowserTreeView):
 	def _eval_filter(self):
 		#logger.debug('Filtering with labels: %s tags: %s, filter: %s', self.label_filter, self.tag_filter, self.filter)
 		if any((self.filter, self.tag_filter, self.label_filter, self.page_filter)):
+			# Add filters to query
+			query = SearchQuery(OPERATOR_AND)
+
+			if self.filter:
+				query.add(self.filter) # already a query object
+
+			if self.tag_filter:
+				if _NO_TAGS in self.tag_filter:
+					query.add(SearchQueryTerm('no', 'tags'))
+				else:
+					query.add(
+						SearchQuery(OPERATOR_AND, [SearchQueryTerm('tag', t) for t in self.tag_filter]))
+
+			if self.label_filter:
+				# This is a "OR" as labels are mutually exclusive by definition
+				query.add(
+					SearchQuery(OPERATOR_OR, [SearchQueryTerm('label', t) for t in self.label_filter]))
+
+			if self.page_filter:
+				query.add(
+					SearchQuery(OPERATOR_AND, [SearchQueryTerm('page', ":%s:" % t.strip(':')) for t in self.page_filter]))
+
+			# Compile query
+			my_keywords = FILTER_QUERY_KEYWORDS.copy()
+			my_keywords['label'] = my_keywords['label'].copy()
+			my_keywords['label']['labels'] = self.task_labels
+
+			filter_func = compile_search_query_check_function(query, my_keywords)
+
 			def filter(model, path, iter):
-				visible = self._filter_item(model[iter])
-				model[iter][VIS_COL] = visible
-				if visible:
+				model[iter][VIS_COL] = filter_func(model[iter])
+				if model[iter][VIS_COL]:
 					parent = model.iter_parent(iter)
 					while parent:
-						model[parent][VIS_COL] = visible
+						model[parent][VIS_COL] = True
 						parent = model.iter_parent(parent)
 		else:
 			def filter(model, path, iter):
@@ -1148,50 +1206,6 @@ class TaskListTreeView(BrowserTreeView):
 		count = len(model) if model else 0
 		self.emit('view-changed', count)
 		self.expand_all()
-
-	def _filter_item(self, modelrow):
-		# This method filters case insensitive because both filters and
-		# text are first converted to lower case text.
-		visible = True
-
-		pagename = modelrow[PAGE_COL].lower()
-		description = modelrow[DESC_COL].lower()
-		tags = [t.lower() for t in modelrow[TAGS_COL]]
-
-
-		if visible and self.page_filter:
-			pageparts = modelrow[PAGE_COL].split(':')
-			visible = any(p in pageparts for p in self.page_filter)
-
-		if visible and self.label_filter:
-			# Any labels need to be present
-			# (all does not make sense as they are mutual exclusive)
-			for label in self.label_filter:
-				if label in description:
-					break
-			else:
-				visible = False # no label found
-
-		if visible and self.tag_filter:
-			# All tag should match
-			if (_NO_TAGS in self.tag_filter and not tags) \
-				or all(tag in tags for tag in self.tag_filter):
-					visible = True
-			else:
-				visible = False
-
-		if visible and self.filter:
-			# And finally the filter string should match
-			# FIXME: we are matching against markup text here - may fail for some cases
-			inverse, string = self.filter
-			if string.startswith('@'):
-				match = string[1:].lower() in [t.lower() for t in tags]
-			else:
-				match = string in description or string in pagename
-			if (not inverse and not match) or (inverse and match):
-				visible = False
-
-		return visible
 
 	def do_focus_in_event(self, event):
 		#print ">>>", self._today, datetime.date.today()
@@ -1204,7 +1218,7 @@ class TaskListTreeView(BrowserTreeView):
 		text = self._get_raw_text(model[path])
 
 		pageview = self.opener.open_page(page)
-		pageview.show_find(text)
+		pageview.show_find(FindQuery(text))
 
 	def _get_raw_text(self, task):
 		id = task[TASKID_COL]

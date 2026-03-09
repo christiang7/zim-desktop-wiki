@@ -48,6 +48,9 @@ class FindQuery():
 		self.flags = flags
 		self.regex = self._compile_regex(string, flags)
 
+	def __repr__(self):
+		return "<%s %r %i %r>" % (self.__class__.__name__, self.string, self.flags, self.regex)
+
 	def __eq__(self, other):
 		return isinstance(other, self.__class__) and (self.string, self.flags) == (other.string, other.flags)
 
@@ -659,11 +662,11 @@ class FindWidget(object):
 		else:
 			buffer.find_clear()
 
-	def find(self, string, flags=0, highlight=False):
-		self.find_entry.set_text(string)
-		self.case_option_checkbox.set_active(flags & FIND_CASE_SENSITIVE)
-		self.word_option_checkbox.set_active(flags & FIND_WHOLE_WORD)
-		self.regex_option_checkbox.set_active(flags & FIND_REGEX)
+	def find(self, query: FindQuery, highlight: bool=False):
+		self.find_entry.set_text(query.string)
+		self.case_option_checkbox.set_active(query.flags & FIND_CASE_SENSITIVE)
+		self.word_option_checkbox.set_active(query.flags & FIND_WHOLE_WORD)
+		self.regex_option_checkbox.set_active(query.flags & FIND_REGEX)
 		self.highlight_checkbox.set_active(highlight)
 		self.on_find_entry_changed()
 

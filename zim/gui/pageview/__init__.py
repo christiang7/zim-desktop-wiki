@@ -28,6 +28,8 @@ from gi.repository import Gtk
 import re
 import functools
 
+from typing import Optional
+
 import zim.formats
 import zim.errors
 
@@ -2076,16 +2078,15 @@ class PageView(GSignalEmitterMixin, Gtk.VBox):
 		MoveTextDialog(self, self.notebook, self.page, buffer, self.navigation).run()
 
 	@action(_('_Find...'), '<Primary>F', alt_accelerator='<Primary>F3') # T: Menu item
-	def show_find(self, string=None, flags=0, highlight=False):
+	def show_find(self, query: Optional['FindQuery']=None, highlight: bool=False):
 		'''Show the L{FindBar} widget
 
-		@param string: the text to find
-		@param flags: options for find behavior, see L{TextFinder.find()}
+		@param query: a FindQuery for the text to find
 		@param highlight: if C{True} highlight the results
 		'''
 		self.find_bar.show()
-		if string:
-			self.find_bar.find(string, flags, highlight)
+		if query:
+			self.find_bar.find(query, highlight)
 		self.find_bar.grab_focus()
 
 	def hide_find(self):

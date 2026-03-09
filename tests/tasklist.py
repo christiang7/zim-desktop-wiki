@@ -11,6 +11,7 @@ from zim.plugins import PluginManager
 from zim.plugins.tasklist import *
 from zim.plugins.tasklist.indexer import *
 from zim.plugins.tasklist.indexer import _MAX_DUE_DATE, _MIN_START_DATE
+from zim.plugins.tasklist.gui import *
 
 from zim.parse.dates import old_parse_date
 from zim.parse.tokenlist import testTokenStream
@@ -531,6 +532,60 @@ class TestTaskList(tests.TestCase):
 		#~ '''Check tasklist plugin dialog'''
 		#
 		# TODO
+
+
+class TestSearchQuery(tests.TestCase):
+
+	records = (
+		# page, desc, tags
+		('foo', 'task 1 @tag', 'tag'),
+		('foo', '<b>TODO</b> task 2 @tag @home', 'tag,home'),
+		('test:foo:bar', 'task 3 @home', 'home'),
+		('test:foo', 'task 4', ''),
+	)
+
+	queries = (
+		('foo', (True, True, True, True)),
+		('task', (True, True, True, True)),
+		('page: foo', (True, True, True, True)),
+		('page: ::foo', (True, True, False, False)),
+		('page: foo::', (True, True, False, True)),
+		('page: bar', (False, False, True, False)),
+		('@tag', (True, True, False, False)),
+		('@home', (False, True, True, False)),
+		('@home @tag', (False, True, False, False)),
+		('tag: @tag', (True, True, False, False)),
+		('tag: @home', (False, True, True, False)),
+		('tag: @home @tag', (False, True, False, False)),
+		('tag: tag', (True, True, False, False)),
+		('tag: home', (False, True, True, False)),
+		('tag: home tag', (False, True, False, False)),
+		('label: todo', (False, True, False, False)),
+		('label: TODO:', (False, True, False, False)),
+		('label: fixme', (False, False, False, False)),
+		('no:tag', (False, False, False, True)),
+		('not no:tag', (True, True, True, False)),
+		('no:label', (True, False, True, True)),
+		('not no:label', (False, True, False, False))
+	)
+
+	def setUp(self):
+		l = max(PAGE_COL, DESC_COL, TAGS_COL) + 1
+		self.model = []
+		for r in self.records:
+			record = [None]*l
+			record[PAGE_COL] = r[0]
+			record[DESC_COL] = r[1]
+			record[TAGS_COL] = r[2]
+			self.model.append(record)
+
+	def runTest(self):
+		for string, wanted in self.queries:
+			#print(">>>", string)
+			query = parse_search_query(string, FILTER_QUERY_KEYWORDS)
+			filter_func = compile_search_query_check_function(query, FILTER_QUERY_KEYWORDS)
+			result = tuple(map(filter_func, self.model))
+			self.assertEqual(result, wanted)
 
 
 class TestIndexViewMixin(object):

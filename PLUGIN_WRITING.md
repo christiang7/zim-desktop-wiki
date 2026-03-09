@@ -92,6 +92,7 @@ At the time of writing these extension base-classes are defined:
     text -- see also to `zim.plugins.base.imagegenerator` module
   - `MainWindowExtension`: for any other changes to the mainwindow that are not
     handled by a `PageViewExtension` or a `NotebookExtension`
+  - `PageSearchExtension`: for modifying the supported keywords in a page search
 
 When you define a subclass of such an extension class, it will be loaded
 automatically by the plugin for each instance of the target component.

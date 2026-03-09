@@ -3403,9 +3403,11 @@ class TestPageViewActions(tests.TestCase):
 		self.assertTrue(pageview.find_bar.get_property('visible'))
 
 	def testShowFindWithQuery_FindNext_FindPrevious(self):
+		from zim.gui.pageview.find import FindQuery
+
 		pageview = setUpPageView(self.setUpNotebook(), 'test 123\n')
 		self.assertFalse(pageview.find_bar.get_property('visible'))
-		pageview.show_find('test')
+		pageview.show_find(FindQuery('test'))
 		self.assertTrue(pageview.find_bar.get_property('visible'))
 
 		pageview.find_next()

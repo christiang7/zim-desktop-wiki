@@ -80,6 +80,23 @@ It also allows to combine tasks from different pages that have a common name. E.
 
 If you want to show tasks of one specific page only, the page selection may not be what you want. In that case you can just type the full page name in the entry for filtering tasks. This works because the filter also takes into account the "page" column of the task view.
 
+===== Search =====
+In the tasklist dialog you can put a search query to filter the tasks shown. The search query can be structured according to the same syntax as described in [[:Help:Searching]] but with different keywords:
+
+**Keywords:**
+''Text:''	Match the task description
+''Page:''	Match the page name
+''Tag:''	Match tags for the task
+''Label:''	Match labels for the tasks
+''No:''		Find tasks with tags "no:tags" or without labels "no:labels"
+
+Tags will be recognized without keyword if they start with "@"
+
+For example, to find any task tagged "@roadmap" in your notebook section ":projects" you could use the query "''@roadmap page: ::projects:''"
+
+Or to list tasks without tags you can use "''no:tags''" or the opposite, tasks with any tag as "''not no:tags''".
+
+
 ===== Usage =====
 
 ==== Using Checkboxes ====

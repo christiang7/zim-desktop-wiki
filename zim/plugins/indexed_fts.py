@@ -14,7 +14,8 @@ from zim.plugins import PluginClass
 from zim.notebook import NotebookExtension, Path
 from zim.notebook.index.base import IndexerBase
 from zim.parse.tokenlist import TEXT
-from zim.search import SearchSelection
+from zim.search import IndexedSearchProvider, PageSearchExtension, PageSearchResult
+
 
 logger = logging.getLogger("zim.plugins.indexed_fts")
 
@@ -83,21 +84,26 @@ sqlite.
 			('sqlite version 3.43.0 or higher', has_min_version, True)
 		]
 
-	@staticmethod
-	def process_index_fts(searchselection, term, scope):
-		'''
-		The workhorse for actually searching the index, called by the
-		search function if available.
 
-		@param searchselection: the L{SearchSelection} instance to use
-		@param term: a term to look for
-		@param scope: if passed, a set of valid page names to search in
+class FTSSearchExtension(PageSearchExtension):
+
+	def __init__(self, plugin, page_search):
+		super().__init__(plugin, page_search)
+		self.add_keyword('text', provider=FTSSearchProvider)
+		self.add_keyword('content', provider=FTSSearchProvider)
+
+
+class FTSSearchProvider(IndexedSearchProvider):
+
+	def generate(self):
+		'''The workhorse for actually searching the index, called by the search function
 
 		NOTE: Currently, we don't use the more advanced BM25 ranking method
 		but instead try to replicate what zim internally uses: the number
 		of times the word was found in the page.
 		'''
-		db = searchselection.notebook.index._db
+		term = self.term
+		db = self.notebook.index._db
 
 		# All keywords passed to this functions are content-related so
 		# we don't need to check the term.keyword property.
@@ -117,18 +123,18 @@ sqlite.
 
 		# Protect against a possibly long-running query if accidentally
 		# searching for "*"
-		if term.string == "*":
-			return SearchSelection(None)
+		if term.value == "*":
+			return []
 
 		# Beware: FTS5 only supports "*" expansion at the end of a word
 		# while we want to support it in the beginning and the middle as well
 		# We can emulate the globbing behavior by constructing an equivalent
 		# query containing all tokens that match the expansion
-		if "*" in term.string:
+		if "*" in term.value:
 			# We need to find all tokens that match the search
 			query_token_result = db.execute(
 				"SELECT DISTINCT term FROM pages_ftsv WHERE term GLOB ?;",
-				(escape_for_glob(term.string.lower()),)
+				(escape_for_glob(term.value.lower()),)
 			).fetchall()
 			query_token_list = [
 				escape_for_fts(row["term"])
@@ -137,8 +143,7 @@ sqlite.
 			query_string = ' OR '.join(query_token_list)
 
 		else:
-			query_string = escape_for_fts(term.string.lower())
-
+			query_string = escape_for_fts(term.value.lower())
 
 		logger.debug("Full-Text Search for query %s", query_string)
 
@@ -153,41 +158,11 @@ sqlite.
 			"JOIN pages_ftsv AS v ON f.rowid = v.doc "
 			"WHERE v.term GLOB ? "
 			"GROUP BY p.name;",
-			(query_string, escape_for_glob(term.string.lower()))
+			(query_string, escape_for_glob(term.value.lower()))
 		).fetchall()
 
-		myscores = {}
-
-		myresults = SearchSelection(None)
-		myresults.scores = searchselection.scores
-
 		for row in query_results:
-			p = Path(row["name"])
-			myscores[p] = row["score"]
-			myresults.add(p)
-
-		# Most of the following is taken form SearchSelection._process_from_index
-		# Only keep results in scope (if scope is not empty)
-		if scope:
-			myresults &= scope
-
-		# Inverse selection
-		if term.inverse:
-			if not scope:
-				# initialize scope with whole notebook :S
-				scope = set()
-				for p in searchselection.notebook.pages.walk():
-					scope.add(p)
-			inverse = scope - myresults
-			myresults.clear()
-			myresults.update(inverse)
-
-		# Recalculate scores of left-over matches
-		for path in myresults:
-			myresults.scores[path] = \
-				myresults.scores.get(path, 0) + myscores.get(path, 0)
-
-		return myresults
+			yield PageSearchResult(Path(row["name"]), score=row["score"])
 
 
 class FTSIndexer(IndexerBase):
