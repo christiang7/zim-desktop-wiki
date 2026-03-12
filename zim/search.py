@@ -143,14 +143,16 @@ class PageSearchProvider():
 	SUPPORTS_NEGATE = False #: flag whether providers supports negation (NOT) or needs a wrapper
 	EXECUTION_PRIO = EXECUTION_PRIO_CONTENT # conservative default
 
-	def __init__(self, notebook: 'Notebook', term: SearchQueryTerm):
+	def __init__(self, notebook: 'Notebook', term: SearchQueryTerm, ui_callback: Optional[Callable]=None):
 		'''Constructor
 		@param notebook: the C{Notebook} object to search
 		@param term: a L{SearchQueryTerm} to search
+		@param ui_callback: an optional callback function that should be called once in a while for
+		longer running operations
 		'''
 		self.notebook = notebook
 		self.term = term
-		self.ui_callback = None
+		self.ui_callback = ui_callback
 
 	def walk_notebook(self) -> Iterable[PageSearchResult]:
 		'''Generator for all pages, yields L{PageSearchResult}s'''
@@ -244,10 +246,12 @@ class PageNameProvider(IndexedSearchProvider):
 	'''Provider for the keywords `name`, `section` and `namespace`'''
 
 	SUPPORTS_NEGATE = True
-	EXECUTION_PRIO = EXECUTION_PRIO_INDEX - 1 # Most efficient provider, always first
+	EXECUTION_PRIO = EXECUTION_PRIO_INDEX + 1
+		# In comparison to other index providers this one also does optimized check and filter
+		# --> raise prio, let other index provider do generation if possible in query
 
-	def __init__(self, notebook, term):
-		super().__init__(notebook, term)
+	def __init__(self, notebook, term, ui_callback=None):
+		super().__init__(notebook, term, ui_callback)
 		if term.keyword in ('namespace', 'section'):
 			value = '::' + term.value.strip(':') + ':' # force absolute lookup
 		else:
@@ -290,10 +294,10 @@ class PageNameProvider(IndexedSearchProvider):
 class LinksProvider(IndexedSearchProvider):
 	'''Provider for the keywords `links`, `linksfrom` and `linksto`'''
 
-	def __init__(self, notebook, term):
-		super().__init__(notebook, term)
+	def __init__(self, notebook, term, ui_callback=None):
+		super().__init__(notebook, term, ui_callback)
 		self.link_dir = LINK_DIR_FORWARD if term.keyword in ('links', 'linksfrom') else LINK_DIR_BACKWARD
-		self.inner = PageNameProvider(notebook, term)
+		self.inner = PageNameProvider(notebook, term, ui_callback)
 
 	def generate(self):
 		for pagename_result in self.inner.generate():
@@ -309,8 +313,8 @@ class LinksProvider(IndexedSearchProvider):
 class TagsProvider(IndexedSearchProvider):
 	'''Provider for the `tags` keyword'''
 
-	def __init__(self, notebook, term):
-		super().__init__(notebook, term)
+	def __init__(self, notebook, term, ui_callback=None):
+		super().__init__(notebook, term, ui_callback)
 		if term.keyword == 'tag' or re.match('^@\\w+@$', term.value):
 			# Backward compatible exact match
 			# Or optimized for direct match
@@ -346,8 +350,8 @@ class TextProvider(ContentSearchProvider):
 
 	SUPPORTS_NEGATE = True
 
-	def __init__(self, notebook, term):
-		super().__init__(notebook, term)
+	def __init__(self, notebook, term, ui_callback=None):
+		super().__init__(notebook, term, ui_callback)
 		self.regex = search_query_term_to_regex(term.value)
 		self.ui_callback_counter = 0
 
@@ -523,11 +527,12 @@ class PageSearchExtension(ExtensionBase):
 
 		@param **attributes: keywords attributes used in page search, these include attributes
 		for search quary parsing and for execution. At minimum a "provider" attributes should be
-		specified, giving a L{PageSearchProvider} sub-class, or the "expand_terms" attribute
-		should be specified.
+		specified, giving a L{PageSearchProvider} sub-class or a constructor function, 
+		or the "expand_terms" attribute should be specified.
 		'''
 		if 'provider' in attributes:
-			assert issubclass(attributes['provider'], PageSearchProvider)
+			assert isinstance(attributes['provider'], Callable) \
+				or issubclass(attributes['provider'], PageSearchProvider)
 		else:
 			assert 'expand_terms' in attributes, 'Attributes should contain either "provider", or "expand_terms"'
 
@@ -608,8 +613,7 @@ class PageSearch(object):
 				provider = self._compile_expand_terms(term)
 			else:
 				cls = self.KEYWORDS[term.keyword]['provider']
-				provider = cls(self.notebook, term)
-				provider.ui_callback = self.ui_callback
+				provider = cls(self.notebook, term, self.ui_callback)
 				if term.negate and not provider.SUPPORTS_NEGATE:
 					provider = NegateOperator(provider)
 

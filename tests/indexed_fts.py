@@ -26,4 +26,4 @@ class TestIndexedFTS(tests.TestCase):
 			).fetchone()[0], 0
 		)
 
-# Functional test case part of tests/search.py
+## More functional test cases part of tests/search.py ##

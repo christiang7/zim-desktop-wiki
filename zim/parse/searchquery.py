@@ -389,7 +389,7 @@ def search_query_term_to_regex(value: str) -> re.Pattern:
 	# Globs to regex
 	parts = []
 	for p in value.strip().strip('*').split('*'):
-		sub_parts = p.split()
+		sub_parts = re.split('\\s+', p) # use regex split to have empty match at start and end of piece
 		parts.append(r'\s+'.join(map(re.escape, sub_parts)))
 	regex = r'\S*'.join(parts)
 
@@ -431,7 +431,7 @@ def search_query_pagename_term_to_regex(value: str) -> re.Pattern:
 	# Globs to regex
 	parts = []
 	for p in value.strip().strip('*').split('*'):
-		sub_parts = p.split()
+		sub_parts = re.split('\\s+', p) # use regex split to have empty match at start and end of piece
 		parts.append(r'\s+'.join(map(re.escape, sub_parts)))
 	regex = r'.*'.join(parts)
 

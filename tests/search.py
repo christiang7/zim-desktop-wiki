@@ -198,6 +198,8 @@ class TestSearchQueryTermToRegex(tests.TestCase):
 			('*\u4e00foo', '\u4e00foo'),
 			(' \u4e00foo', '\\b\u4e00foo'),
 			('+foo', '\\+foo'), # no word boundery at non-word character
+			('Lorem ip* dolor', '\\bLorem\\s+ip\\S*\\s+dolor'),
+			('Lorem *sum dolor', '\\bLorem\\s+\\S*sum\\s+dolor'),
 		):
 			#print(value, regex, search_query_term_to_regex(value))
 			self.assertEqual(search_query_term_to_regex(value), re.compile(regex, re.I))
@@ -286,9 +288,25 @@ class TestPageSearchProviders(tests.TestCase):
 		check = provider.checker()
 		self.assertResultsMatch(list(r for r in provider.walk_notebook() if check(r)), paths)
 
+		if hasattr(provider, 'SUPPORTS_NEGATE') and provider.SUPPORTS_NEGATE:
+			# HACK to create negated version
+			negterm = provider.term
+			negterm.negate = not negterm.negate
+			provider = provider.__class__(provider.notebook, negterm)
+			#
+			self.assertResultsExclude(list(provider.generate()), paths)
+			self.assertResultsExclude(list(provider.filter(provider.walk_notebook())), paths)
+			check = provider.checker()
+			self.assertResultsExclude(list(r for r in provider.walk_notebook() if check(r)), paths)
+
 	def assertResultsMatch(self, results, paths):
 		self.assertTrue(all(isinstance(r, PageSearchResult) for r in results), 'Got: %r' % results)
 		self.assertEqual(set(r.path.name for r in results), set(Path(p).name for p in paths))
+
+	def assertResultsExclude(self, results, paths):
+		self.assertTrue(all(isinstance(r, PageSearchResult) for r in results), 'Got: %r' % results)
+		self.assertTrue(results is not None, 'Good test case should have positive negated values')
+		self.assertTrue(set(r.path.name for r in results).isdisjoint(set(Path(p).name for p in paths)))
 
 	def testPageNameProvider(self):
 		content = ('Test', 'FooBar', 'Baz', 'Dus', 'Test:Bar')
@@ -339,11 +357,12 @@ class TestPageSearchProviders(tests.TestCase):
 		self.assertProviderResults(TagsProvider(notebook, SearchQueryTerm('tags', '@project')), ('A', 'B', 'project'))
 		self.assertProviderResults(TagsProvider(notebook, SearchQueryTerm('tags', '@project@')), ('project',))
 
-	def testTextProvider(self):
+	def testTextProvider(self, cls=TextProvider):
+		# Also used by test for FTS plugin below
 		notebook = self.setUpNotebook(content={'test1': 'foo', 'test2': 'barfoo', 'test3': 'foobar', 'test4': 'foo**bar**'})
-		self.assertProviderResults(TextProvider(notebook, SearchQueryTerm('text', 'foo')), ('test1', 'test3', 'test4'))
+		self.assertProviderResults(cls(notebook, SearchQueryTerm('text', 'foo')), ('test1', 'test3', 'test4'))
 			# test2 does not match due to not starts word
-		self.assertProviderResults(TextProvider(notebook, SearchQueryTerm('text', 'foo*bar')), ('test3', 'test4'))
+		self.assertProviderResults(cls(notebook, SearchQueryTerm('text', 'foo*bar')), ('test3', 'test4'))
 			# to match test4, search should ignore formatting
 
 	def testProvidersInKeywords(self):
@@ -527,6 +546,16 @@ class TestPageSearch(tests.TestCase):
 		results = [r.path for r in page_search.search_pages(query)]
 		self.assertFalse(results)
 
+	def testQuotedString(self):
+		page_search = PageSearch(self.notebook)
+		query = page_search.parse_page_search_query('"Lorem ipsum dolor"')
+		results = [r.path for r in page_search.search_pages(query)]
+		self.assertTrue(Path('roundtrip') in results)
+
+		query = page_search.parse_page_search_query('"Lorem ip* dolor"')
+		results = [r.path for r in page_search.search_pages(query)]
+		self.assertTrue(Path('roundtrip') in results)
+
 
 @tests.slowTest
 class TestPageSearchFiles(TestPageSearch):
@@ -549,6 +578,9 @@ class TestPageSearchIndexed(TestPageSearch):
 		tests.TestCase.setUpClass() # setup plugin manager
 		PluginManager.load_plugin('indexed_fts')
 		TestPageSearch.setUpClass()
+
+	def testProvider(self):
+		TestPageSearchProviders().testTextProvider(cls=indexed_fts.createProvider)
 
 
 class TestUnicodeSearchTerms(tests.TestCase):
@@ -602,6 +634,19 @@ class TestQueryGrouping(tests.TestCase):
 			query = page_search.parse_page_search_query(string)
 			results = set(r.path for r in page_search.search_pages(query))
 			self.assertEqual(results, set(Path(p) for p in pages))
+
+
+class TestUICallbackCancel(tests.TestCase):
+
+	def runTest(self):
+		def callback():
+			raise SearchCancelledException
+
+		content = dict(('page%i' % i, 'foo') for i in range(10))
+		notebook = self.setUpNotebook(content=content)
+		page_search = PageSearch(notebook, ui_callback=callback)
+		results = list(page_search.search_pages(page_search.parse_page_search_query('content: foo')))
+		self.assertEqual(len(results), UI_CALLBACK_RATE_FOR_CONTENT) # should be cancelled at first callback
 
 
 class TestCompileSearchQueryCheckFunction(tests.TestCase):
