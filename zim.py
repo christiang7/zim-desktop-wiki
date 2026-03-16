@@ -9,7 +9,7 @@ import os
 import re
 
 # Check if we run the correct python version
-REQUIRED_MINIMUM_PYTHON_VERSION = (3, 6)
+REQUIRED_MINIMUM_PYTHON_VERSION = (3, 10)
 USED_PYTHON_VERSION = sys.version_info
 if USED_PYTHON_VERSION < REQUIRED_MINIMUM_PYTHON_VERSION:
 	error_message = 'zim needs python >= {major}.{minor}'.format(

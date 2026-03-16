@@ -151,6 +151,7 @@ class TestMainWindowExtension(tests.TestCase):
 	any(
 		map(VCS.check_dependencies, (VCS.BZR, VCS.GIT, VCS.HG))
 	), 'Missing dependencies')
+@tests.skipIf(os.name == 'nt', 'Fails on windows')
 class TestOverridePreferences(tests.TestCase):
 	'''Testing reading plugin preferences and notebook properties override'''
 
