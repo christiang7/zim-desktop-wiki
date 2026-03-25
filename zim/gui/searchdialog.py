@@ -7,7 +7,7 @@ from gi.repository import Gtk
 import logging
 
 from zim.notebook import Path
-from zim.gui.widgets import Dialog, BrowserTreeView, InputEntry, ErrorDialog, ScrolledWindow
+from zim.gui.widgets import Dialog, BrowserTreeView, InputEntry, ErrorDialog, ScrolledWindow, StatusPage
 from zim.gui.pageview.find import FIND_REGEX
 
 from zim.search import *
@@ -26,7 +26,8 @@ class SearchDialog(Dialog):
 
 	READY = 0
 	SEARCHING = 1
-	CANCELLED = 2
+	DONE = 2
+	CANCELLED = 3
 
 	def __init__(self, widget, notebook, page, navigation):
 		Dialog.__init__(self, widget, _('Search'), # T: Dialog title
@@ -37,10 +38,12 @@ class SearchDialog(Dialog):
 
 		hbox = Gtk.HBox(spacing=5)
 		self.vbox.pack_start(hbox, False, True, 0)
-		hbox.pack_start(Gtk.Label(_('Search') + ': '), False, True, 0) # T: input label
+		search_label = Gtk.Label.new_with_mnemonic(_('_Search') + ': ')
+		hbox.pack_start(search_label, False, True, 0) # T: input label
 		self.query_entry = InputEntry()
 		self.query_entry.set_tooltip_text(HELP_TEXT)
 		hbox.add(self.query_entry)
+		search_label.set_mnemonic_widget(self.query_entry)
 		self.search_button = Gtk.Button.new_with_mnemonic(_('_Find')) # T: Button label
 		hbox.pack_start(self.search_button, False, True, 0)
 
@@ -49,9 +52,8 @@ class SearchDialog(Dialog):
 
 		self.cancel_button = Gtk.Button.new_with_mnemonic(_('_Cancel')) # T: Button label
 		hbox.pack_start(self.cancel_button, False, True, 0)
-		self._set_state(self.READY)
 
-		self.namespacecheckbox = Gtk.CheckButton.new_with_mnemonic(_('Limit search to the current page and sub-pages'))
+		self.namespacecheckbox = Gtk.CheckButton.new_with_mnemonic(_('_Limit search to the current page and sub-pages'))
 			# T: checkbox option in search dialog
 		if page is not None:
 			self.vbox.pack_start(self.namespacecheckbox, False, True, 0)
@@ -61,11 +63,22 @@ class SearchDialog(Dialog):
 		# TODO checkbox _('Whole _word')
 
 		self.results_treeview = SearchResultsTreeView(notebook, navigation)
-		self.vbox.pack_start(ScrolledWindow(self.results_treeview), True, True, 0)
+		self._stack = Gtk.Stack()
+		for name, widget in (
+			('ready', StatusPage('edit-find-symbolic', None, HELP_TEXT)),
+			('searching', StatusPage('edit-find-symbolic', _('Searching ...'))), # T: placeholder label when search has started
+			('no-results', StatusPage('edit-find-symbolic', _('No results'), HELP_TEXT)), # T: placeholder label when search has no results
+			('results', ScrolledWindow(self.results_treeview)),
+		):
+			widget.show_all()
+			self._stack.add_named(widget, name)
+		self.vbox.pack_start(self._stack, True, True, 0)
 
 		self.search_button.connect_object('clicked', self.__class__._search, self)
 		self.cancel_button.connect_object('clicked', self.__class__._cancel, self)
 		self.query_entry.connect_object('activate', self.__class__._search, self)
+
+		self._set_state(self.READY)
 
 	def search(self, query):
 		'''Trigger a search to be performed.
@@ -91,7 +104,7 @@ class SearchDialog(Dialog):
 			ErrorDialog(self, error).run()
 
 		if not self.results_treeview.cancelled:
-			self._set_state(self.READY)
+			self._set_state(self.DONE)
 		else:
 			self._set_state(self.CANCELLED)
 
@@ -99,8 +112,6 @@ class SearchDialog(Dialog):
 		self.results_treeview.cancelled = True
 
 	def _set_state(self, state):
-		# TODO set cursor for treeview part
-		# TODO set label or something ?
 		def hide(button):
 			button.hide()
 			button.set_no_show_all(True)
@@ -109,13 +120,19 @@ class SearchDialog(Dialog):
 			button.set_no_show_all(False)
 			button.show_all()
 
-		if state in (self.READY, self.CANCELLED):
+		if state in (self.READY, self.DONE, self.CANCELLED):
 			self.query_entry.set_sensitive(True)
 			hide(self.cancel_button)
 			if self.spinner:
 				self.spinner.stop()
 				hide(self.spinner)
 			show(self.search_button)
+			if state == self.READY:
+				self._stack.set_visible_child_name('ready')
+			elif len(self.results_treeview.get_model()):
+				self._stack.set_visible_child_name('results')
+			else:
+				self._stack.set_visible_child_name('no-results')
 		elif state == self.SEARCHING:
 			self.query_entry.set_sensitive(False)
 			hide(self.search_button)
@@ -123,6 +140,7 @@ class SearchDialog(Dialog):
 				show(self.spinner)
 				self.spinner.start()
 			show(self.cancel_button)
+			self._stack.set_visible_child_name('searching')
 		else:
 			assert False, 'BUG: invalid state'
 
@@ -197,6 +215,11 @@ class SearchResultsTreeView(BrowserTreeView):
 					# FUTURE - use result.search_snippets
 			if set_show_results_cb:
 				set_show_results_cb()
+
+			# Iter through rest without cb
+			for result in it:
+				model.append((result.path.name, result.search_score, result.path))
+					# FUTURE - use result.search_snippets
 
 	def _do_open_page(self, view, path, col):
 		page = Path(self.get_model()[path][0])
