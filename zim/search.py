@@ -122,7 +122,7 @@ EXECUTION_PRIO_CONTENT = 30 #: Requires reading page content
 EXECUTION_PRIO_OFFSET_NEGATE = 5 #: Negation wrapper is less efficient, so gets offset
 
 UI_CALLBACK_RATE_FOR_CONTENT = 5 #: if set, call the callback for every n pages being read
-UI_CALLBACK_RATE_INDEX = 100 #: if set, call the callback for every n pages being yielded
+UI_CALLBACK_RATE_INDEX = 20 #: if set, call the callback for every n pages being yielded
 
 
 class PageSearchProvider():
@@ -370,6 +370,7 @@ class TextProvider(ContentSearchProvider):
 				if self.ui_callback:
 					# Make sure ui remains responsive
 					if self.ui_callback_counter == UI_CALLBACK_RATE_FOR_CONTENT:
+						self.ui_callback_counter = 0
 						self.ui_callback()
 					else:
 						self.ui_callback_counter += 1
@@ -591,6 +592,7 @@ class PageSearch(object):
 				if self.ui_callback:
 						# Make sure ui remains responsive
 						if self.ui_callback_counter == UI_CALLBACK_RATE_INDEX:
+							self.ui_callback_counter = 0
 							self.ui_callback()
 						else:
 							self.ui_callback_counter += 1

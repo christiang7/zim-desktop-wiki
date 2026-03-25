@@ -114,13 +114,16 @@ def createProvider(notebook: 'Notebook', term: 'SearchTerm', ui_callback=None) -
 	# - For phrases -multiple tokens with whitespace- this is supported by MATCH as well
 	# - For phrases with a glob in it, we are out of luck - fallback to matching individual
 	#   tokens and post-filter by content check (reading the document)
-	if "*" in term.value.rstrip('*'):
-		if any(c.isspace() for c in term.value):
-			return FTSSearchProviderGlobsAndPhrases(notebook, term, ui_callback)
-		else:
-			return FTSSearchProviderGlobs(notebook, term, ui_callback)
+
+	## ISSUE: for large notebooks, the MATCH query hangs, while GLOB is responisve,
+	## therefore, always use the GLOB version
+	#if "*" in term.value.rstrip('*'):
+	if any(c.isspace() for c in term.value):
+		return FTSSearchProviderGlobsAndPhrases(notebook, term, ui_callback)
 	else:
-		return FTSSearchProvider(notebook, term, ui_callback)
+		return FTSSearchProviderGlobs(notebook, term, ui_callback)
+	#else:
+		#return FTSSearchProvider(notebook, term, ui_callback)
 
 
 class FTSSearchProvider(IndexedSearchProvider):
@@ -144,14 +147,15 @@ class FTSSearchProvider(IndexedSearchProvider):
 		term = quote_for_fts(term) + ' *' if term[-1] == '*' else quote_for_fts(term)
 		#print(">>MATCH>>", term)
 		return self.notebook.index._db.execute(
-			"SELECT p.name AS name, count(v.offset) as score "
-			"FROM pages_fts(?) as f "
+			"SELECT p.name AS name, count(v.offset) AS score "
+			"FROM pages_fts as f "
 			"JOIN keys_pages_fts as k ON f.rowid = k.fts_id "
-			"JOIN pages as p ON k.page_id = p.id "
+			"JOIN pages AS p ON k.page_id = p.id "
 			"JOIN pages_ftsv AS v ON f.rowid = v.doc "
+			"WHERE pages_fts MATCH ? "
 			"GROUP BY p.name;",
 			(escape_for_glob(term),)
-		).fetchall()
+		)
 
 
 class FTSSearchProviderGlobs(FTSSearchProvider):
@@ -160,15 +164,15 @@ class FTSSearchProviderGlobs(FTSSearchProvider):
 	def generate_inner(self, term):
 		#print(">>GLOB>>", term)
 		return self.notebook.index._db.execute(
-			"SELECT p.name AS name, count(v.offset) as score "
+			"SELECT p.name AS name, count(v.offset) AS score "
 			"FROM pages_fts as f "
 			"JOIN keys_pages_fts as k ON f.rowid = k.fts_id "
-			"JOIN pages as p ON k.page_id = p.id "
+			"JOIN pages AS p ON k.page_id = p.id "
 			"JOIN pages_ftsv AS v ON f.rowid = v.doc "
 			"WHERE v.term GLOB ? "
 			"GROUP BY p.name;",
 			(escape_for_glob(term),)
-		).fetchall()
+		)
 
 
 class FTSSearchProviderGlobsAndPhrases(FTSSearchProviderGlobs):
