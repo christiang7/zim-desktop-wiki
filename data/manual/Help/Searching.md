@@ -165,6 +165,7 @@ Most keywords support "*" to match partial words. The "*" matches any non-whites
 
 Words that end in a ":" but are not a recognized keyword are understood as plain text and result in a content search.
 
+Keywords support also the following operators: "'':=''" for equal, "''<=''", "''>=''", "''<''", and "''>''" for less-equal, greater-equal, less, and greater respectively. Keywords that do not implement comparison ignore these operators. Some keywords use the "equals" operator ("'':=''") to indicate case-sensitivity.
 
 As a special case, a keyword can also contain a group.
 
@@ -195,6 +196,9 @@ The following rules are applied:
 
 For example "day" matches "day", "Day", and "days" and is equivalent with "day*". The value "*day" matches "Monday", "Tuesday", "Teusdays" but also "day" and "days", it is equivalent to "*day*".
 
+To make this keyword search case-sensitive, you can use "''Content:=''".
+
+For example "''Content: Monday''" matches "monday", "Monday", "MONDAY" etc. while "''Content:= Monday''" only matches "Monday" with exact case as spelled in the query
 
 The "''Text:''" keyword is an alias for "''Content:''".
 
@@ -216,6 +220,7 @@ The following rules are applied:
 
 For example "''Name: Project''" will match any page with the word "Project" in the name and is equivalent to "''Name: *Project*''". To match an exact page name you can search "''Name: :Project:''" but this can still match many pages that have a page called "Project" as a parent. The query "''Name: ::Project:''" results only in pages which have the page ":Project" as their parent.
 
+To make this keyword search case-sensitive, you can use "''Name:=''".
 
 === Section, Namespace ===
 The "''Section:''" matches the given page and any sub-pages. This allows searching a sub-set of the full notebook. The value should be a fully specified name. The start is always the top level of the notebook.

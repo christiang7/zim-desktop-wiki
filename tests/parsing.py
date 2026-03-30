@@ -225,8 +225,6 @@ class TestParseDates(tests.TestCase):
 			'17W', '2017W131', '2017-W131'
 		):
 			m = date_re.match(text)
-			if m:
-				print('>>', m.group(0))
 			self.assertIsNone(m, 'Did unexpectedly match: %s' % text)
 
 	def testWeekNumber(self):
@@ -242,6 +240,14 @@ class TestParseDates(tests.TestCase):
 			Day.new_from_weeknumber(2017, 13, 7),
 			Day.new_from_weeknumber(2017, 14, 0)
 		)
+
+	def testParseDateSpecials(self):
+		for text in tuple(TODAY_TOMORROW.keys()) + ('today+1', 'today-1', 'thisweek+5', 'thisweek-5', 'thismonth+24', 'thismonth-24'):
+			m = date_re_incl_today_tomorrow.match(text)
+			self.assertIsNotNone(m, 'Failed to match: %s' % text)
+			self.assertEqual(m.group(0), text)
+			obj = parse_date_incl_today_tomorrow(m.group(0))
+			self.assertIsInstance(obj, (Day, Week, Month))
 
 	def testOldParseDate(self):
 		'''Test parsing dates'''

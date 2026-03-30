@@ -1919,7 +1919,7 @@ Foo 123
 			self.fail('No object in tree')
 
 		buffer.set_parsetree(tree)
-		self.assertEqual(len(list(view._object_widgets)), 1) # assert there is an object in the view
+		self.assertEqual(len(list(view.get_inserted_object_widgets())), 1) # assert there is an object in the view
 		self.assertParseTreeEqual(buffer, tree) # assert stable over roundtrip
 
 	def testPopup(self):

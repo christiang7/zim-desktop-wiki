@@ -1027,9 +1027,9 @@ class PageView(GSignalEmitterMixin, Gtk.VBox):
 		self._save_page_handler.wait_for_store_page_async()
 
 	def _hack_on_inserted_tree(self, *a):
-		if self.textview._object_widgets:
+		if self.textview.get_inserted_object_widgets():
 			# Force resize of the scroll window, forcing a redraw to fix
-			# glitch in allocation of embedded obejcts, see isse #642
+			# glitch in allocation of embedded obejcts, see issue #642
 			# Will add another timeout to rendering the page, increasing the
 			# priority breaks the hack though. Which shows the glitch is
 			# probably also happening in a drawing or resizing idle event

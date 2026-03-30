@@ -227,6 +227,6 @@ class SearchResultsTreeView(BrowserTreeView):
 
 		# Popup find dialog with same query
 		if pageview and self.query:
-			fquery = find_query_from_search_query(self.query)
+			fquery = self._page_search.find_query_from_search_query(self.query)
 			if fquery:
 				pageview.show_find(fquery, highlight=True)

@@ -156,7 +156,6 @@ class TextView(Gtk.TextView):
 		self.set_size_request(24, 24)
 		self._cursor = CURSOR_TEXT
 		self._cursor_link = None
-		self._object_widgets = weakref.WeakSet()
 		self.set_left_margin(10)
 		self.set_right_margin(5)
 		self.set_wrap_mode(Gtk.WrapMode.WORD)
@@ -172,10 +171,8 @@ class TextView(Gtk.TextView):
 
 	def set_buffer(self, buffer):
 		# Clear old widgets
-		for child in self.get_children():
-			if isinstance(child, InsertedObjectWidget):
-				self._object_widgets.remove(child)
-				self.remove(child)
+		for widget in self.get_inserted_object_widgets():
+			self.remove(widget)
 
 		# Set new buffer
 		Gtk.TextView.set_buffer(self, buffer)
@@ -185,6 +182,9 @@ class TextView(Gtk.TextView):
 			self.on_insert_object(buffer, anchor)
 
 		buffer.connect('insert-objectanchor', self.on_insert_object)
+
+	def get_inserted_object_widgets(self):
+		return [child for child in self.get_children() if isinstance(child, InsertedObjectWidget)]
 
 	def on_insert_object(self, buffer, anchor):
 		# Connect widget for this view to object
@@ -210,14 +210,13 @@ class TextView(Gtk.TextView):
 			# TODO - compute indenting
 
 		self.add_child_at_anchor(widget, anchor)
-		self._object_widgets.add(widget)
 		widget.show_all()
 
 	def on_size_allocate(self, *a):
 		# Update size request for widgets
 		wrap_width = self._get_object_wrap_width()
 		if wrap_width != self._object_wrap_width:
-			for widget in self._object_widgets:
+			for widget in self.get_inserted_object_widgets():
 				widget.set_textview_wrap_width(wrap_width)
 					# TODO - compute indenting
 			self._object_wrap_width = wrap_width

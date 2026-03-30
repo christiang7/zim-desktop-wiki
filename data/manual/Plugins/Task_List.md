@@ -85,16 +85,29 @@ In the tasklist dialog you can put a search query to filter the tasks shown. The
 
 **Keywords:**
 ''Text:''	Match the task description
+''Task:''	Alias for "''Text:''"
 ''Page:''	Match the page name
 ''Tag:''	Match tags for the task
 ''Label:''	Match labels for the tasks
-''No:''		Find tasks with tags "no:tags" or without labels "no:labels"
+''Startdate>''	Find tasks with a start date after a given date, supports "<", "<=", "=", ">", and ">="
+''Start>''	Alias for ''Startdate''
+''Duedate<''	Find tasks with a due date before a given date, supports "<", "<=", "=", ">", and ">="
+''Due<''	Alias for ''Duedate''
+''No:''		Find tasks without tags "no:tags" or without labels "no:labels", or without start or due date "no:start" and "no:due"
 
 Tags will be recognized without keyword if they start with "@"
 
 For example, to find any task tagged "@roadmap" in your notebook section ":projects" you could use the query "''@roadmap page: ::projects:''"
 
 Or to list tasks without tags you can use "''no:tags''" or the opposite, tasks with any tag as "''not no:tags''".
+
+The "''Text''" and "''Page''" keywords can match case-sensitive by using the "'':=''" operator. E.g. "''Text:= TODO''" only matches the word "TODO" in all caps.
+
+The "''Start''" and "''Due''" keyword take a date format using the same formats accepted to define a start or end date in tasks, so you can use the "yyyy-mm-dd" format but also week numers etc. As a special case the words "today", "tomorrow", "yesterday", "thisweek", and "thismonth" are recognized. These words also accept an offset, so "today+1" will give the same result as tomorrow and "today-1" matches "yesterday". The offsets for "thisweek" and "thismonth" count in weeks and months respectively.
+
+If you search for a date without a keyword, but with a ">" or "<" prefix, it will be interpreted as a start or due date respectively. A notable inconsistency is that ">today" will be interpreted as "start>=today". This is done to ensure that a date without keyword is interpreted the same in the query as in the task itself.
+
+So as an example, all items that are tagged "@roadmap" and due today or before can be queried using "''@roadmap <today''"
 
 
 ===== Usage =====

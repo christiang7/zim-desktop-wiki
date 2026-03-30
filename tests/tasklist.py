@@ -536,12 +536,12 @@ class TestTaskList(tests.TestCase):
 
 class TestSearchQuery(tests.TestCase):
 
+	cols = (PAGE_COL, DESC_COL, TAGS_COL, START_COL, DUE_COL)
 	records = (
-		# page, desc, tags
-		('foo', 'task 1 @tag', 'tag'),
-		('foo', '<b>TODO</b> task 2 @tag @home', 'tag,home'),
-		('test:foo:bar', 'task 3 @home', 'home'),
-		('test:foo', 'task 4', ''),
+		('foo', 'task 1 @tag', 'tag', '2020-01-15', '2020-02-02'),
+		('foo', '<b>TODO</b> task 2 @tag @home', 'tag,home', _MIN_START_DATE, '2020-12-12'),
+		('test:foo:bar', 'task 3 @home', 'home', _MIN_START_DATE, _MAX_DUE_DATE),
+		('test:foo', 'task 4', '', '2019-12-31', _MAX_DUE_DATE),
 	)
 
 	queries = (
@@ -563,29 +563,42 @@ class TestSearchQuery(tests.TestCase):
 		('label: todo', (False, True, False, False)),
 		('label: TODO:', (False, True, False, False)),
 		('label: fixme', (False, False, False, False)),
+		('due>2020-06-01', (False, True, True, True)),
+		('duedate<2020-12-31', (True, True, False, False)),
+		('due>2020-06', (False, True, True, True)),
+		('<2020-12-31', (True, True, False, False)),
+		('@home <2020-12-31', (False, True, False, False)),
+		('start>2020-01-01', (True, False, False, False)),
+		('startdate<2020-01-01', (False, True, True, True)),
+		('start>wk2002', (True, False, False, False)),
+		('>2020-01-01', (True, False, False, False)),
+		('start>today', (False, False, False, False)), # assume system date > 2020
+		('due<today', (True, True, False, False)), # idem
 		('no:tag', (False, False, False, True)),
 		('not no:tag', (True, True, True, False)),
 		('no:label', (True, False, True, True)),
-		('not no:label', (False, True, False, False))
+		('not no:label', (False, True, False, False)),
+		('no: due', (False, False, True, True)),
+		('no: duedate', (False, False, True, True)),
+		('no: start', (False, True, True, False)),
+		('no: startdate', (False, True, True, False)),
 	)
 
 	def setUp(self):
-		l = max(PAGE_COL, DESC_COL, TAGS_COL) + 1
+		l = max(self.cols) + 1
 		self.model = []
 		for r in self.records:
 			record = [None]*l
-			record[PAGE_COL] = r[0]
-			record[DESC_COL] = r[1]
-			record[TAGS_COL] = r[2]
+			for i, col in enumerate(self.cols):
+				record[col] = r[i]
 			self.model.append(record)
 
 	def runTest(self):
 		for string, wanted in self.queries:
-			#print(">>>", string)
 			query = parse_search_query(string, FILTER_QUERY_KEYWORDS)
 			filter_func = compile_search_query_check_function(query, FILTER_QUERY_KEYWORDS)
 			result = tuple(map(filter_func, self.model))
-			self.assertEqual(result, wanted)
+			self.assertEqual(result, wanted, msg="Query: %s" % string)
 
 
 class TestIndexViewMixin(object):

@@ -162,7 +162,7 @@ class TestPageViewWithPlugin(TestPageViewNoPlugin):
 			text=TABLE_WIKI_TEXT,
 		)
 		# test widget loaded
-		objects = list(pageview.textview._object_widgets) # XXX
+		objects = list(pageview.textview.get_inserted_object_widgets())
 		self.assertIsInstance(objects[0], TableViewWidget)
 
 		# test modify

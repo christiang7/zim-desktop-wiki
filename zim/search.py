@@ -41,42 +41,6 @@ from zim.parse.tokenlist import tokens_to_text
 logger = logging.getLogger('zim.search')
 
 
-def find_query_from_search_query(query: SearchQuery) -> Optional['FindQuery']:
-	'''Turn a C{SearchQuery} into a C{FindQuery}
-	Alls positive terms that match content are taken into account
-	'''
-	from zim.gui.pageview.find import FindQuery, FIND_CASE_SENSITIVE, FIND_WHOLE_WORD, FIND_REGEX
-
-	strings = list(_walk_search_query(query))
-	if strings:
-		regex = '|'.join(search_query_term_to_regex(s).pattern for s in strings)
-		return FindQuery(regex, FIND_REGEX)
-	else:
-		return None
-
-def _walk_search_query(query):
-	for term in query:
-		if isinstance(term, SearchQuery):
-			if term.negate:
-				continue # skip negated content (and ignore double negated...)
-			else:
-				yield from _walk_search_query(term) # recurs
-		else: # SearchQueryTerm
-			if term.negate: # OPERATOR_NOT
-				continue
-			elif term.keyword in ('content', 'contentorname', 'text', 'any'):
-				yield term.value
-			elif term.keyword == 'tags':
-				value = term.value.rstrip('@')
-				if not term.value.startswith('@'):
-					value = '*' + value
-				yield value
-			elif term.keyword == 'tag':
-				yield '@' + term.value.lstrip('@')
-			else:
-				pass # other terms select pages, but no (easy) match in the page
-
-
 class PageSearchResult:
 	'''Object to combine notebook path with text snippets and search score
 	It can also hold a reference to a C{Page} object for efficient caching
@@ -153,6 +117,11 @@ class PageSearchProvider():
 		self.notebook = notebook
 		self.term = term
 		self.ui_callback = ui_callback
+
+	@classmethod
+	def get_find_regex(cls, term: SearchQueryTerm) -> str|None:
+		'''Get a regex pattern to match this term in content or C{None}, only applicable for content terms'''
+		return None
 
 	def walk_notebook(self) -> Iterable[PageSearchResult]:
 		'''Generator for all pages, yields L{PageSearchResult}s'''
@@ -253,10 +222,8 @@ class PageNameProvider(IndexedSearchProvider):
 	def __init__(self, notebook, term, ui_callback=None):
 		super().__init__(notebook, term, ui_callback)
 		if term.keyword in ('namespace', 'section'):
-			value = '::' + term.value.strip(':') + ':' # force absolute lookup
-		else:
-			value = term.value
-		self.regex = search_query_pagename_term_to_regex(value)
+			term = term.copy(value= '::' + term.value.strip(':') + ':') # force absolute lookup
+		self.regex = search_query_pagename_term_to_regex(term)
 
 	def generate(self):
 		if self.term.negate:
@@ -321,8 +288,18 @@ class TagsProvider(IndexedSearchProvider):
 			self.regex = None
 			self.generate = self.generate_exact
 		else:
-			self.regex = search_query_tags_term_to_regex(term.value)
+			self.regex = search_query_tags_term_to_regex(term)
 			self.generate = self.generate_glob
+
+	@classmethod
+	def get_find_regex(cls, term):
+		if term.keyword == 'tag' or re.match('^@\\w+@$', term.value):
+			return '@' + re.escape(term.value.strip('@')) + '\\b'
+		else:
+			pattern = search_query_tags_term_to_regex(term).pattern
+			if pattern.startswith('\\b'):
+				pattern = pattern[2:]
+			return '@' + pattern
 
 	def generate_exact(self):
 		tag = self.term.value.strip('@')
@@ -352,8 +329,12 @@ class TextProvider(ContentSearchProvider):
 
 	def __init__(self, notebook, term, ui_callback=None):
 		super().__init__(notebook, term, ui_callback)
-		self.regex = search_query_term_to_regex(term.value)
+		self.regex = search_query_term_to_regex(term)
 		self.ui_callback_counter = 0
+
+	@classmethod
+	def get_find_regex(cls, term):
+		return search_query_term_to_regex(term).pattern
 
 	def checker(self):
 		return self.check_content
@@ -644,8 +625,56 @@ class PageSearch(object):
 		# Either `a (a OR b)`` or a `NOT a AND NOT b` group
 		query = SearchQuery(OPERATOR_AND if term.negate else OPERATOR_OR)
 		for keyword in self.KEYWORDS[term.keyword]['expand_terms']:
-			t = SearchQueryTerm(keyword, term.value)
-			t.negate = term.negate
+			t = term.copy(keyword=keyword)
 			query.terms.append(t)
 
 		return self._compile_page_search(query)
+
+	def find_query_from_search_query(self, query: SearchQuery) -> 'FindQuery|None':
+		'''Turn a C{SearchQuery} into a C{FindQuery}
+		All positive terms that match content are taken into account
+		'''
+		from zim.gui.pageview.find import FindQuery, FIND_CASE_SENSITIVE, FIND_WHOLE_WORD, FIND_REGEX
+
+		seen = set()
+		def is_double(r):
+			if r in seen:
+				return True
+			else:
+				seen.add(r)
+				return False
+
+		regexes = list(r for r in self._walk_search_query_for_find(query) if not is_double(r))
+		if regexes and len(regexes) == 1:
+			if re.escape(regexes[0]) == regexes[0]: # no special characters
+				return FindQuery(regexes[0])
+			else:
+				return FindQuery(regexes[0], FIND_REGEX)
+		elif regexes:
+			return FindQuery('|'.join(regexes), FIND_REGEX)
+		else:
+			return None
+
+	def _walk_search_query_for_find(self, query):
+		for term in query:
+			if term.negate:
+				continue # skip negated content (and ignore double negated...)
+
+			if isinstance(term, SearchQuery):
+				yield from self._walk_search_query_for_find(term) # recurs
+			else: # SearchQueryTerm
+				if 'expand_terms' in self.KEYWORDS[term.keyword]:
+					## HACK to prevent a big ..|..|.. match, just do content matching for "any" term ##
+
+					#q = SearchQuery(OPERATOR_OR)
+					#for keyword in self.KEYWORDS[term.keyword]['expand_terms']:
+					#	t = term.copy(keyword=keyword)
+					#	q.add(t)
+					#yield from self._walk_search_query_for_find(q) # recurs
+
+					yield TextProvider.get_find_regex(term)
+				else:
+					cls = self.KEYWORDS[term.keyword]['provider']
+					regex = cls.get_find_regex(term)
+					if regex:
+						yield regex

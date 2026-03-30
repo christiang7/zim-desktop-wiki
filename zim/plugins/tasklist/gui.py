@@ -13,8 +13,9 @@ import re
 import zim.datetimetz as datetime
 from zim.base.naturalsort import natural_sorted
 from zim.parse.searchquery import parse_search_query, search_tag_re, SearchQuery, SearchQueryTerm, OPERATOR_AND, OPERATOR_OR, \
-		compile_search_query_check_function, check_func_constructor_any_keyword, search_query_pagename_term_to_regex, search_query_tags_term_to_regex
-
+	compile_search_query_check_function, search_query_pagename_term_to_regex, search_query_tags_term_to_regex, \
+	check_comparison_func_constructor, check_func_constructor_any_keyword, OPERATOR_LESS_EQUAL, OPERATOR_GREATER_EQUAL
+from zim.parse.dates import parse_date_incl_today_tomorrow, date_re_incl_today_tomorrow
 from zim.notebook import Path
 from zim.actions import toggle_action, initialize_actiongroup, PRIMARY_MODIFIER_MASK
 from zim.signals import DelayedCallback, SIGNAL_AFTER, SignalHandler, ConnectorMixin
@@ -817,25 +818,63 @@ def check_func_constructor_label_keyword(term, keywords):
 	return mychecker
 
 
+def check_func_constructor_start_end_date(term, keywords):
+	# Use the default comparison method with string comparison
+	# in this wrapper convert the date value to standardize it
+
+	# Logic here is same as in indexer when indexing date string in task
+	# except we also allow for "today", "tomorrow" etc.
+	try:
+		if term.keyword in ('start', 'startdate'):
+			value = parse_date_incl_today_tomorrow(term.value).first_day.isoformat()
+		elif term.keyword in ('due', 'duedate'):
+			value = parse_date_incl_today_tomorrow(term.value).last_day.isoformat()
+	except ValueError:
+		logger.warning('Invalid date format in query: %s', term.value)
+		return lambda r: False
+
+	term = term.copy(value=value)
+	return check_comparison_func_constructor(term, keywords)
+
+
+def check_func_constructor_auto_start_end_date(term, keywords):
+	(keyword, op) = ('startdate', OPERATOR_GREATER_EQUAL) if term.value[0] == '>' else ('duedate', OPERATOR_LESS_EQUAL)
+	term = term.copy(keyword=keyword, kw_operator=op, value=term.value[1:])
+	return check_func_constructor_start_end_date(term, keywords)
+
+
 def check_func_constructor_no_keyword(term, keywords):
 	# Compile check function that checks for no tags or no labels
-	if term.value.lower() in ('tag', 'tags'):
+	keyword = term.value.lower().rstrip('s') # tag / tags, label / labels
+	if keyword == 'tag':
 		return lambda r: not r[TAGS_COL]
-	elif term.value.lower() in ('label', 'labels'):
+	elif keyword == 'label':
 		pattern = re.compile('^(<[^<>]+>)?(%s)(?!\\w)' % '|'.join(re.escape(l) for l in keywords['label']['labels']), re.U|re.I)
 			# Allow for text markup at the start, limit to known labels from properties
 		return lambda r: not pattern.match(r[DESC_COL])
+	elif keyword in ('start', 'startdate'):
+		return lambda r: r[START_COL] == _MIN_START_DATE
+	elif keyword in ('due', 'duedate'):
+		return lambda r: r[DUE_COL] == _MAX_DUE_DATE
 	else:
 		logger.warning('Unknown keyword: "no: %s"' % term.value)
 		return lambda r: False
 
 
+_auto_match_date_re = re.compile('[<>]' + date_re_incl_today_tomorrow.pattern)
+
 FILTER_QUERY_KEYWORDS = {
 	'page': {'key': PAGE_COL, 'regex_constructor': search_query_pagename_term_to_regex},
 	'text': {'key': DESC_COL},
+	'task': {'key': DESC_COL},
 	'tags': {'key': TAGS_COL, 'implicit_match': search_tag_re, 'regex_constructor': search_query_tags_term_to_regex},
-	'any': {'check_func_constructor': check_func_constructor_any_keyword, 'include': ('page', 'text', 'tag')},
 	'label': {'check_func_constructor': check_func_constructor_label_keyword, 'labels': ('TODO', 'FIXME')}, # default labels are overwritten on use
+	'startdate': {'key': START_COL, 'comparison': str, 'check_func_constructor': check_func_constructor_start_end_date},
+	'start': {'key': START_COL, 'comparison': str, 'check_func_constructor': check_func_constructor_start_end_date},
+	'duedate': {'key': DUE_COL, 'comparison': str, 'check_func_constructor': check_func_constructor_start_end_date},
+	'autodate': {'implicit_match': _auto_match_date_re, 'check_func_constructor': check_func_constructor_auto_start_end_date},
+	'due': {'key': DUE_COL, 'comparison': str, 'check_func_constructor': check_func_constructor_start_end_date},
+	'any': {'check_func_constructor': check_func_constructor_any_keyword, 'include': ('page', 'text', 'tag')},
 	'no': {'check_func_constructor': check_func_constructor_no_keyword}
 }
 FILTER_QUERY_KEYWORDS['tag'] = FILTER_QUERY_KEYWORDS['tags'] # alias

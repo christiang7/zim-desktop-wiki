@@ -14,8 +14,10 @@ from zim.plugins import PluginClass
 from zim.notebook import NotebookExtension, Path
 from zim.notebook.index.base import IndexerBase
 from zim.parse.tokenlist import tokens_to_text
+from zim.parse.searchquery import search_query_term_to_regex
 from zim.search import PageSearchExtension, \
-	IndexedSearchProvider, PageSearchResult, TextProvider, EXECUTION_PRIO_MIXED
+	IndexedSearchProvider, PageSearchResult, TextProvider, \
+	EXECUTION_PRIO_MIXED, OPERATOR_EQUAL
 
 
 logger = logging.getLogger("zim.plugins.indexed_fts")
@@ -90,8 +92,8 @@ class FTSSearchExtension(PageSearchExtension):
 
 	def __init__(self, plugin, page_search):
 		super().__init__(plugin, page_search)
-		self.add_keyword('text', provider=createProvider)
-		self.add_keyword('content', provider=createProvider)
+		self.add_keyword('text', provider=FTSSearchProvider)
+		self.add_keyword('content', provider=FTSSearchProvider)
 
 
 def quote_for_fts(keyword):
@@ -106,32 +108,40 @@ def escape_for_glob(keyword):
 	})
 
 
-def createProvider(notebook: 'Notebook', term: 'SearchTerm', ui_callback=None) -> 'FTSSearchProvider':
-	'''Function to create correct search provider class'''
-	# There are several types of matches we need to support:
-	# - The MATCH in the FTS table only supports glob at the end of a term
-	# - For glob elsewhere in a word, we can GLOB the vocab table to get matching terms
-	# - For phrases -multiple tokens with whitespace- this is supported by MATCH as well
-	# - For phrases with a glob in it, we are out of luck - fallback to matching individual
-	#   tokens and post-filter by content check (reading the document)
-
-	## ISSUE: for large notebooks, the MATCH query hangs, while GLOB is responisve,
-	## therefore, always use the GLOB version
-	#if "*" in term.value.rstrip('*'):
-	if any(c.isspace() for c in term.value):
-		return FTSSearchProviderGlobsAndPhrases(notebook, term, ui_callback)
-	else:
-		return FTSSearchProviderGlobs(notebook, term, ui_callback)
-	#else:
-		#return FTSSearchProvider(notebook, term, ui_callback)
-
-
 class FTSSearchProvider(IndexedSearchProvider):
 	'''Base class supports simple case, use MATCH to get term or phrase, optional ending in glob'''
 
 	# FUTURE: use BM25 ranking to set matching score ?
 
-	def generate(self):
+	# NOTE: depending on the query there are several ways to query the database
+	#
+	#   1. MATCH statement works for words and phrases but only supports glob at the end.
+	#      Found this also slows down for large notebooks.
+	#   2. GLOB in the Vocab table allows globs anywhere in the word, but does not support
+	#      phrases
+	#   3. Therefore phrases with globs in it, we are out of luck and need to combine 
+	#      querying the index for one of the words (assume longest is most significant)
+	#      and post-filter to do regex match on the content for the exact phrase. Slower
+	#      than direct database query, but faster than searching all content without index
+	#
+	# This class dynamicly combines strategy 2 and 3
+	#
+	# Since the FTS table is case-insensitive, strategy 3 is also required for case-sensitive queries
+
+	def __init__(self, notebook, term, ui_callback = None):
+		super().__init__(notebook, term, ui_callback)
+		if term.kw_operator == OPERATOR_EQUAL or any(c.isspace() for c in term.value):
+			# OPERATOR_EQUAL is interpreted as exact match, so case sensitive
+			self.EXECUTION_PRIO = EXECUTION_PRIO_MIXED
+			self.generate = self.generate_phrase
+		else:
+			self.generate = self.generate_word
+
+	@classmethod
+	def get_find_regex(cls, term):
+		return search_query_term_to_regex(term).pattern
+
+	def generate_word(self):
 		term = self.term.value.lower().strip()
 
 		if not term.replace('*', '').strip():
@@ -143,23 +153,25 @@ class FTSSearchProvider(IndexedSearchProvider):
 		for row in self.generate_inner(term):
 			yield PageSearchResult(Path(row["name"]), score=row["score"])
 
-	def generate_inner(self, term):
-		term = quote_for_fts(term) + ' *' if term[-1] == '*' else quote_for_fts(term)
-		#print(">>MATCH>>", term)
-		return self.notebook.index._db.execute(
-			"SELECT p.name AS name, count(v.offset) AS score "
-			"FROM pages_fts as f "
-			"JOIN keys_pages_fts as k ON f.rowid = k.fts_id "
-			"JOIN pages AS p ON k.page_id = p.id "
-			"JOIN pages_ftsv AS v ON f.rowid = v.doc "
-			"WHERE pages_fts MATCH ? "
-			"GROUP BY p.name;",
-			(escape_for_glob(term),)
-		)
+	def generate_phrase(self):
+		term = self.term.value.lower().strip()
 
+		if not term.replace('*', '').strip():
+			# Protect against a possibly long-running query if accidentally searching for "*"
+			return []
+		elif not self.term.value[-1].isspace():
+			term += '*' # default glob word ending
 
-class FTSSearchProviderGlobs(FTSSearchProvider):
-	'''Extended version that does globs anywhere in a term, but no phrases'''
+		tokens = term.split()
+		tokens.sort(key=lambda w: len(w))
+		longest = tokens[-1]
+
+		textprovider = TextProvider(self.notebook, self.term, self.ui_callback)
+		check = textprovider.checker()
+		for row in self.generate_inner(longest):
+			result = PageSearchResult(Path(row["name"]), 0)
+			if check(result):
+				yield result
 
 	def generate_inner(self, term):
 		#print(">>GLOB>>", term)
@@ -173,41 +185,6 @@ class FTSSearchProviderGlobs(FTSSearchProvider):
 			"GROUP BY p.name;",
 			(escape_for_glob(term),)
 		)
-
-
-class FTSSearchProviderGlobsAndPhrases(FTSSearchProviderGlobs):
-	'''Extended version that does globs inside phrases, but lower speed performance'''
-
-	EXECUTION_PRIO = EXECUTION_PRIO_MIXED
-
-	def __init__(self, notebook, term, ui_callback=None):
-		super().__init__(notebook, term, ui_callback)
-		self.textprovider = TextProvider(notebook, term, ui_callback)
-
-	def generate(self):
-		# Case for globs in phrase, this is a hard one and less efficient
-		# We pre-select pages with an query, then do a real check
-		# on the content to filter the real matches
-		# Could be optimized further for various cases, but since this
-		# is already a corner case, keep it simple for now
-
-		term = self.term.value.lower().strip()
-
-		if not term.replace('*', '').strip():
-			# Protect against a possibly long-running query if accidentally searching for "*"
-			return []
-		elif not self.term.value[-1].isspace():
-			term += '*' # default glob word ending
-
-		tokens = term.split()
-		tokens.sort(key=lambda w: len(w))
-		longest = tokens[-1]
-
-		check = self.textprovider.checker()
-		for row in FTSSearchProviderGlobs.generate_inner(self, longest):
-			result = PageSearchResult(Path(row["name"]), 0)
-			if check(result):
-				yield result
 
 
 class FTSIndexer(IndexerBase):

@@ -6,6 +6,7 @@ from zim.parse.searchquery import *
 from zim.search import *
 from zim.notebook import Path
 from zim.plugins import PluginManager, indexed_fts
+from zim.gui.pageview.find import FindQuery, FIND_CASE_SENSITIVE, FIND_WHOLE_WORD, FIND_REGEX
 
 
 # some aliases to define queries
@@ -35,6 +36,16 @@ class TestParseSearchQuery(tests.TestCase):
 			('"Links:Foo"',	_q(_any('Links:Foo'))),
 				# quoted string, not a keyword, falls back to default
 			('links Foo', _and(_any('links'), _any('Foo'))),
+			('links=foo', _q(_t('links', 'foo', kw_operator=OPERATOR_EQUAL))),
+			('links:=foo', _q(_t('links', 'foo', kw_operator=OPERATOR_EQUAL))),
+			('links<foo', _q(_t('links', 'foo', kw_operator=OPERATOR_LESS_THAN))),
+			('links:<foo', _q(_t('links', 'foo', kw_operator=OPERATOR_LESS_THAN))),
+			('links>foo', _q(_t('links', 'foo', kw_operator=OPERATOR_GREATER_THAN))),
+			('links:>foo', _q(_t('links', 'foo', kw_operator=OPERATOR_GREATER_THAN))),
+			('links>=foo', _q(_t('links', 'foo', kw_operator=OPERATOR_GREATER_EQUAL))),
+			('links:>=foo', _q(_t('links', 'foo', kw_operator=OPERATOR_GREATER_EQUAL))),
+			('links<=foo', _q(_t('links', 'foo', kw_operator=OPERATOR_LESS_EQUAL))),
+			('links:<=foo', _q(_t('links', 'foo', kw_operator=OPERATOR_LESS_EQUAL))),
 		):
 			query = parse_search_query(string, keywords)
 			#print('====', string, '\n', query, '\n', wanted)
@@ -201,8 +212,8 @@ class TestSearchQueryTermToRegex(tests.TestCase):
 			('Lorem ip* dolor', '\\bLorem\\s+ip\\S*\\s+dolor'),
 			('Lorem *sum dolor', '\\bLorem\\s+\\S*sum\\s+dolor'),
 		):
-			#print(value, regex, search_query_term_to_regex(value))
-			self.assertEqual(search_query_term_to_regex(value), re.compile(regex, re.I))
+			self.assertEqual(search_query_term_to_regex(_t('kw', value)), re.compile(regex, re.I))
+			self.assertEqual(search_query_term_to_regex(_t('kw', value, kw_operator=OPERATOR_EQUAL)), re.compile(regex))
 
 
 class TestSearchQueryPageNameTermToRegex(tests.TestCase):
@@ -224,8 +235,8 @@ class TestSearchQueryPageNameTermToRegex(tests.TestCase):
 			('::foo::', '^:?foo:?$'),
 			('::foo:+', '^:?foo:.+'),
 		):
-			#print(value, regex, search_query_pagename_term_to_regex(value))
-			self.assertEqual(search_query_pagename_term_to_regex(value), re.compile(regex, re.I))
+			self.assertEqual(search_query_pagename_term_to_regex(_t('kw', value)), re.compile(regex, re.I))
+			self.assertEqual(search_query_pagename_term_to_regex(_t('kw', value, kw_operator=OPERATOR_EQUAL)), re.compile(regex))
 
 
 class TestSearchQueryTagsTermToRegex(tests.TestCase):
@@ -242,41 +253,35 @@ class TestSearchQueryTagsTermToRegex(tests.TestCase):
 			('foo@', 'foo\\b'),
 			('@foo@', '\\bfoo\\b')
 		):
-			#print(value, regex, search_query_tags_term_to_regex(value))
-			self.assertEqual(search_query_tags_term_to_regex(value), re.compile(regex, re.I))
+			self.assertEqual(search_query_tags_term_to_regex(_t('kw', value)), re.compile(regex, re.I))
 
 
 class TestSearchQueryToFindQuery(tests.TestCase):
 
 	def runTest(self):
-		from zim.gui.pageview.find import FindQuery, FIND_CASE_SENSITIVE, FIND_WHOLE_WORD, FIND_REGEX
-
 		notebook = self.setUpNotebook()
 		page_search = PageSearch(notebook)
 
-
-		for string, regex in (
-			('Foo', '\\bFoo'), # TODO: should use FIND_WHOLE_WORD
-			('*Foo*', 'Foo'),
-			('Foo Bar', '\\bFoo|\\bBar'),
-			('Foo -Bar', '\\bFoo'), # Bar negated
-			('Links: Foo', None), # no content match in this query
-			('Tag: Foo', '@Foo'),
-			('@Foo', re.escape('@Foo')),
-				# re.escape() behavior changed in 3.7 older versions also escape the "@"
-			('@Foo Bar', re.escape('@Foo') + '|\\bBar'),
-			('Foo... Bar', '\\bFoo\\.\\.\\.|\\bBar'),
-			('"Foo... Bar"', '\\bFoo\\.\\.\\.\\s+Bar'),
-			('NOT foo', None),
-			('Foo*Bar', '\\bFoo\\S*Bar'),
-			('*Foo*Bar*', 'Foo\\S*Bar'),
-			('Foo AND (Bar OR Dus)', '\\bFoo|\\bBar|\\bDus'),
-			('Foo AND NOT (Bar OR Dus)', '\\bFoo'),
+		for string, value, options in (
+			('Foo', '\\bFoo', FIND_REGEX),
+			('*Foo*', 'Foo', 0),
+			('Foo Bar', '\\bFoo|\\bBar', FIND_REGEX),
+			('Foo -Bar', '\\bFoo', FIND_REGEX), # Bar negated
+			('Links: Foo', None, 0), # no content match in this query
+			('Tag: Foo', '@Foo\\b', FIND_REGEX),
+			('@Foo', '@Foo', 0),
+			('@Foo Bar', '@Foo|\\bBar', FIND_REGEX),
+			('Foo... Bar', '\\bFoo\\.\\.\\.|\\bBar', FIND_REGEX),
+			('"Foo... Bar"', '\\bFoo\\.\\.\\.\\s+Bar', FIND_REGEX),
+			('NOT foo', None, 0),
+			('Foo*Bar', '\\bFoo\\S*Bar', FIND_REGEX),
+			('*Foo*Bar*', 'Foo\\S*Bar', FIND_REGEX),
+			('Foo AND (Bar OR Dus)', '\\bFoo|\\bBar|\\bDus', FIND_REGEX),
+			('Foo AND NOT (Bar OR Dus)', '\\bFoo', FIND_REGEX),
 		):
 			squery = page_search.parse_page_search_query(string)
-			fquery = find_query_from_search_query(squery)
-			#print('====', string)
-			self.assertEqual(fquery, FindQuery(regex, FIND_REGEX) if regex else None)
+			fquery = page_search.find_query_from_search_query(squery)
+			self.assertEqual(fquery, FindQuery(value, options) if value else None)
 
 
 class TestPageSearchProviders(tests.TestCase):
@@ -323,7 +328,7 @@ class TestPageSearchProviders(tests.TestCase):
 		# Check handling section and namespace keywords
 		for kw in ('section', 'namespace'):
 			provider = PageNameProvider(notebook, SearchQueryTerm(kw, query))
-			self.assertEqual(provider.regex, search_query_pagename_term_to_regex('::ba:'))
+			self.assertEqual(provider.regex, search_query_pagename_term_to_regex(_t('kw', '::ba:')))
 
 	def testLinksProvider(self):
 		content = {
@@ -556,6 +561,25 @@ class TestPageSearch(tests.TestCase):
 		results = [r.path for r in page_search.search_pages(query)]
 		self.assertTrue(Path('roundtrip') in results)
 
+	def testCaseSensitive(self):
+		page_search = PageSearch(self.notebook)
+		query = page_search.parse_page_search_query('Content: foo')
+		results = [(r.path, r.search_score) for r in page_search.search_pages(query)]
+
+		query = page_search.parse_page_search_query('Content:= foo')
+		results_sensitive = [(r.path, r.search_score) for r in page_search.search_pages(query)]
+
+		self.assertNotEqual(results_sensitive, results)
+
+	def testFindQuery(self):
+		# Has seperate test case with more queries, test here to make sure
+		# plugin tests deriving from this class also check it
+		page_search = PageSearch(self.notebook)
+		query = page_search.parse_page_search_query('foo bar')
+		self.assertEqual(query, _and(_t('any', 'foo'), _t('any', 'bar')))
+		fquery = page_search.find_query_from_search_query(query)
+		self.assertEqual(fquery, FindQuery('\\bfoo|\\bbar', FIND_REGEX))
+
 
 @tests.slowTest
 class TestPageSearchFiles(TestPageSearch):
@@ -580,7 +604,11 @@ class TestPageSearchIndexed(TestPageSearch):
 		TestPageSearch.setUpClass()
 
 	def testProvider(self):
-		TestPageSearchProviders().testTextProvider(cls=indexed_fts.createProvider)
+		TestPageSearchProviders().testTextProvider(cls=indexed_fts.FTSSearchProvider)
+
+		term = _t('content', 'foo')
+		pattern = indexed_fts.FTSSearchProvider.get_find_regex(term)
+		self.assertEqual(pattern, '\\bfoo')
 
 
 class TestUnicodeSearchTerms(tests.TestCase):
@@ -698,4 +726,59 @@ class TestCompileSearchQueryCheckFunction(tests.TestCase):
 			#print('>>>', query, '\n', '===', p_query)
 			check_func = compile_search_query_check_function(p_query, keywords)
 			result = list(map(check_func, records))
+			self.assertEqual(result, wanted, msg='Query: %s' % query)
+
+
+class TestCompileSearchQueryComparisonFunction(tests.TestCase):
+
+	keywords = {
+		'date': {'key': 0, 'check_func_constructor': check_comparison_func_constructor, 'comparison': str},
+		'prio': {'key': 1, 'check_func_constructor': check_comparison_func_constructor, 'comparison': int},
+	}
+	records = [
+		('2020-01-01', 5),
+		('2020-05-05', 1),
+		('2020-08-08', 2),
+		('2020-12-12', 3),
+	]
+	queries = [
+		('date>2020-06-01', [False, False, True, True]),
+		('date:>2020-06-01', [False, False, True, True]),
+		('date>=2020-06-01', [False, False, True, True]),
+		('date:>=2020-06-01', [False, False, True, True]),
+
+		('date<2020-06-01', [True, True, False, False]),
+		('date:<2020-06-01', [True, True, False, False]),
+		('date<=2020-06-01', [True, True, False, False]),
+		('date:<=2020-06-01', [True, True, False, False]),
+
+		('date: 2020-05-05', [False, True, False, False]),
+		('date:2020-05-05', [False, True, False, False]),
+		('date=2020-05-05', [False, True, False, False]),
+		('date= 2020-05-05', [False, True, False, False]),
+		('date:=2020-05-05', [False, True, False, False]),
+
+		('date<2020-05-05', [True, False, False, False]),
+		('date<=2020-05-05', [True, True, False, False]),
+		('date>2020-05-05', [False, False, True, True]),
+		('date>=2020-05-05', [False, True, True, True]),
+
+		('-date>2020-06-01', [True, True, False, False]),
+		('-date>=2020-06-01', [True, True, False, False]),
+		('-date: 2020-05-05', [True, False, True, True]),
+
+		('prio>2', [True, False, False, True]),
+		('prio>=2', [True, False, True, True]),
+		('prio=2', [False, False, True, False]),
+		('prio: 2', [False, False, True, False]),
+		('prio<2', [False, True, False, False]),
+		('prio<=2', [False, True, True, False]),
+	]
+
+	def runTest(self):
+		for query, wanted in self.queries:
+			p_query = parse_search_query(query, self.keywords)
+			#print('>>>', query, '\n', '===', p_query)
+			check_func = compile_search_query_check_function(p_query, self.keywords)
+			result = list(map(check_func, self.records))
 			self.assertEqual(result, wanted, msg='Query: %s' % query)

@@ -48,7 +48,7 @@ OPERATOR_GROUP_END = ')'
 
 _operator_tokens = (OPERATOR_OR, OPERATOR_AND, OPERATOR_NOT, OPERATOR_GROUP_START, OPERATOR_GROUP_END)
 
-operators = {
+_query_operators = {
 	'or': OPERATOR_OR,
 	'and': OPERATOR_AND,
 	'+': OPERATOR_AND,
@@ -60,6 +60,24 @@ operators = {
 _operators_allowed_in_keyword_group = ('+', '-')
 _operators_not_allowed_in_keyword_group = ('(', ')')
 # 'and' 'or' 'not' will be interpreted as string in keyword group context
+
+
+OPERATOR_MATCH = 'MATCH'
+OPERATOR_EQUAL = '__eq__'
+OPERATOR_LESS_THAN = '__lt__'
+OPERATOR_GREATER_THAN = '__gt__'
+OPERATOR_LESS_EQUAL = '__le__'
+OPERATOR_GREATER_EQUAL = '__ge__'
+
+
+_keyword_operators = {
+	':': OPERATOR_MATCH,
+	'=': OPERATOR_EQUAL,
+	'>': OPERATOR_GREATER_THAN,
+	'<': OPERATOR_LESS_THAN,
+	'>=': OPERATOR_GREATER_EQUAL,
+	'<=': OPERATOR_LESS_EQUAL,
+}
 
 _word_re = re.compile(r'''
 	(	'(\\'|[^'])*' |  # single quoted word
@@ -148,22 +166,24 @@ class SearchQuery:
 class SearchQueryTerm:
 	'''Object to represent a single keyword term in a search query'''
 
-	def __init__(self, keyword: str, value: str, negate: bool=False):
+	def __init__(self, keyword: str, value: str, kw_operator=OPERATOR_MATCH, negate: bool=False):
 		self.keyword = keyword.lower()
 		self.value = value
+		self.kw_operator = kw_operator
 		self.negate = negate
+
+	def copy(self, keyword: str|None=None, value: str|None=None, kw_operator=None, negate: bool|None=None):
+		'''Create a new instance with only few attribute modified'''
+		negate = self.negate if negate is None else negate # distinguish False and None
+		return self.__class__(keyword or self.keyword, value or self.value, kw_operator or self.kw_operator, negate)
 
 	def __eq__(self, other):
 		# Compare resulting term, not original string information
 		return isinstance(other, self.__class__) and \
-			(self.keyword, self.negate, self.value) == (other.keyword, other.negate, other.value)
+			(self.keyword, self.value, self.kw_operator, self.negate) == (other.keyword, other.value, self.kw_operator, other.negate)
 
 	def __repr__(self):
-		return "<%s %r %r negate=%r>" % (self.__class__.__name__, self.keyword, self.value, self.negate)
-
-	def copy(self):
-		'''Shallow copy'''
-		return self.__class__(self.keyword, self.value, self.negate)
+		return "<%s %s %r %r negate=%r>" % (self.__class__.__name__, self.keyword, self.kw_operator, self.value, self.negate)
 
 
 def parse_search_query(string: str, keywords: dict, default_keyword: str='any') -> SearchQuery:
@@ -193,7 +213,7 @@ def _tokenize_search_query(string: str, keywords: dict, default_keyword: str='an
 	# terms without a keyword get the default keyword
 
 	# Bootstrap regexes
-	keyword_re = re.compile('(' + '|'.join(keywords) + '):(.*)', re.I|re.U)
+	keyword_re = re.compile('(' + '|'.join(keywords) + ')(:?[><]=|:?[=><]|:)(.*)', re.I|re.U)
 	implicit_keywords = {}
 	if isinstance(keywords, dict): # should always be a dict, but in testing we use sets
 		for k in keywords:
@@ -224,14 +244,15 @@ def _tokenize_search_query(string: str, keywords: dict, default_keyword: str='an
 			w = w[:-1]
 
 		m_key = keyword_re.match(w)
-		if w.lower() in operators:
-			tokens.append(operators[w.lower()])
+		if w.lower() in _query_operators:
+			tokens.append(_query_operators[w.lower()])
 		elif m_key:
 			keyword = m_key.group(1).lower()
-			if m_key.group(2) or ( words and not words[0][0] == '(' ):
-				string = m_key.group(2) or words.pop(0)
+			kwop = _keyword_operators.get(m_key.group(2).strip(':'), OPERATOR_MATCH)
+			if m_key.group(3) or ( words and not words[0][0] == '(' ):
+				string = m_key.group(3) or words.pop(0)
 				term = unescape_quoted_string(string)
-				tokens.append(SearchQueryTerm(keyword, term))
+				tokens.append(SearchQueryTerm(keyword, term, kw_operator=kwop))
 			elif words and words[0][0] == '(':
 				# special case to support "keyword: (value value value)" as "(keyword:value keyword:value keyword:value)"
 				if words[0] == '(':
@@ -242,7 +263,7 @@ def _tokenize_search_query(string: str, keywords: dict, default_keyword: str='an
 				tokens.extend(_tokenize_group_for_term(keyword, words))
 			else:
 				# no more words - edge case - something ending in ":" but nothing following
-				term = m_key.group(1)+":"
+				term = m_key.group(1) + m_key.group(2)
 				keyword = match_implicit_keyword(term)
 				tokens.append(SearchQueryTerm(keyword, term))
 		else:
@@ -267,7 +288,7 @@ def _tokenize_group_for_term(keyword, words):
 			w = w[:-1]
 
 		if w in _operators_allowed_in_keyword_group:
-			tokens.append(operators[w])
+			tokens.append(_query_operators[w])
 		elif w == '(':
 			logger.warning("Out of place '(' operator in keyword group of search query")
 			# skip over this token
@@ -369,7 +390,7 @@ def _process_operators(tokens: list) -> SearchQuery:
 			return SearchQuery(OPERATOR_AND, tokens)
 
 
-def search_query_term_to_regex(value: str) -> re.Pattern:
+def search_query_term_to_regex(term: SearchQueryTerm) -> re.Pattern:
 	'''Returns a regex object for a simple string match of a L{SearchQueryTerm}
 
 	The following rules are applied:
@@ -380,15 +401,14 @@ def search_query_term_to_regex(value: str) -> re.Pattern:
 	  - by default matches can end anywhere in a word, unless they end with a space " "
 	  - a "*" at the end does nothing but the default behavior
 
-	@param value: the L{term.value} attribute of a L{SearchQueryTerm}
+	@param term: a L{SearchQueryTerm}
 	@param returns: a C{re.Pattern} object
 	'''
 	# NOTE: changes in above rules also need to be updated in the manual
-	case = False # TODO: how to switch this from the query?
 
 	# Globs to regex
 	parts = []
-	for p in value.strip().strip('*').split('*'):
+	for p in term.value.strip().strip('*').split('*'):
 		sub_parts = re.split('\\s+', p) # use regex split to have empty match at start and end of piece
 		parts.append(r'\s+'.join(map(re.escape, sub_parts)))
 	regex = r'\S*'.join(parts)
@@ -396,20 +416,21 @@ def search_query_term_to_regex(value: str) -> re.Pattern:
 	# Add word delimiters according to the rules explained above, but avoid adding them next
 	# to non-word characters or next to chinese charaters.
 	# Chinese is treated special because it does not always use whitespace as word delimiter.
-	if re.match(r'^\s+\w', value, re.U) \
-		or (re.match(r'^\w', value, re.U) and not '\u4e00' <= value[0] <= '\u9fff'):
+	if re.match(r'^\s+\w', term.value, re.U) \
+		or (re.match(r'^\w', term.value, re.U) and not '\u4e00' <= term.value[0] <= '\u9fff'):
 			regex = r'\b' + regex
 
-	if re.search(r'\w\s+$', value, re.U):
+	if re.search(r'\w\s+$', term.value, re.U):
 		regex = regex + r'\b'
 
-	if case:
+	if term.kw_operator == OPERATOR_EQUAL:
+		# OPERATOR_EQUAL is interpreted as exact match, so case sensitive
 		return re.compile(regex, re.U)
 	else:
 		return re.compile(regex, re.U | re.I)
 
 
-def search_query_pagename_term_to_regex(value: str) -> re.Pattern:
+def search_query_pagename_term_to_regex(term: SearchQueryTerm) -> re.Pattern:
 	'''Returns a regex object for a page name match of a L{SearchQueryTerm}
 
 	The following rules are applied:
@@ -422,36 +443,36 @@ def search_query_pagename_term_to_regex(value: str) -> re.Pattern:
 	  - a "::" at the end excludes sub-pages
 	  - a ":+" at the end gives sub-pages put excludes the parent page
 
-	@param value: the L{term.value} attribute of a L{SearchQueryTerm}
+	@param term: a L{SearchQueryTerm}
 	@param returns: a C{re.Pattern} object
 	'''
 	# NOTE: changes in above rules also need to be updated in the manual
-	case = False # TODO: how to switch this from the query?
 
 	# Globs to regex
 	parts = []
-	for p in value.strip().strip('*').split('*'):
+	for p in term.value.strip().strip('*').split('*'):
 		sub_parts = re.split('\\s+', p) # use regex split to have empty match at start and end of piece
 		parts.append(r'\s+'.join(map(re.escape, sub_parts)))
 	regex = r'.*'.join(parts)
 
-	if value.startswith(' '):
+	if term.value.startswith(' '):
 		regex = r'\s+' + regex
 	elif regex.startswith('::'):
 		regex = '^:?' + regex[2:]
 	elif regex.startswith(':'):
 		regex = '(^:?|:)' + regex[1:]
 
-	if value.endswith(' '):
+	if term.value.endswith(' '):
 		regex = regex + r'\s+'
 	elif regex.endswith('::'):
 		regex = regex[:-2] + ':?$'
-	elif value.endswith(':+'):
+	elif term.value.endswith(':+'):
 		regex = regex[:-3] + ':.+'
 	elif regex.endswith(':'):
 		regex = regex[:-1] + '(:|:?$)'
 
-	if case:
+	if term.kw_operator == OPERATOR_EQUAL:
+		# OPERATOR_EQUAL is interpreted as exact match, so case sensitive
 		return re.compile(regex, re.U)
 	else:
 		return re.compile(regex, re.U | re.I)
@@ -460,7 +481,7 @@ def search_query_pagename_term_to_regex(value: str) -> re.Pattern:
 search_tag_re = re.compile(r'^@[\w*]+@?$', re.U) #: Inteded to be used for implicit keyword parsing
 
 
-def search_query_tags_term_to_regex(value: str) -> re.Pattern:
+def search_query_tags_term_to_regex(term: SearchQueryTerm) -> re.Pattern:
 	'''Return a regex object for a tag name
 
 	The following rules are applied:
@@ -470,18 +491,18 @@ def search_query_tags_term_to_regex(value: str) -> re.Pattern:
 	  - if the term starts with a "@" it will only match from the start of the name
 	  - if the term ends with a "@" it will only match from the end of the name
 
-	@param value: the L{term.value} attribute of a L{SearchQueryTerm}
+	@param term: a L{SearchQueryTerm}
 	@param returns: a C{re.Pattern} object
 	'''
-	startword = value.startswith('@')
-	endsword = value.endswith('@')
-	parts = value.strip('*').strip('@').split('*')
+	startword = term.value.startswith('@')
+	endsword = term.value.endswith('@')
+	parts = term.value.strip('*').strip('@').split('*')
 	regex = r'.*'.join(map(re.escape, parts))
 	if startword:
 		regex = '\\b' + regex
 	if endsword:
 		regex = regex + '\\b'
-	return re.compile(regex, re.U | re.I)
+	return re.compile(regex, re.U | re.I) # Tags are always case in-sensitive
 
 
 def check_func_constructor(term: SearchQueryTerm, keywords: dict) -> Callable[[object], bool]:
@@ -497,7 +518,7 @@ def check_func_constructor(term: SearchQueryTerm, keywords: dict) -> Callable[[o
 	else:
 		regex_constructor = search_query_term_to_regex
 
-	pattern = regex_constructor(term.value)
+	pattern = regex_constructor(term)
 	key = keywords[term.keyword]['key']
 
 	def mychecker(record):
@@ -516,7 +537,7 @@ def check_func_constructor_any_keyword(term: SearchQueryTerm, keywords: dict) ->
 	check_functions = []
 	for keyword in keywords[term.keyword]['include']:
 		constructor = keywords[keyword].get('check_func_constructor', check_func_constructor)
-		myterm = SearchQueryTerm(keyword, term.value)
+		myterm = term.copy(keyword=keyword)
 		checker = constructor(myterm, keywords)
 		check_functions.append(checker)
 
@@ -528,6 +549,24 @@ def check_func_constructor_any_keyword(term: SearchQueryTerm, keywords: dict) ->
 			return False
 
 	return mychecker
+
+
+def check_comparison_func_constructor(term: SearchQueryTerm, keywords: dict) -> Callable[[object], bool]:
+	'''To be used as a constructor with L{compile_search_query_check_function}
+	The resulting function uses the comparison functions `<`, `>`, `=`, `<=`, `>=`, where `:` is interpreted
+	as `=`. The c{'comparison'} value in the keywords dict should provide a type (e.g. `str` or `int`)
+	that is used for the comparison
+	'''
+	key = keywords[term.keyword]['key']
+	ctype = keywords[term.keyword]['comparison']
+	try:
+		ref = ctype(term.value) # e.g. str -> int
+	except ValueError:
+		logger.warning('Invalid value for type \'%s\': %s' % ctype.__name__, term.value)
+		return lambda r: False
+
+	op = ctype.__eq__ if term.kw_operator == OPERATOR_MATCH else getattr(ctype, term.kw_operator)
+	return lambda r: op(r[key], ref)
 
 
 def _negate_checker(checker, *a):
@@ -569,9 +608,8 @@ def compile_search_query_check_function(query: SearchQuery, keywords: dict) -> C
 	These check functions only need to check for a positive match, the wrapper takes care of
 	operators and negation.
 
-	Check function constructors included here are L{check_func_constructor_pagename} and 
-	L{check_func_constructor_any_keyword} which implement a different regex for pagenames and 
-	a check any field behavior.
+	Check function constructors included here are L{check_func_constructor_pagename},
+	L{check_comparison_func_constructor}, L{check_func_constructor_any_keyword}.
 
 	@param keywords: dict with keywords as keys and a dict with attributes (e.g. the type) as values
 	@returns: a check function for the whole query C{check(record: Mapping) -> bool}
