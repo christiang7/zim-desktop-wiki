@@ -137,7 +137,7 @@ class Dumper(DumperClass):
 	dump_ul = dump_list
 	dump_ol = dump_list
 
-	def dump_li(self, tag, attrib, strings):
+	def dump_li(self, tag, attrib, strings, indent_string='\t'):
 		# Here is some logic to figure out the correct bullet character
 		# depends on parent list element
 
@@ -167,7 +167,7 @@ class Dumper(DumperClass):
 			# else assume it is numbered..
 
 			if 'indent' in attrib:
-				prefix = int(attrib['indent']) * '\t'
+				prefix = int(attrib['indent']) * indent_string
 				bullet = prefix + bullet
 
 		return (bullet, ' ') + tuple(strings)

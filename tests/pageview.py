@@ -2106,10 +2106,37 @@ class TestDoEndOfLine(tests.TestCase, TextBufferTestCaseMixin):
 		self.assertInsertNewLine('=== Foo', '<h level="2">Foo\n</h>')
 		self.assertInsertNewLine('=== Foo ===', '<h level="2">Foo\n</h>')
 
+	def testFormatMarkdownHeading(self):
+		self.buffer.notebook = self.setUpNotebook()
+		self.buffer.notebook.config['Notebook']['default_file_format'] = 'markdown'
+		try:
+			self.assertInsertNewLine('# Foo', '<h level="1">Foo\n</h>')
+			self.assertInsertNewLine('## Foo', '<h level="2">Foo\n</h>')
+			self.assertInsertNewLine('### Foo', '<h level="3">Foo\n</h>')
+			self.assertInsertNewLine('#### Foo', '<h level="4">Foo\n</h>')
+			self.assertInsertNewLine('##### Foo', '<h level="5">Foo\n</h>')
+			self.assertInsertNewLine('###### Foo', '<h level="6">Foo\n</h>')
+		finally:
+			self.buffer.notebook = None
+
+	def testFormatMarkdownHeadingTrailingHashes(self):
+		self.buffer.notebook = self.setUpNotebook()
+		self.buffer.notebook.config['Notebook']['default_file_format'] = 'markdown'
+		try:
+			self.assertInsertNewLine('## Foo ##', '<h level="2">Foo\n</h>')
+			self.assertInsertNewLine('# Foo #', '<h level="1">Foo\n</h>')
+		finally:
+			self.buffer.notebook = None
+
+	def testNoMarkdownHeadingInWikiFormat(self):
+		# Ensure # Foo is NOT converted to heading in wiki format notebooks
+		self.assertInsertNewLine('# Foo', '# Foo\n')
+
 	def testNoFormattingInsideCode(self):
 		# Make sure text inside code is not being formatted
 		self.assertInsertNewLine('<code>== Foo ==</code>', '<code>== Foo ==</code>\n')
 		self.assertInsertNewLine('<code>---</code>', '<code>---</code>\n')
+		self.assertInsertNewLine('<code># Foo</code>', '<code># Foo</code>\n')
 
 	def testFormatLine(self):
 		self.assertInsertNewLine('aaa\n-----', 'aaa\n<line />\n')

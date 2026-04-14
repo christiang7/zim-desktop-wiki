@@ -190,11 +190,18 @@ class ApplicationMountPointHandler(object):
 			return path.exists()
 
 
-def init_notebook(dir, name=None, page_template='Default'):
-	'''Initialize a new notebook in a directory'''
+def init_notebook(dir, name=None, page_template='Default', file_format='zim-wiki'):
+	'''Initialize a new notebook in a directory
+
+	@param dir: a L{Folder} for the notebook
+	@param name: notebook name, defaults to folder basename
+	@param page_template: name of the page template to use
+	@param file_format: storage format, either C{'zim-wiki'} or C{'markdown'}
+	'''
 	from .notebook import NotebookConfig
 	dir.touch()
 	config = NotebookConfig(dir.file('notebook.zim'))
 	config['Notebook']['name'] = name or dir.basename
-	config['Notebook']['default_page_template'] = valid_template_name('wiki', page_template)
+	config['Notebook']['default_file_format'] = file_format
+	config['Notebook']['default_page_template'] = valid_template_name('wiki', page_template) # TODO: make template format flexible
 	config.write()

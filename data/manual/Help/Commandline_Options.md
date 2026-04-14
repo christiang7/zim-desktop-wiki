@@ -14,6 +14,7 @@ usage: zim [OPTIONS] [NOTEBOOK [PAGE_LINK]]
    or: zim --import [OPTIONS] NOTEBOOK PAGE FILES
    or: zim --search [OPTIONS] NOTEBOOK QUERY
    or: zim --index  [OPTIONS] NOTEBOOK
+   or: zim --convert-notebook [OPTIONS] NOTEBOOK
    or: zim --plugin PLUGIN [ARGUMENTS]
    or: zim --manual [OPTIONS] [PAGE_LINK]
    or: zim --help
@@ -70,6 +71,10 @@ Search Options:
 
 Index Options:
   -f, --flush       flush the index first and force re-building
+
+Convert Notebook Options !!!EXPERIMENTAL MAKE A BACKUP FIRST!!!:
+  -F, --format      change the source format and re-write all pages in
+                    the new format ('zim-wiki', 'markdown')
 
 Try 'zim --manual' for more help.
 '''

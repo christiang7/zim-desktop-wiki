@@ -95,7 +95,6 @@ class TestLineSorterWindowExtension(tests.TestCase, TextBufferTestCaseMixin):
 		)
 		self.place_cursor(32)
 		self.extension.move_line_up()
-		self.print_buffer(self.buffer)
 		self.assertBufferEqual(self.buffer,
 			'<li indent="0" style="unchecked-box"><icon stock="zim-unchecked-box" /> Checkbox #1\n</li>'
 			'Line with <strong>bold</strong> text\n'

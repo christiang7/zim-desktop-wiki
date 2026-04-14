@@ -981,9 +981,7 @@ class PageView(GSignalEmitterMixin, Gtk.VBox):
 			# HACK: using None value instead of "hascontent" to distinguish
 			# between a page without source and an existing empty page
 			CURSOR_CHAR = '\ufffe' # unicode "non-character"
-			parsetree = self.notebook.get_template(self.page,
-				{'place_cursor': ExpressionFunction(lambda: CURSOR_CHAR)}
-			)
+			parsetree = self.notebook.get_new_page_template(self.page, support_cursor=True)
 			buffer.set_parsetree(parsetree, showing_template=True)
 			start, end = buffer.get_bounds()
 			start.forward_find_char(lambda c,x: c == CURSOR_CHAR)

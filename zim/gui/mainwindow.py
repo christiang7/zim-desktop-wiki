@@ -469,7 +469,6 @@ class MainWindow(WindowBaseMixin, Window):
 
 		# setup uistate
 		self.uistate = notebook.state['MainWindow']
-		self.uistate.setdefault('windowpos', None, check=value_is_coord)
 		self.uistate.setdefault('windowsize', (600, 450), check=value_is_coord)
 		self.uistate.setdefault('windowmaximized', False)
 		self.uistate.setdefault('active_tabs', None, tuple)
@@ -721,10 +720,6 @@ class MainWindow(WindowBaseMixin, Window):
 
 		if not self._geometry_set:
 			# Ignore this if an explicit geometry was specified to the constructor
-			if self.uistate['windowpos'] is not None:
-				x, y = self.uistate['windowpos']
-				self.move(x, y)
-
 			w, h = self.uistate['windowsize']
 			self.set_default_size(w, h)
 
@@ -771,7 +766,6 @@ class MainWindow(WindowBaseMixin, Window):
 		self.history.set_state(self.page, cursor, scroll)
 
 		if self.is_visible() and not self.isfullscreen:
-			self.uistate['windowpos'] = tuple(self.get_position())
 			self.uistate['windowsize'] = tuple(self.get_size())
 			self.uistate['windowmaximized'] = self.maximized
 

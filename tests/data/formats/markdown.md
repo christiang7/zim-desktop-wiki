@@ -29,17 +29,17 @@ And some empty space here:
 
 
 ### head 3
-[](foo)  links to page in the current namespace or parents
-[](:foo) links to page in the root namespace
-[](+foo) links to page in a subnamespace
-[bar](foo) links to "foo" but display "bar"
+[[foo]]  links to page in the current namespace or parents
+[[:foo]] links to page in the root namespace
+[[+foo]] links to page in a subnamespace
+[[foo|bar]] links to "foo" but display "bar"
 
-[](:foo:bar) [](./file.png) <file:///etc/passwd>
+[[:foo:bar]] [](./file.png) <file:///etc/passwd>
 
 <mailto:foo@bar.org>
-[wp?Test](interwiki:wp?Test)
+[[wp?Test]]
 
-External links like <http://nongnu.org> and [foo@bar.org](mailto:foo@bar.org) are also supported
+External links like <http://nongnu.org> and <foo@bar.org> are also supported
 
 [not:a:link]
 
@@ -57,7 +57,7 @@ External links like <http://nongnu.org> and [foo@bar.org](mailto:foo@bar.org) ar
 
 Tags: @foo @bar
 
-Anchors: {#foo}  [](#foo)  [](page#foo)
+Anchors: {#foo}  [[#foo]]  [[page#foo]]
 
 
 #### head 4 {#head-4-anchor}
@@ -80,30 +80,30 @@ Indented list:
 
 
 TODO list:
-- ☐ foo
-- ☑ bar
-  - ☑ sub item 1
+- [ ] foo
+- [*] bar
+  - [*] sub item 1
     - Some normal bullet
-  - ☑ sub item 2
-- ☒ baz
+  - [*] sub item 2
+- [x] baz
 
-- ▷ Migrated checkbox
-- ◁ Transmigrated checkbox
+- [>] Migrated checkbox
+- [<] Transmigrated checkbox
 
 A numbered list:
 1. foo
 2. bar
-  1. sub list
-  2. here
+  a. sub list
+  b. here
 3. hmmm
 
 
 Start with number other that 1/a/A
 
-3. foo
-4. bar
+C. foo
+D. bar
   3. sub item start with 3
-5. baz
+E. baz
 
 ##### head 5
 *some verbatim blocks*:
@@ -172,11 +172,11 @@ the Achaeans.
 
 ## A table
 
-|        H1        |                        H2 h2 | H3                   |
-|:----------------:|-----------------------------:|:---------------------|
-|    Column A1     |                    Column A2 | a                    |
-| a very long cell |                **bold text** | b                    |
-|    hyperlinks    | [wp?wiki](interwiki:wp?wiki) | [Xorg](http://x.org) |
+|        H1       <|         H2 h2 | H3                  <|
+|:----------------:|--------------:|:---------------------|
+|    Column A1     |     Column A2 | a                    |
+| a very long cell | **bold text** | b                    |
+|    hyperlinks    |   [[wp?wiki]] | [Xorg](http://x.org) |
 
 ## Multiformatting **bold**
 

@@ -12,7 +12,6 @@ from zim.config import ConfigManager
 from zim.formats import get_format
 from zim.notebook import HRef, PageNotFoundError
 from zim.parse.links import link_type
-from zim.templates.expression import ExpressionFunction
 from zim.gui.widgets import Dialog, FileDialog, ErrorDialog, BrowserTreeView, ScrolledWindow
 from zim.gui.base.images import image_file_get_dimensions
 from zim.gui.applications import edit_config_file, open_folder
@@ -812,15 +811,13 @@ class MoveTextDialog(Dialog):
 			return False
 
 		if not newpage.exists():
-			template = self.notebook.get_template(newpage,
-				{'place_cursor': ExpressionFunction(lambda: '')} # FIXME, ideal would be to insert new content at cursor location
-			)
+			template = self.notebook.get_new_page_template(newpage)
 			newpage.set_parsetree(template)
 
 		parsetree = self.buffer.get_parsetree(self.bounds)
 		newtree = update_parsetree_and_copy_images(parsetree, self.notebook, self.page, newpage)
 
-		newpage.append_parsetree(newtree)
+		newpage.append_parsetree(newtree) # TODO - we would want to insert at the cursor position in case of a template
 		self.notebook.store_page(newpage)
 
 		# Delete text (after copy was successfull..)

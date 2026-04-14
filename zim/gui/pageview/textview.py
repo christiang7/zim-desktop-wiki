@@ -33,6 +33,7 @@ CURSOR_WIDGET = Gdk.Cursor.new_from_name(Gdk.Display.get_default(), 'default')
 
 # Regexes used for autoformatting
 heading_re = re.compile(r'^(={2,7})\s*(.*?)(\s=+)?$')
+md_heading_re = re.compile(r'^(\#{1,6})[ \t]+(\S.*?)[ \t]*\#*[ \t]*$')
 
 link_to_page_re = re.compile(r'''(
 	  [\w\.\-\(\)]*(?: :[\w\.\-\(\)]{2,} )+ (?: : | \#\w[\w_-]+)?
@@ -1013,6 +1014,10 @@ class TextView(Gtk.TextView):
 		is_hr = (l >= 3) and (line == '-' * l)
 
 		m_head = heading_re.match(line)
+		if not m_head and buffer.notebook and buffer.notebook.config['Notebook']['default_file_format'] == 'markdown':
+			m_md_head = md_heading_re.match(line)
+		else:
+			m_md_head = None
 
 		if is_hr:
 			with buffer.user_action:
@@ -1023,6 +1028,15 @@ class TextView(Gtk.TextView):
 		elif m_head:
 			level = len(m_head.group(1)) - 1
 			heading = m_head.group(2) + '\n'
+			end.forward_line()
+			mark = buffer.create_mark(None, end)
+			buffer.delete(start, end)
+			buffer.insert_with_tags_by_name(
+				buffer.get_iter_at_mark(mark), heading, 'style-h' + str(level))
+			buffer.delete_mark(mark)
+		elif m_md_head:
+			level = len(m_md_head.group(1))
+			heading = m_md_head.group(2).rstrip() + '\n'
 			end.forward_line()
 			mark = buffer.create_mark(None, end)
 			buffer.delete(start, end)

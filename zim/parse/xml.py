@@ -2,6 +2,7 @@
 
 import re
 
+from .encode import encode_xml_text, encode_xml_attrib, decode_xml
 from .tokenlist import TEXT, END
 
 
@@ -11,7 +12,7 @@ def _attrib_to_xml(attrib):
 	else:
 		text = []
 		for k in sorted(attrib):
-			v = _encode_xml_attrib(attrib[k]) if isinstance(attrib[k], str) else attrib[k]
+			v = encode_xml_attrib(attrib[k]) if isinstance(attrib[k], str) else attrib[k]
 			text.append(' %s="%s"' % (k, v))
 		return ''.join(text)
 
@@ -26,20 +27,9 @@ def _xml_to_tag_and_attribute(string):
 		elif k in ('indent', 'level'):
 			attrib[k] = int(v)
 		else:
-			attrib[k] = _decode_xml(v)
+			attrib[k] = decode_xml(v)
 	attrib = attrib if attrib else None
 	return tag, attrib
-
-
-def _encode_xml(text):
-	return text.replace('&', '&amp;').replace('>', '&gt;').replace('<', '&lt;')
-
-def _encode_xml_attrib(text):
-	return text.replace('&', '&amp;').replace('>', '&gt;').replace('<', '&lt;').replace('"', '&quot;').replace("'", '&apos;')
-
-def _decode_xml(text):
-	chars = {'amp': '&', 'gt': '>', 'lt': '<', 'quot': '"', 'apos': "'"}
-	return re.sub(r'&(\w+);', lambda m: chars[m.group(1)], text)
 
 
 def simple_xml_to_token_parser(xml):
@@ -64,7 +54,7 @@ def simple_xml_to_token_parser(xml):
 				else:
 					stack.append(t[0])
 		else:
-			yield (TEXT, _decode_xml(part))
+			yield (TEXT, decode_xml(part))
 	assert not stack, 'Missing end tags for: %r' % stack
 
 
@@ -76,7 +66,7 @@ def simple_token_to_xml_dumper(token_iter, tags_without_end_tag=()):
 		stack = []
 		for t in token_iter:
 			if t[0] == TEXT:
-				xml.append(_encode_xml(t[1]))
+				xml.append(encode_xml_text(t[1]))
 			elif t[0] == END:
 				assert stack and t[1] == stack[-1], 'Unexpected end tag: %r' % (t,)
 				stack.pop()

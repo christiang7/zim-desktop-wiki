@@ -6,15 +6,18 @@ The notebook **Name** is used in the "[[Notebooks|Open Notebook]]" dialog and e.
 
 The notebook **Interwiki Keyword** can be used to link to this notebook for other notebooks. See "Interwiki" in [[Links]] for more info.
 
-The **Home Page** is the first page to open in a notebook if you have no history yet. It can be accessed with the icon button for the home page and the <Alt><Home> key binding. Typically the home page should be an index page linking to other pages.
-
 The notebook **Icon** is an image that is used together with the name to identify the notebook.
+
+The **Default file format** sets the file format used for new pages in the notebook. The default is "zim-wiki" (the native zim wiki format). Selecting "markdown" stores pages as Markdown files (`.md`) with YAML front matter - this feature is currently experimental for testing.
+
+The **Page template** gives the default template for new pages
+
+The **Home Page** is the first page to open in a notebook if you have no history yet. It can be accessed with the icon button for the home page and the <Alt><Home> key binding. Typically the home page should be an index page linking to other pages.
 
 The **Document Root** is a special folder containing documents that can be linked to from the notebook. To link files in this folder start the links with a "/" (see [[Links]] for more details). This folder is typically used for notebooks to be published as a webpage. When [[Export|exporting]] the notebook to HTML, the document root can be mapped as a special URL.
 
-The property **Prefer short names for page links** controls the behavior e.g. when pasting a page link. When enabled a link like "''CustomerA:ProjectB''" will be inserted with "''ProjectB''" as link text.
+The **Prefer short names for page links** property controls the behavior e.g. when pasting a page link. When enabled a link like "''CustomerA:ProjectB''" will be inserted with "''ProjectB''" as link text.
 
 When the property **Do not use system trash for this notebook** is enabled, the "//Delete page//" menu action will perform a permanent delete instead of a moving files to trash.
 
 The property **Filename template for pasted images** gives a base name to save image files when images are pasted into a page. This string can contain `strftime` codes for date and time.
- 

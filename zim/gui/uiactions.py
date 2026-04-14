@@ -461,8 +461,8 @@ class NewPageDialog(Dialog):
 		self.notebook = notebook
 		self.navigation = navigation
 
-		default = notebook.get_page_template_name(path)
-		templates = [t[0] for t in list_templates('wiki')]
+		default = notebook.get_new_page_template_name(path)
+		templates = [t[0] for t in list_templates('wiki')] # TODO make page template format flexible
 		if not default in templates:
 			templates.insert(0, default)
 
@@ -503,7 +503,7 @@ class NewPageDialog(Dialog):
 			if page.exists():
 				raise PageExistsError(path)
 
-			template = get_template('wiki', self.form['template'])
+			template = get_template('wiki', self.form['template']) # TODO make page template format flexible
 			tree = self.notebook.eval_new_page_template(page, template)
 			page.set_parsetree(tree)
 			self.notebook.store_page(page)
@@ -523,9 +523,21 @@ class ImportPageDialog(FileDialog):
 		self.navigation = navigation
 		self.notebook = notebook
 
-		self.add_filter(_('Text Files'), '*.md') # T: File filter for '*.txt'
-
 ##### changed self.add_filter(_('Text Files'), '*.txt') to self.add_filter(_('Text Files'), '*.md') 
+
+		# Add "All Supported Formats" filter with both .txt and .md
+		filter_supported = Gtk.FileFilter()
+		filter_supported.set_name(_('All Supported Formats') + ' (.txt, .md)')
+			# T: File filter for all supported import formats (.txt, .md)
+		filter_supported.add_pattern('*.txt')
+		filter_supported.add_pattern('*.md')
+		self.filechooser.add_filter(filter_supported)
+		self.filechooser.set_filter(filter_supported)
+
+		self.add_filter(_('Text Files') + ' (.txt)', '*.txt') # T: File filter for '*.txt'
+		self.add_filter(_('Markdown Files' + ' (.md)'), '*.md') # T: File filter for '*.md'
+		self._add_filter_all()
+		self.filechooser.set_filter(filter_supported)
 
 		if page is not None:
 			self.add_shortcut(notebook, page)
@@ -536,7 +548,10 @@ class ImportPageDialog(FileDialog):
 		file = self.get_file()
 		if file is None:
 			return False
-		page = import_file_from_user_input(file, self.notebook)
+
+		format = 'wiki' if file.basename.endswith('.md') else 'wiki' # TODO interface to support all source formats
+		#page = import_file_from_user_input(file, self.notebook)
+		page = import_file_from_user_input(file, self.notebook, format=format)
 		self.navigation.open_page(page)
 		return True
 ###### changed if basename.endswith('.txt'): to if basename.endswith('.md'):
@@ -547,7 +562,8 @@ class SaveCopyDialog(FileDialog):
 		FileDialog.__init__(self, widget, _('Save Copy'), Gtk.FileChooserAction.SAVE)
 			# T: Dialog title of file save dialog
 		self.page = page
-		self.filechooser.set_current_name(page.name + '.md')
+		file, folder = notebook.layout.map_page(page)
+		self.filechooser.set_current_name(file.basename)
 		self.add_shortcut(notebook, page)
 
 ###### changed self.filechooser.set_current_name(page.name + '.txt') to self.filechooser.set_current_name(page.name + '.md')
@@ -559,7 +575,7 @@ class SaveCopyDialog(FileDialog):
 		file = self.get_file()
 		if file is None:
 			return False
-		format = 'wiki'
+		format = 'markdown' if file.basename.endswith('.md') else 'wiki' # TODO interface to support all source formats
 		logger.info("Saving a copy of %s using format '%s'", self.page, format)
 		lines = self.page.dump(format)
 		file.writelines(lines)

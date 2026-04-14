@@ -34,7 +34,7 @@ except:
 from zim.plugins import PluginClass, InsertedObjectTypeExtension, PLUGIN_FOLDER
 from zim.actions import action
 from zim.config import String, Boolean, ConfigManager
-from zim.formats.html import html_encode
+from zim.parse.encode import encode_xml_text, encode_xml_attrib
 
 from zim.gui.widgets import Dialog, InputEntry, ScrolledWindow
 from zim.gui.insertedobjects import TextViewWidget
@@ -194,11 +194,11 @@ class SourceViewObjectType(InsertedObjectTypeExtension):
 		sh_map = {'dosbatch': 'dos'}
 		sh_lang = sh_map[attrib['lang']] if attrib['lang'] in sh_map else attrib['lang']
 		# TODO: some template instruction to be able to use other highlighters as well?
-		output = ['<pre><code class="%s">' % html_encode(sh_lang)] # for syntaxhigligther
+		output = ['<pre><code class="%s">' % encode_xml_attrib(sh_lang)] # for syntaxhigligther
 		#class="brush: language;" works with SyntaxHighlighter 2.0.278, 3 & 4
-		#output = ['<pre class="brush: %s;">' % html_encode(sh_lang)] # for syntaxhigligther
+		#output = ['<pre class="brush: %s;">' % encode_xml_attrib(sh_lang)] # for syntaxhigligther
 
-		output.append(html_encode(data))
+		output.append(encode_xml_text(data))
 		output.append('</code></pre>\n')
 
 		return output

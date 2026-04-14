@@ -1,6 +1,10 @@
-====== Syntax ======
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.6
+Creation-Date: Unknown
 
-Examples of the wiki syntax as used by zim.
+====== Wiki Syntax ======
+
+Examples of the wiki syntax as used by zim. This is the original wiki format used with the ''.txt'' extension. Also see [[Markdown Syntax]] for markdown files.
 
 Most of this syntax is inspired by the [[https://www.dokuwiki.org/wiki:syntax|DokuWiki syntax]], but with some significant modifications. All markup uses at least two characters to reduce the chance of conflicts between the wiki markup normal typographic use of these characters.
 

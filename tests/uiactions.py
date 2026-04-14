@@ -991,12 +991,12 @@ class TestUIActionsRealFile(tests.TestCase):
 class TestManualProperties(tests.TestCase):
 
 	def runTest(self):
-		from zim.gui.propertiesdialog import notebook_properties
+		from zim.gui.propertiesdialog import PropertiesDialog
 
 		with open('./data/manual/Help/Properties.txt') as fh:
 			manual = fh.read()
 
-		for pref in notebook_properties:
+		for pref in PropertiesDialog.notebook_properties:
 			label = pref[2]
 			if '\n' in label:
 				label, x = label.split('\n', 1)

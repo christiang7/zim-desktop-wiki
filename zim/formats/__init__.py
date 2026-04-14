@@ -167,6 +167,22 @@ TEXT = 'T'
 END = '/'
 
 
+_FORMAT_EXTENSION_MAP = {
+	'markdown': '.md',
+	'zim-wiki': '.txt',
+	'wiki': '.txt',
+}
+
+
+def get_format_extension(format_name):
+	'''Return the default file extension for a given storage format name.
+
+	@param format_name: one of C{'markdown'}, C{'zim-wiki'}, or C{'wiki'}
+	@returns: file extension string, e.g. C{'.md'} or C{'.txt'}
+	'''
+	return _FORMAT_EXTENSION_MAP[format_name]
+
+
 _letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
 def increase_list_iter(listiter):
@@ -208,14 +224,6 @@ def convert_list_iter_letter_to_number(listiter):
 			return None
 
 
-def encode_xml(text):
-	'''Encode text such that it can be used in xml
-	@param text: label text as string
-	@returns: encoded text
-	'''
-	return text.replace('&', '&amp;').replace('>', '&gt;').replace('<', '&lt;').replace('"', '&quot;').replace("'", '&apos;')
-
-
 def list_formats(type):
 	if type == EXPORT_FORMAT:
 		return ['HTML', 'LaTeX', 'Markdown (pandoc)', 'RST (sphinx)']
@@ -240,6 +248,7 @@ def canonical_name(name):
 
 _aliases = {
 	'zim-wiki': 'wiki',
+	'markdown-native': 'markdown',
 }
 
 def get_format(name):

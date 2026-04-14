@@ -2671,9 +2671,12 @@ class TextBuffer(TextBufferFindMixin, Gtk.TextBuffer):
 		if tree.hascontent:
 			# Reparsing the parsetree in order to find wiki codes
 			# and get rid of oddities in our generated parsetree.
-			#print(">>> Parsetree original:\n", tree.tostring())
+			#
+			# TODO format should depend on native format of source file
+			#      refactor out with ParseTree refactoring
+			#      ensure markdown also supports dump directly from textbuffer
 			from zim.formats import get_format
-			format = get_format("wiki") # FIXME should the format used here depend on the store ?
+			format = get_format('wiki')
 			dumper = format.Dumper()
 			parser = format.Parser()
 			text = dumper.dump(tree)
@@ -3124,7 +3127,7 @@ class TextBuffer(TextBufferFindMixin, Gtk.TextBuffer):
 			if tags:
 				text_format = 'verbatim-' + tags[0].zim_tag
 			else:
-				text_format = 'wiki' # TODO: should depend on page format
+				text_format = self.notebook.layout.default_format.info['name']
 		parsetree = clipboard.get_parsetree(self.notebook, self.page, text_format)
 		if not parsetree:
 			return

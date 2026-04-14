@@ -43,6 +43,7 @@ usage: zim [OPTIONS] [NOTEBOOK [PAGE_LINK]]
    or: zim --import [OPTIONS] NOTEBOOK PAGE FILES
    or: zim --search [OPTIONS] NOTEBOOK QUERY
    or: zim --index  [OPTIONS] NOTEBOOK
+   or: zim --convert-notebook [OPTIONS] NOTEBOOK
    or: zim --plugin PLUGIN [ARGUMENTS]
    or: zim --manual [OPTIONS] [PAGE_LINK]
    or: zim --help
@@ -94,12 +95,15 @@ Import Options:
   --format          format to read (defaults to 'wiki')
   --assubpage       import files as sub-pages of PATH, this is implicit true
                     when PATH ends with a ":" or when multiple files are given
-
 Search Options:
   -s, --with-scores print score for each page, sort by score
 
 Index Options:
   -f, --flush       flush the index first and force re-building
+
+Convert Notebook Options !!!EXPERIMENTAL MAKE A BACKUP FIRST!!!:
+  -F, --format      change the source format and re-write all pages in
+                    the new format ('zim-wiki', 'markdown')
 
 Try 'zim --manual' for more help.
 '''
@@ -558,7 +562,7 @@ class ImportCommand(NotebookCommand):
 
 		notebook, href = self.build_notebook()
 		path = Path(href.names) if href else None
-		format = self.opts.get('format', 'wiki')
+		format = self.opts.get('format', 'wiki') # TODO derive from extension between wiki and markdown (and other supported import formats)
 		assubpage = self.opts.get('assubpage', False)
 
 		n, p, *files = self.get_arguments()
@@ -646,6 +650,122 @@ class IndexCommand(NotebookCommand):
 		logger.info('Index up to date!')
 
 
+from zim.formats import get_format_extension
+
+_FORMAT_NAME_MAP = {
+	'markdown': 'markdown',
+	'zim-wiki': 'zim-wiki',
+	'wiki': 'zim-wiki',
+}
+
+
+def get_format_name(target_format):
+	return _FORMAT_NAME_MAP[target_format]
+
+
+class ConvertNotebookCommand(NotebookCommand):
+	'''Class implementing the C{--convert-notebook} command.
+
+	Converts a notebook between storage formats (e.g. zim-wiki to markdown
+	or vice versa). This rewrites all page source files in the target format
+	and updates the notebook configuration.
+
+	Usage::
+
+		zim --convert-notebook --format=markdown NOTEBOOK
+		zim --convert-notebook --format=zim-wiki NOTEBOOK
+	'''
+
+	arguments = ('NOTEBOOK',)
+	options = (
+		('format=', 'F', 'Target format: "markdown" or "zim-wiki"'),
+	)
+
+	def run(self):
+		import time
+
+		logger.warning('!!! THIS IS AN EXPERIMENTAL FEATURE - Ctrl-C new if you don\'t have a backup !!!')
+		time.sleep(10)
+
+		target_format = self.opts.get('format')
+		if not target_format:
+			raise UsageError('Please specify target format with --format=markdown or --format=zim-wiki')
+
+		if target_format not in _FORMAT_NAME_MAP:
+			raise UsageError('Unknown format "%s". Use "markdown" or "zim-wiki".' % target_format)
+
+		target_format_name = get_format_name(target_format)
+		target_extension = get_format_extension(target_format)
+
+		notebook, x = self.build_notebook(ensure_uptodate=True)
+
+		current_format_name = notebook.config['Notebook']['default_file_format']
+		current_extension = get_format_extension(current_format_name)
+
+		if current_format_name == target_format_name:
+			logger.info('Notebook is already in %s format', target_format_name)
+			return
+
+		import zim.formats
+		source_format = zim.formats.get_format(current_format_name)
+		dest_format = zim.formats.get_format(target_format_name)
+
+		logger.info('Converting notebook from %s to %s ...', current_format_name, target_format_name)
+
+		# Iterate all pages and convert
+		converted = 0
+		errors = 0
+		for page_path in list(notebook.pages.walk()):
+			logger.info('Converting: %s' % page_path)
+			try:
+				page = notebook.get_page(page_path)
+				tree = page.get_parsetree()
+
+				if tree is None:
+					continue
+
+				# Dump in new format
+				dumper = dest_format.Dumper()
+				lines = dumper.dump(tree, file_output=True)
+
+				# Compute old and new file paths
+				old_file = page.source_file
+				rel_path = old_file.relpath(notebook.folder)
+
+				if rel_path.endswith(current_extension):
+					new_rel_path = rel_path[:-len(current_extension)] + target_extension
+				else:
+					new_rel_path = rel_path + target_extension
+
+				new_file = notebook.folder.file(new_rel_path)
+				if new_file.exists():
+					raise AssertionError('Could not convert %s to %s since the latter already exists' % (old_file, new_file))
+
+				# Write the new file
+				new_file.writelines(lines)
+
+				# Remove old file if path changed
+				if old_file.path != new_file.path:
+					old_file.remove()
+
+				converted += 1
+				logger.info('Converted: %s', page_path.name)
+
+			except Exception:
+				errors += 1
+				logger.exception('Error converting page: %s', page_path.name)
+
+		# Update notebook config
+		notebook.config['Notebook']['default_file_format'] = target_format_name
+		notebook.config.write()
+
+		# Flush and rebuild index
+		notebook.index.flush()
+		notebook.index.update()
+
+		logger.info('Conversion complete: %i pages converted, %i errors', converted, errors)
+
+
 commands = {
 	'help': HelpCommand,
 	'version': VersionCommand,
@@ -657,6 +777,7 @@ commands = {
 	'import': ImportCommand,
 	'search': SearchCommand,
 	'index': IndexCommand,
+	'convert-notebook': ConvertNotebookCommand,
 }
 
 

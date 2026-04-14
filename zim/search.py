@@ -88,6 +88,8 @@ EXECUTION_PRIO_OFFSET_NEGATE = 5 #: Negation wrapper is less efficient, so gets 
 UI_CALLBACK_RATE_FOR_CONTENT = 5 #: if set, call the callback for every n pages being read
 UI_CALLBACK_RATE_INDEX = 20 #: if set, call the callback for every n pages being yielded
 
+SCORE_PAGENAME_TAG = 10 #: score awarded for a pagename or tag match
+
 
 class PageSearchProvider():
 	'''Base class for "search providers"
@@ -255,7 +257,13 @@ class PageNameProvider(IndexedSearchProvider):
 		if self.term.negate:
 			return lambda r: not self.regex.search(r.path.name)
 		else:
-			return lambda r: bool(self.regex.search(r.path.name))
+			def check(r):
+				if self.regex.search(r.path.name):
+					r.search_score += SCORE_PAGENAME_TAG
+					return True
+				else:
+					return False
+			return check
 
 
 class LinksProvider(IndexedSearchProvider):
@@ -304,7 +312,7 @@ class TagsProvider(IndexedSearchProvider):
 	def generate_exact(self):
 		tag = self.term.value.strip('@')
 		try:
-			return [PageSearchResult(p) for p in self.notebook.tags.list_pages(tag)]
+			return [PageSearchResult(p, score=SCORE_PAGENAME_TAG) for p in self.notebook.tags.list_pages(tag)]
 		except IndexNotFoundError:
 			return []
 
@@ -319,7 +327,7 @@ class TagsProvider(IndexedSearchProvider):
 		for tag in self.notebook.tags.match_tags(longest):
 			if self.regex.search(tag.name):
 				for p in self.notebook.tags.list_pages(tag):
-					yield PageSearchResult(p)
+					yield PageSearchResult(p, score=SCORE_PAGENAME_TAG)
 
 
 class TextProvider(ContentSearchProvider):

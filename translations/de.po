@@ -2160,11 +2160,20 @@ msgstr "Seiten Vorlage"
 msgid "Import Page"
 msgstr "Seite importieren"
 
+#. File filter for all supported import formats (.txt, .md)
+#: zim/gui/uiactions.py:528
+msgid "All Supported Formats"
+msgstr "Alle unterstützten Formate"
+
 #. File filter for '*.txt'
-#: zim/gui/uiactions.py:526
+#: zim/gui/uiactions.py:535
 msgid "Text Files"
 msgstr "Textdateien"
 
+#. File filter for '*.md'
+#: zim/gui/uiactions.py:536
+msgid "Markdown Files"
+msgstr "Markdowndateien"
 #. Dialog title of file save dialog
 #: zim/gui/uiactions.py:546
 msgid "Save Copy"

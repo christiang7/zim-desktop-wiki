@@ -78,7 +78,9 @@ class FilesLayout(NotebookLayout):
 		assert isinstance(folder, Folder)
 		self.root = folder
 		self.endofline = endofline
-
+		self.update_format(default_format, default_extension)
+	
+	def update_format(self, default_format, default_extension):
 		if not default_extension.startswith('.'):
 			default_extension = '.' + default_extension
 
@@ -101,6 +103,10 @@ class FilesLayout(NotebookLayout):
 					return line.strip() == ''
 				except FileNotFoundError:
 					return True # give file the benefit of the doubt, could be a deleted source file
+			elif self.default_extension == '.md':
+				# Markdown files are always accepted as source files
+				# Optionally they may contain YAML front matter with Content-Type
+				return True
 			else:
 				return True
 		else:

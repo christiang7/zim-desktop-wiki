@@ -353,14 +353,6 @@ class TaskListWindow(TaskListWidgetMixin, ConnectorMixin, Gtk.Window):
 		else:
 			self.connect('delete-event', self.save_uistate)
 
-		# note: _windowpos is defined with a leading "_" so it is not
-		# persistent across instances, this is intentional to avoid
-		# e.g. messy placement for seldom used dialogs
-		self.uistate.setdefault('_windowpos', None, check=value_is_coord)
-		if self.uistate['_windowpos'] is not None:
-			x, y = self.uistate['_windowpos']
-			self.move(x, y)
-
 		self.uistate.setdefault('windowsize', defaultwindowsize, check=value_is_coord)
 		if self.uistate['windowsize'] is not None:
 			w, h = self.uistate['windowsize']
@@ -556,10 +548,7 @@ class TaskListWindow(TaskListWidgetMixin, ConnectorMixin, Gtk.Window):
 			self.uistate['sort_order'] = Gtk.SortType.ASCENDING
 
 		try:
-			x, y = self.get_position()
-			self.uistate['_windowpos'] = (x, y)
-			w, h = self.get_size()
-			self.uistate['windowsize'] = (w, h)
+			self.uistate['windowsize'] = tuple(self.get_size())
 		except:
 			logger.exception('Exception in save_uistate')
 
