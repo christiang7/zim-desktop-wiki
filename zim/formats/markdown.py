@@ -671,7 +671,7 @@ class Dumper(TextDumper):
 			body = TextDumper.dump(self, tree)
 			if body and not body[-1].endswith('\n'):
 				body[-1] = body[-1] + '\n'
-			return [dump_yaml_front_matter(header_meta), '\n'] + body
+			return [dump_yaml_front_matter(header_meta), ''] + body
 		else:
 			return TextDumper.dump(self, tree)
 
@@ -768,7 +768,7 @@ class Dumper(TextDumper):
 
 		if href == text:
 			if is_url_link(href):
-				return ('<', href, '>')
+				return ('', href, '')
 			else:
 				text = ''
 
