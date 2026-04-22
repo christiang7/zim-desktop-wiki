@@ -5,8 +5,14 @@ interwiki=
 home=Start
 icon=
 document_root=
+short_links=False
 shared=True
+paste_image_template=pasted_image_%y%m%d
 endofline=unix
 disable_trash=False
+default_file_format=markdown
+default_file_extension=.md
+default_page_template=Default
+notebook_layout=files
 profile=
 
