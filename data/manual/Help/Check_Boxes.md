@@ -1,7 +1,6 @@
 ---
 Creation-Date: "Sat, 08 Nov 2008 11:04:28 +0100"
 ---
-
 # Checkboxes
 
 Zim supports lists with checkboxes instead of bullets. These look like:
@@ -20,4 +19,4 @@ To start a checkbox list type on an empty line '`[]<space>`' or '`()<space>`', t
 
 There is an option in the [[Preferences]]  to have checkbox lists behave recursively. This means that the state of items with a sublist reflects the state of all child items. Checking the parent will check all child items, and checking the last child item will check the parent item automatically.
 
-The [[:Plugins:Task List|Task List plugin]] regards checkboxes as TODO items and can give an overview of all open checkboxes in a notebook.
+The [[Plugins:Task List|Task List plugin]] regards checkboxes as TODO items and can give an overview of all open checkboxes in a notebook.

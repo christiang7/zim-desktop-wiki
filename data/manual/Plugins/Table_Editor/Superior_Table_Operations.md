@@ -30,7 +30,7 @@ A link can be accessed with:
 - `RIGHT MOUSE-BUTTON-CLICK` on cell with the link  and selection of the menu item *Open cell in content link*
 - `CTRL + LEFT MOUSE-BUTTON-CLICK` on a cell
 
-See also:	[[:Help:Links|Syntax for Links]]
+See also:	[[Help:Links|Syntax for Links]]
 
 ## Exporting:
 Exporting filters for Plain, HTML, Markdown, reStructuredText, Latex has been also adjusted for the table plugin.
