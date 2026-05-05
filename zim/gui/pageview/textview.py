@@ -236,7 +236,6 @@ class TextView(Gtk.TextView):
 		# Overriden to force usage of our Textbuffer.copy_clipboard
 		# over Gtk.TextBuffer.copy_clipboard
 		format = format or self.preferences['copy_format']
-		format = zim.formats.canonical_name(format)
 		self.get_buffer().copy_clipboard(Clipboard, format)
 
 	def do_cut_clipboard(self):

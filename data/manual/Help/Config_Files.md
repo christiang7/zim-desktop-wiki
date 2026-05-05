@@ -1,0 +1,242 @@
+---
+Creation-Date: Unknown
+---
+
+# Config Files
+
+This page documents the various config files used.
+Also, see [[preferences]] for documentation of the preferences dialog.
+
+## Paths
+
+### Freedesktop (Linux etc.)
+Zim uses the scheme as laid down in the "XDG Base Directory Specification" as published by [freedesktop.org](http://freedesktop.org). The default paths are:
+
+```
+$XDG_CONFIG_HOME = HOME/.config/
+$XDG_DATA_HOME   = HOME/.local/share/
+$XDG_DATA_DIRS   = /usr/local/share/:/usr/share/
+```
+
+These can be overloaded with the corresponding environment variables.
+
+When zim writes config files, it always uses `$XDG_CONFIG_HOME`. Data files are read-only and are searched for in `$XDG_DATA_HOME` and `$XDG_DATA_DIRS`. The installation defaults for config files are also installed in `$XDG_DATA_DIRS`, but these are copied on first use to `$XDG_CONFIG_HOME`.
+
+### Windows
+On Windows the default paths are:
+
+```
+$XDG_CONFIG_HOME = %appdata%/zim/config/
+$XDG_DATA_HOME   = %appdata%/zim/data/
+```
+
+
+Where `%appdata%` is the default Windows path to store application data, typically a path like "`%USERPROFILE%\Application Data`".
+
+When there is no `%HOME%` environment parameter defined on Windows either the `%USERPROFILE%` parameter or `%HOMEDRIVE%` + `%HOMEPATH%` are used. Make sure to define `%HOME%` or `%USERPROFILE%` including a drive letter.
+
+## Portable install
+For the portable install the config files are looked up relative to the installation folder. The defaults are:
+
+```
+$XDG_CONFIG_HOME = ../config/
+$XDG_DATA_HOME   = ../data/
+```
+
+The `../` means that the configuration folders are in the same parent folder as the installation folder. This is intentionally, so installing a new version does not overwrite the configuration.
+
+If you want to change the paths for the portable install, there is a special configuration file used at startup of the application that is called `environ.ini` which allows customizing the lookup.
+
+
+### macOS
+On macOS the default paths are:
+
+```
+ $XDG_CONFIG_HOME = ~/Library/Application Support/org.zim-wiki.Zim/
+ $XDG_DATA_HOME = ~/Library/Application Support/org.zim-wiki.Zim/share/
+```
+
+## Global Config Files
+
+These config files determine various aspects of how zim behaves. They are global in the sense that they are not specific to one notebook.
+
+### Main config file
+The default config file is `$XDG_CONFIG_HOME/zim/preferences.conf`.
+
+The config file is written automatically when you close zim. So if you want to change it manually you need to close all instances of zim first.
+
+There are hidden options which you can added directly in the file but are not shown in the preferences dialog:
+- "`autosave_timeout`" which gives the interval for autosaving in seconds, the default is 10
+- "`gtk_bell`" which can be `True` or `False`, if `False` it overrides Gtk settings to turn off the bell in the editor, default is `False`
+
+
+
+### Interwiki URL list
+The file `$XDG_DATA/zim/urls.list` gives a list of urls which are used for the [[Links|interwiki]] function. All files in the `$XDG_DATA` path are read when looking for a URL, so you can use $XDG_DATA_HOME to override the installation defaults.
+
+`urls.list` is a tab/space delimited file, with the first column being the interwiki prefix, and the second column being a [str.format](https://docs.python.org/3.8/library/stdtypes.html#str.format)-compatible string with either `{NAME}` or `{URL}` as the possible interpolated values.
+`{NAME}` will be substituted with the local link, for example, `https://wikipedia.org/wiki/{NAME}` will become `https://wikipedia.org/wiki/Foo` with the link `[[wp?Foo]]`.
+`{URL}` is `{NAME}`'s data passed through a [[wp?urlencode|urlencode]] function.
+If none of the interpolated values are found in the second column's string, the local link is appended to the end of the specified URL.
+
+You can also use the non-standard "`zim+file://`" scheme in the second column to link to other zim notebooks on your machine.
+
+An example `urls.list` would look something like this:
+```
+prj zim+file:///home/dvn/project/{NAME}
+w2  https://wiki.c2.com/?{URL}
+zh	https://zim-wiki.org/manual/Help/
+```
+
+
+### Date format list
+The file `$XDG_DATA/zim/dates.list` gives a list of strftime formats, one on each line, to be used to populate the "Insert Date and Time" dialog. The first instance of this file that is found in the $XDG_DATA path is used.
+
+See [this link](http://docs.python.org/library/time.html%23time.strftime) for documentation of the strftime formatting.
+
+### Automount config file
+The config file `$XDG_CONFIG_HOME/zim/automount.conf` can be used to configure mount commands for specific notebook paths. See [[Automount]] for details.
+
+### Environ.ini config file
+The config file `environ.ini` can be used to modify environment parameters before any of the zim modules are loaded. See [[Portable Install]] for details.
+
+### GUI style config file
+Zim has certain defaults on how to display styles. For example, it displays links as blue text without underline. To change this style copy "`/usr/share/zim/style.conf`" to "`~/.config/zim/`" and edit it. Each style has it's own section which starts with the style name between square brackets and contains key-value pairs for the various display properties.
+
+**NOTE: **The display styles for the GUI is not used when exporting to HTML. If you want your HTML to show certain custom styles, you should write an HTML [[Templates|template]] with a CSS stylesheet.
+
+Example:
+
+```
+[TextView]
+tabs = 40
+font = Sans 10
+
+[Tag bold]
+weight = PANGO_WEIGHT_BOLD
+
+[Tag italic]
+style = italic
+```
+
+Known properties for TextView:
+- **indent**: *integer*	- indenting step size in pixels
+- **tabs**: *integer*	- tab size in pixels
+- **linespacing**: *integer* - line spacing in pixels, effectively spacing between paragraphs
+- **wrapped-lines-linespacing**: *integer* - line spacing in pixels between wrapped lines
+- **justify**: `LEFT`, `RIGHT`, `CENTER` or `FILL`
+- **font**: *string*
+- **bullet_icon_size**: `ICON_SIZE_MENU`, `ICON_SIZE_LARGE_TOOLBAR`, ...
+
+Known style tags:
+- **h1**, **h2**, **h3**, **h4**, **h5**, **h6**: various headings
+- **emphasis**: emphasized or italic text
+- **strong**: strong or bold text
+- **mark**: highlighted or underlined text
+- **strike**: strike-through text
+- **code**: inline verbatim text
+- **pre**: verbatim text as paragraph
+- **sub**: subscript text
+- **sup**: superscript text
+- **link**: hyperlink text
+- **page-link**: hyperlink text pointing to another page
+- **indent**: indented lines
+- **bullet-list**: lines in a bullet list
+- **numbered-list**: lines in a numbered list
+- **unchecked-checkbox**: lines with an open checkbox
+- **checked-checkbox**: lines with a "v-checked" checkbox
+- **xchecked-checkbox**: lines with a "x-checked" checkbox
+
+Known properties for Tags:
+- **family**: `monospace`, `sans`, ...
+- **foreground**: `grey`, `blue`, `#cccccc`, etc.
+- **background**: `yellow`, `#cccccc`, etc.
+- **paragraph-background**: `red`, `#cccccc`, etc.
+- **weight**: `PANGO_WEIGHT_BOLD`, ...
+- **scale**: *integer*
+- **style**: `italic`, ...
+- **underline**: `single`, ...
+- **strikethrough**: `true`, `false`
+- **wrap-mode**: "`none"`, ...
+- **indent**: *integer*
+- **linespacing**: *integer*
+- **rise**: *integer* (offset from line center, intended for "sup" and "sub")
+
+
+In the style config, properties can be postfixed with "`[darktheme]`" to define variants that are used when the "Prefer dark theme" [[Preferences|preference]] is enabled.
+
+
+### Gtk configuration
+
+To change the look of the application beyond what can be done with the `style.conf` file you need to modify the Gtk theming. With Gtk3 this can be done using the CSS language similar to how e.g. webpages are styled.
+
+The file location of this configuration is: `$XDG_CONFIG_HOME/gtk-3.0/gtk.css` . You need to re-start zim to see it take effect. For examples of common things, like changing font or color, please use your search engine of choice. The developer documentation is here: <https://developer.gnome.org/gtk3/stable/GtkCssProvider.html>
+
+Also, some settings are not in CSS but can be configured via  `$XDG_CONFIG_HOME/gtk-3.0/settings.ini` . The developer documentation is here: <https://developer.gnome.org/gtk3/stable/GtkSettings.html>
+
+> **NOTE:** if you installed zim on Windows using the installer, the location for these files are `<zim-installation-dir>\etc\gtk-3.0\gtk.css` and `<zim-installation-dir>\etc\gtk-3.0\settings.ini `respectively.
+
+Specifically, the Gtk theme can be configured via the `settings.ini` file by setting `gtk-theme-name` after installing a custom theme on your system.
+
+Also the `settings.ini` can be used to request the dark version of any theme like this:
+
+```
+[Settings]
+gtk-application-prefer-dark-theme=1
+```
+
+  NOTE: for the windows installer, you can use `.\etc\gtk-3.0\settings.ini` relative to the install folder of the application.
+
+There are some widgets in zim that have a name set, so they can be addressed specifically from the CSS style using an id selector ("`#name`").
+
+Specific ones are:
+
+- zim-sidepane: for any side pane of the application window
+- zim-pageview: for the textview showing the page
+- zim-inserted-object-inline: for objects that are inserted in the text in the middle of a line
+- zim-inserted-object: for objects that are inserted in the text as a block; default is to render a small border line
+- zim-inserted-object-head: for the top bar of such an object; default is to render a small border line at the bottom
+
+More names are documented in the manual page of specific plugins.
+
+To identify these in the code, search for use of `widget_set_css(...)` and `widget.set_name(...)`. The name used will be accessible from the CSS config as an "id".
+
+Another way to identify CSS selector IDs is to use GTK Inspector, which can be invoked when calling Zim from the command line as follows:
+
+```
+GTK_DEBUG=interactive zim
+```
+
+
+### CSS configuration examples
+The following snippets that can be used directly in `~/.config/gtk-3.0/gtk.css`
+
+```
+#zim-pageview text {
+    background-color: #1A2E38;  /* changes the background color of the Zim's page editor */
+    color: #BABABA; /* foreground text color */
+  }
+
+#zim-toc-widget {
+  color: #2b2b2b;  /* sets the color of the border line of the Table of Content plugin */
+  opacity: 0.9;    /* give the ToC some nice transparency */
+  font-size: 12px; /* ToC font size */
+  }
+
+#zim-toc-widget scrolledwindow treeview {
+  color: #BABABA;  /* sets the color of the text within the Table of Content plugin */
+  opacity: 1;
+  }
+```
+
+
+
+## Notebook config file
+
+There is a notebook specific config files called "`notebook.zim`" which should be in the notebook folder. This file contains a section "`[Notebook]`" which contains the properties that can be set in the [[properties|properties dialog]].
+
+One hidden property is "`end_of_line`" which determines the end-of-line convention for files written by zim within the scope of this notebook. The value can be either "`dos`" or "`unix`". For newly created notebooks this value is set depending on the platform on which zim is running. The main purpose of this property is to ensure that a notebook that is shared between e.g. Linux and Windows machines does not change the full file on every write. When desired the property can be changed manually, which will affect all pages edited after the change.
+
+A second hidden option is "`disable_trash`" which defaults to `False`. If enabled this will cause zim to avoid using the system trash for this notebook, see the section about deleting in [[Pages]].
+
+A third hidden option is "`shared" which defaults to True` (however will be `False` for older notebooks). If `True`, zim stores the notebook cache in the home folder (`$XDG_CACHE_HOME`). Usually, this is what you want, however in particular cases, e.g. when the notebook resides in an encrypted folder, you may want to set this to `False` in order to make sure the cache is actually stored in the notebook folder (using a ".zim" hidden folder).

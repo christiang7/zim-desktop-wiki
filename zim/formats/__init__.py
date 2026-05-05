@@ -89,9 +89,9 @@ from zim.parse.tokenlist import TokenParser, topLevelLists, collect_until_end_to
 from zim.parse.builder import Builder
 
 from zim.config import ConfigDict
+from zim.base.klasslookup import get_module, lookup_subclass
 from zim.plugins import PluginManager
 
-import zim.plugins
 
 # Needed to determine RTL, but may not be available
 # if gtk bindings are not installed
@@ -167,22 +167,6 @@ TEXT = 'T'
 END = '/'
 
 
-_FORMAT_EXTENSION_MAP = {
-	'markdown': '.md',
-	'zim-wiki': '.txt',
-	'wiki': '.txt',
-}
-
-
-def get_format_extension(format_name):
-	'''Return the default file extension for a given storage format name.
-
-	@param format_name: one of C{'markdown'}, C{'zim-wiki'}, or C{'wiki'}
-	@returns: file extension string, e.g. C{'.md'} or C{'.txt'}
-	'''
-	return _FORMAT_EXTENSION_MAP[format_name]
-
-
 _letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
 def increase_list_iter(listiter):
@@ -225,31 +209,38 @@ def convert_list_iter_letter_to_number(listiter):
 
 
 def list_formats(type):
-	if type == EXPORT_FORMAT:
-		return ['HTML', 'LaTeX', 'Markdown (pandoc)', 'RST (sphinx)']
+	'''Returns a list of 2-tuple of format name and a UI label
+	@param type: one of C{NATIVE_FORMAT}, C{EXPORT_FORMAT}, or C{TEXT_FORMAT}
+	'''
+	if type == NATIVE_FORMAT:
+		return [
+			('zim-wiki', 'Zim Wiki'),
+			('markdown', 'Markdown'),
+		]
+	elif type == EXPORT_FORMAT:
+		return [
+			('html', 'HTML'),
+			('latex', 'LaTeX'),
+			('markdown', 'Markdown (pandoc)'),
+			('rst', 'RST (sphinx)'),
+		]
 	elif type == TEXT_FORMAT:
-		return ['Text', 'Wiki', 'Markdown (pandoc)', 'RST (sphinx)']
+		return [
+				('plain', 'Text'),
+				('zim-wiki', 'Zim Wiki'),
+				('markdown', 'Markdown (pandoc)'),
+				('rst', 'RST (sphinx)'),
+			]
 	else:
 		assert False, 'TODO'
-
-
-def canonical_name(name):
-	# "HTML" -> html
-	# "Markdown (pandoc)" -> "markdown"
-	# "Text" -> "plain"
-	name = name.lower()
-	if ' ' in name:
-		name, _ = name.split(' ', 1)
-	if name == 'text':
-		return 'plain'
-	else:
-		return name
 
 
 _aliases = {
 	'zim-wiki': 'wiki',
 	'markdown-native': 'markdown',
+	'text': 'plain',
 }
+
 
 def get_format(name):
 	'''Returns the module object for a specific format.'''
@@ -265,7 +256,7 @@ def get_format_module(name):
 	@returns: a module object
 	'''
 	name = _aliases.get(name, name)
-	return zim.plugins.get_module('zim.formats.' + canonical_name(name))
+	return get_module('zim.formats.' + name)
 
 
 def get_parser(name, *arg, **kwarg):
@@ -278,7 +269,7 @@ def get_parser(name, *arg, **kwarg):
 	@returns: parser object instance (subclass of L{ParserClass})
 	'''
 	module = get_format_module(name)
-	klass = zim.plugins.lookup_subclass(module, ParserClass)
+	klass = lookup_subclass(module, ParserClass)
 	return klass(*arg, **kwarg)
 
 
@@ -292,7 +283,7 @@ def get_dumper(name, *arg, **kwarg):
 	@returns: dumper object instance (subclass of L{DumperClass})
 	'''
 	module = get_format_module(name)
-	klass = zim.plugins.lookup_subclass(module, DumperClass)
+	klass = lookup_subclass(module, DumperClass)
 	return klass(*arg, **kwarg)
 
 
@@ -702,7 +693,7 @@ class ParseTreeBuilder(Builder):
 		can not be re-used.
 		'''
 		root = self._b.close()
-		return zim.formats.ParseTree(root)
+		return ParseTree(root)
 
 	def start(self, tag, attrib=None):
 		attrib = attrib.copy() if attrib is not None else {}

@@ -285,6 +285,23 @@ class TestServerGui(tests.TestCase):
 		self.assertEqual(window.__class__.__name__, 'ServerWindow')
 
 
+@tests.verySlowTest
+class TestConvertNotebookCommand(tests.TestCase):
+
+	def runTest(self):
+		notebook = self.setUpNotebook(mock=tests.MOCK_ALWAYS_REAL, content=tests.FULL_NOTEBOOK)
+
+		cmd = ConvertNotebookCommand('convert-notebook')
+		cmd.parse_options('--format=markdown', notebook.folder.path)
+		with tests.LoggingFilter('zim', '!!!'):
+			cmd.run()
+
+		self.assertTrue(notebook.folder.file('roundtrip.md').exists())
+		config = notebook.folder.file('notebook.zim').read()
+		self.assertIn('default_file_format=markdown', config)
+		self.assertIn('default_file_extension=.md', config)
+
+
 ## ExportCommand() is tested in tests/export.py
 
 import os

@@ -45,8 +45,8 @@ def expectedFailureIf(condition):
 os.environ['LANGUAGE'] = 'C.UTF-8'
 gettext.install('zim', names=('_', 'gettext', 'ngettext'))
 
-FAST_TEST = False #: determines whether we skip slow tests or not
-FULL_TEST = False #: determine whether we mock filesystem tests or not
+TEST_SPEED = 'default' #: determines whether we skip slow tests or not
+TEST_FS_MOCK = 'default' #: determine whether we mock filesystem tests or not
 
 # This list also determines the order in which tests will executed
 __all__ = [
@@ -223,10 +223,23 @@ def slowTest(obj):
 			def testBar(self):
 				...
 	'''
-	if FAST_TEST:
+	if TEST_SPEED == 'fast':
 		wrapper = skip('Slow test')
 		return wrapper(obj)
 	else:
+		# include for 'default' and 'slow'
+		return obj
+
+
+def verySlowTest(obj):
+	'''Decorator for *very* slow tests
+	Like C{slowTest()} but skips by default unless "--full" is used
+	'''
+	if TEST_SPEED != 'slow':
+		wrapper = skip('Very slow test - use "--full" to run')
+		return wrapper(obj)
+	else:
+		# only inlucde for 'slow'
 		return obj
 
 
@@ -308,12 +321,10 @@ class TestCase(unittest.TestCase):
 		elif mock == MOCK_ALWAYS_REAL:
 			use_mock = False
 		else:
-			if FULL_TEST:
-				use_mock = False
-			elif FAST_TEST:
-				use_mock = True
-			else:
+			if TEST_FS_MOCK == 'default':
 				use_mock = (mock == MOCK_DEFAULT_MOCK)
+			else:
+				use_mock = (TEST_FS_MOCK == 'yes')
 
 		if use_mock:
 			from zim.newfs.mock import MockFolder

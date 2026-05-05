@@ -39,6 +39,7 @@ logger = logging.getLogger('notebook.zim')
 from zim.newfs import FileNotFoundError, localFileOrFolder, LocalFolder, FilePath
 from zim.parse.encode import url_decode
 from zim.templates import valid_template_name
+from zim.formats import get_format
 
 from .info import NotebookInfo, NotebookInfoList, \
 	resolve_notebook, get_notebook_list, get_notebook_info, interwiki_link, create_valid_interwiki_key
@@ -203,5 +204,6 @@ def init_notebook(dir, name=None, page_template='Default', file_format='zim-wiki
 	config = NotebookConfig(dir.file('notebook.zim'))
 	config['Notebook']['name'] = name or dir.basename
 	config['Notebook']['default_file_format'] = file_format
+	config['Notebook']['default_file_extension'] = get_format(file_format).info['extension'] # init with default extension
 	config['Notebook']['default_page_template'] = valid_template_name('wiki', page_template) # TODO: make template format flexible
 	config.write()

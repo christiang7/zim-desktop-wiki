@@ -102,8 +102,10 @@ Index Options:
   -f, --flush       flush the index first and force re-building
 
 Convert Notebook Options !!!EXPERIMENTAL MAKE A BACKUP FIRST!!!:
-  -F, --format      change the source format and re-write all pages in
+  --format          change the source format and re-write all pages in
                     the new format ('zim-wiki', 'markdown')
+  --extension       optional file extension for the new pages, defaults
+                    to e.g. '.txt' for zim-wiki and '.md' for markdown
 
 Try 'zim --manual' for more help.
 '''
@@ -650,19 +652,6 @@ class IndexCommand(NotebookCommand):
 		logger.info('Index up to date!')
 
 
-from zim.formats import get_format_extension
-
-_FORMAT_NAME_MAP = {
-	'markdown': 'markdown',
-	'zim-wiki': 'zim-wiki',
-	'wiki': 'zim-wiki',
-}
-
-
-def get_format_name(target_format):
-	return _FORMAT_NAME_MAP[target_format]
-
-
 class ConvertNotebookCommand(NotebookCommand):
 	'''Class implementing the C{--convert-notebook} command.
 
@@ -678,37 +667,38 @@ class ConvertNotebookCommand(NotebookCommand):
 
 	arguments = ('NOTEBOOK',)
 	options = (
-		('format=', 'F', 'Target format: "markdown" or "zim-wiki"'),
+		('format=', '', 'Target format: "markdown" or "zim-wiki"'),
+		('extension=', '', 'Target file extesion, optional'),
 	)
 
 	def run(self):
+		from zim.formats import get_format
 		import time
 
 		logger.warning('!!! THIS IS AN EXPERIMENTAL FEATURE - Ctrl-C new if you don\'t have a backup !!!')
 		time.sleep(10)
 
-		target_format = self.opts.get('format')
-		if not target_format:
+		target_format_name = self.opts.get('format')
+		if not target_format_name:
 			raise UsageError('Please specify target format with --format=markdown or --format=zim-wiki')
 
-		if target_format not in _FORMAT_NAME_MAP:
-			raise UsageError('Unknown format "%s". Use "markdown" or "zim-wiki".' % target_format)
+		try:
+			target_format = get_format(target_format_name)
+		except ImportError:
+			raise UsageError('Unknown format "%s". Use e.g. "markdown" or "zim-wiki".' % target_format)
 
-		target_format_name = get_format_name(target_format)
-		target_extension = get_format_extension(target_format)
+		target_extension = self.opts.get('extension', target_format.info['extension'])
+		target_extension = '.' + target_extension.lstrip('.')
 
 		notebook, x = self.build_notebook(ensure_uptodate=True)
 
 		current_format_name = notebook.config['Notebook']['default_file_format']
-		current_extension = get_format_extension(current_format_name)
+		current_extension = notebook.config['Notebook']['default_file_extension']
+		current_extension = '.' + current_extension.lstrip('.')
 
 		if current_format_name == target_format_name:
 			logger.info('Notebook is already in %s format', target_format_name)
 			return
-
-		import zim.formats
-		source_format = zim.formats.get_format(current_format_name)
-		dest_format = zim.formats.get_format(target_format_name)
 
 		logger.info('Converting notebook from %s to %s ...', current_format_name, target_format_name)
 
@@ -725,7 +715,7 @@ class ConvertNotebookCommand(NotebookCommand):
 					continue
 
 				# Dump in new format
-				dumper = dest_format.Dumper()
+				dumper = target_format.Dumper()
 				lines = dumper.dump(tree, file_output=True)
 
 				# Compute old and new file paths
@@ -757,6 +747,7 @@ class ConvertNotebookCommand(NotebookCommand):
 
 		# Update notebook config
 		notebook.config['Notebook']['default_file_format'] = target_format_name
+		notebook.config['Notebook']['default_file_extension'] = target_extension
 		notebook.config.write()
 
 		# Flush and rebuild index

@@ -170,13 +170,15 @@ class TestFormatMixin(object):
 class TestListFormats(tests.TestCase):
 
 	def runTest(self):
-		for desc in list_formats(EXPORT_FORMAT):
-			name = canonical_name(desc)
+		for name, desc in list_formats(NATIVE_FORMAT):
+			format = get_format(name)
+			self.assertTrue(format.info['native'])
+
+		for name, desc in list_formats(EXPORT_FORMAT):
 			format = get_format(name)
 			self.assertTrue(format.info['export'])
 
-		for desc in list_formats(TEXT_FORMAT):
-			name = canonical_name(desc)
+		for name, desc in list_formats(TEXT_FORMAT):
 			format = get_format(name)
 			self.assertTrue(format.info['export'])
 			self.assertTrue(format.info['mimetype'].startswith('text/'))

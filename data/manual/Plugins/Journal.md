@@ -1,0 +1,45 @@
+# Journal
+
+The Journal Plugin turns a specific section of the notebook into a journal (the "Journal" section by default, but this is configurable). It can either have a page per day, organized by year and month, or a page per week or month. This "Journal" section is shown in a separate side pane view using a calendar and showing the pages with the latest entry on top.
+
+This plugin is intended to help organize notes by date like you would do for a journal. Another use case is e.g. to put minutes of meetings or class notes on the page for the date of the meeting - possibly to work them out later in pages for the specific subject.
+
+**Dependencies:** This plugin has no additional dependencies. The python module "`babel`" is an optional dependency to determine the weekday conventions.
+
+**See also:** [[Usage:Daily Journal]]
+
+## Options
+This plugin has the following options:
+- The option **Position in the window** determines in which side pane the calendar is shown.
+- The option **Hide Journal pane if empty** allows to hide the Journal pane for notebooks that do not use it.
+
+These options can be set as notebook properties per notebook:
+- The **Section** controls where the calendar pages are stored.
+- The option **Use a page for each: ...** allows you to set the calendar to either use a separate page for each day, each week, each month or even each year.
+
+## Keybindings
+- `<Alt>D`  - navigate to the calendar date for today
+
+## Tasks per day
+The [[Task List|Task List plugin]] has an option to automatically set the due date for tasks that are defined on calendar pages. When this is enabled you can put tasks on the correct calendar page and they will show up in the task list with this implicit due date.
+
+## Template Properties
+The Calendar plugin adds the following properties to the template for calendar pages:
+
+**`journal_plugin.page_type()`**
+Indicates type of the page for which template was used. Contains one of following values: "`day`", "`week`", "`month`" or "`year`"
+
+**`journal_plugin.date`**
+Date covered by this page
+
+**`journal_plugin.start_date`**
+First date covered by this page (same as `journal_plugin.date`)
+
+**`journal_plugin.end_date`**
+Last date covered by this page
+
+**`journal_plugin.days(first=None, last=None)`**
+A function that returns a list of all days in the week, month, year covered by this page. The `first` end `last` arguments can be used to provide integer offsets from the first date in the range. This is usefull to e.g. only iterate working days in a week.
+
+
+All these dates can be used with the templates `strftime()` function to format the date as text. See [[Help:Templates|Templates]] for details.
