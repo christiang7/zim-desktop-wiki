@@ -8,29 +8,28 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-09 18:44+0200\n"
-"PO-Revision-Date: 2022-06-28 00:15+0000\n"
-"Last-Translator: Nguyễn Phú Lâm <nguyenphulam44@gmail.com>\n"
-"Language-Team: Vietnamese <https://hosted.weblate.org/projects/zim/master/vi/"
+"PO-Revision-Date: 2026-02-02 13:02+0000\n"
+"Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
+"Language-Team: Georgian <https://hosted.weblate.org/projects/zim/develop/ka/"
 ">\n"
-"Language: vi\n"
+"Language: ka\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.13.1-dev\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.16-dev\n"
 
 #. Error message when external application could not be found, %s is the command
 #: zim/applications.py:133
-#, fuzzy, python-format
-#| msgid "Failed to run application: %s"
+#, python-format
 msgid "Cound not find application: %s"
-msgstr "Chạy ứng dụng thất bại: %s"
+msgstr ""
 
 #. Error message when external application failed, %s is the command
 #: zim/applications.py:150
 #, python-format
 msgid "Failed to run application: %s"
-msgstr "Chạy ứng dụng thất bại: %s"
+msgstr ""
 
 #. Error message when external application failed, %(cmd)s is the command, %(code)i the exit code
 #: zim/applications.py:153
@@ -39,20 +38,18 @@ msgid ""
 "%(cmd)s\n"
 "returned non-zero exit status %(code)i"
 msgstr ""
-"%(cmd)s\n"
-"trở lại non-zero trạng thái thoát %(code)i"
 
 #. error when application failed to start
 #: zim/applications.py:436
 #, python-format
 msgid "Failed running: %s"
-msgstr "Chạy thất bại: %s"
+msgstr ""
 
 #. label for default webbrowser | 
 #. label for default application
 #: zim/applications.py:457 zim/applications.py:500 zim/gui/applications.py:1170
 msgid "Default"
-msgstr "Mặc định"
+msgstr "ნაგულისხმევი"
 
 #. Translate to "calendar:week_start:0" if you want Sunday to be the first day of the week or to "calendar:week_start:1" if you want Monday to be the first day of the week
 #: zim/datetimetz.py:102
@@ -62,37 +59,37 @@ msgstr "calendar:week_start:1"
 #. generic error dialog
 #: zim/errors.py:46
 msgid "Looks like you found a bug"
-msgstr "Dường như bạn đã tìm thấy một lỗi"
+msgstr ""
 
 #. message for FileUnicodeError (%s is the file name)
 #: zim/fs.py:275 zim/newfs/base.py:67
 #, python-format
 msgid "Could not read: %s"
-msgstr "Không thể đọc: %s"
+msgstr "წაკითხვა შეუძლებელია: %s"
 
 #. message for FileUnicodeError
 #: zim/fs.py:277 zim/newfs/base.py:69
 msgid "This usually means the file contains invalid characters"
-msgstr "Điều này thường có nghĩa là tệp chứa các ký tự không hợp lệ"
+msgstr ""
 
 #. label for detailed error | 
 #. section for version details in "save version" dialog
 #: zim/fs.py:279 zim/newfs/base.py:71
 #: zim/plugins/versioncontrol/__init__.py:791
 msgid "Details"
-msgstr "Thông tin chi tiết"
+msgstr "დეტალები"
 
 #. Error message
 #: zim/fs.py:1171
 #, python-format
 msgid "File is not writable: %s"
-msgstr "Tệp không thể ghi được: %s"
+msgstr ""
 
 #. error message
 #: zim/fs.py:1243
 #, python-format
 msgid "File changed on disk: %s"
-msgstr "Tệp đã thay đổi trên đĩa: %s"
+msgstr ""
 
 #. option in preferences dialog
 #: zim/gui/applications.py:45
@@ -104,7 +101,7 @@ msgstr ""
 #. Heading in a question dialog for creating a folder
 #: zim/gui/applications.py:594
 msgid "Create folder?"
-msgstr "Tạo thư mục?"
+msgstr "შევქმნა საქაღალდე?"
 
 #. Text in a question dialog for creating a folder, %s will be the folder base name
 #: zim/gui/applications.py:596
@@ -113,20 +110,18 @@ msgid ""
 "The folder \"%s\" does not yet exist.\n"
 "Do you want to create it now?"
 msgstr ""
-"Thư mục \"%s\" chưa tồn tại.\n"
-"Bạn có muốn tạo nó ngay bây giờ không?"
 
 #. error when external application fails
 #: zim/gui/applications.py:663 zim/gui/applications.py:737
 #, python-format
 msgid "Could not open: %s"
-msgstr "Không thể mở: %s"
+msgstr ""
 
 #. main text for dialog for editing external files
 #: zim/gui/applications.py:728
 #, python-format
 msgid "Editing file: %s"
-msgstr "Chỉnh sửa tệp: %s"
+msgstr ""
 
 #. description for dialog for editing external files
 #: zim/gui/applications.py:730
@@ -134,37 +129,34 @@ msgid ""
 "You are editing a file in an external application. You can close this dialog "
 "when you are done"
 msgstr ""
-"Bạn đang chỉnh sửa tệp trong một ứng dụng bên ngoài. Bạn có thể đóng hộp "
-"thoại này khi bạn đã hoàn tất"
 
 #. Error message when external application could not be run in terminal, %s is the command
 #: zim/gui/applications.py:826
-#, fuzzy, python-format
-#| msgid "Failed to run application: %s"
+#, python-format
 msgid "Cound not find terminal emulator to run application: %s"
-msgstr "Chạy ứng dụng thất bại: %s"
+msgstr ""
 
 #. label to customize 'open with' menu
 #: zim/gui/applications.py:1080
 msgid "Customize..."
-msgstr "Tùy chỉnh..."
+msgstr "მორგება..."
 
 #. message when no applications in "Open With" menu
 #: zim/gui/applications.py:1106
 msgid "No Applications Found"
-msgstr "Không tìm thấy ứng dụng"
+msgstr ""
 
 #. menu item to open a file with an application, %s is the app name
 #: zim/gui/applications.py:1136
 #, python-format
 msgid "Open with \"%s\""
-msgstr "Mở bằng \"%s\""
+msgstr ""
 
 #. Text in the 'custom command' dialog, "%s" will be URL scheme like "http://" or "ssh://"
 #: zim/gui/applications.py:1145
 #, python-format
 msgid "Configure an application to open \"%s\" links"
-msgstr "Định cấu hình ứng dụng để mở liên kết \"%s\""
+msgstr ""
 
 #. Text in the 'custom command' dialog, "%s" will be mimetype like "text/plain"
 #: zim/gui/applications.py:1148
@@ -173,24 +165,22 @@ msgid ""
 "Configure an application to open files\n"
 "of type \"%s\""
 msgstr ""
-"Định cấu hình ứng dụng để mở\n"
-" tệp loại \"%s\""
 
 #. Dialog title
 #: zim/gui/applications.py:1160
 msgid "Configure Applications"
-msgstr "Định cấu hình ứng dụng"
+msgstr ""
 
 #. Button for adding a new application to the 'open with' menu | 
 #. Dialog title
 #: zim/gui/applications.py:1174 zim/gui/applications.py:1282
 msgid "Add Application"
-msgstr "Thêm Ứng dụng"
+msgstr "პროგრამის დამატება"
 
 #. Label for default application handler
 #: zim/gui/applications.py:1222
 msgid "System Default"
-msgstr "Mặc định Hệ thống"
+msgstr "სისტემის ნაგულისხმევი"
 
 #. Field in 'custom command' dialog | 
 #. Input in "Edit Custom Tool" dialog | 
@@ -207,29 +197,29 @@ msgstr "Mặc định Hệ thống"
 #: zim/gui/templateeditordialog.py:159 zim/gui/uiactions.py:605
 #: zim/plugins/attachmentbrowser/filebrowser.py:441
 msgid "Name"
-msgstr "Tên"
+msgstr "სახელი"
 
 #. Field in 'custom command' dialog | 
 #. Input in "Edit Custom Tool" dialog
 #: zim/gui/applications.py:1287 zim/gui/customtools.py:676
 msgid "Command"
-msgstr "Lệnh"
+msgstr "ბრძანება"
 
 #. Field in 'custom command' dialog
 #: zim/gui/applications.py:1288
 msgid "Make default application"
-msgstr "Tạo ứng dụng mặc định"
+msgstr ""
 
 #. Error message for new commands in "open with" dialog
 #: zim/gui/applications.py:1305
 #, python-format
 msgid "Could not find executable \"%s\""
-msgstr "Không thể tìm thấy \"%s\" có thể thực thi"
+msgstr ""
 
 #. Dialog title
 #: zim/gui/customtools.py:533
 msgid "Custom Tools"
-msgstr "Công cụ Tùy chỉnh"
+msgstr "მორგებული ხელსაწყოები"
 
 #. help text in "Custom Tools" dialog
 #: zim/gui/customtools.py:538
@@ -237,40 +227,38 @@ msgid ""
 "You can configure custom tools that will appear\n"
 "in the tool menu and in the tool bar or context menus."
 msgstr ""
-"Bạn có thể định cấu hình các công cụ tùy chỉnh đó sẽ xuất hiện\n"
-" trong menu công cụ và trong thanh công cụ hoặc menu ngữ cảnh."
 
 #. Dialog title
 #: zim/gui/customtools.py:654
 msgid "Edit Custom Tool"
-msgstr "Sửa Công cụ Tùy chỉnh"
+msgstr ""
 
 #. Input in "Edit Custom Tool" dialog | 
 #. Heading in plugins tab of preferences dialog
 #: zim/gui/customtools.py:675 zim/gui/preferencesdialog.py:348
 msgid "Description"
-msgstr "Sự mô tả"
+msgstr "აღწერა"
 
 #. Input in "Edit Custom Tool" dialog | 
 #. label for properties dialog
 #: zim/gui/customtools.py:690 zim/gui/propertiesdialog.py:23
 msgid "Icon"
-msgstr "Biểu tượng"
+msgstr "ხატულა"
 
 #. Input in "Edit Custom Tool" dialog
 #: zim/gui/customtools.py:699
 msgid "Command does not modify data"
-msgstr "Lệnh không sửa đổi dữ liệu"
+msgstr ""
 
 #. Input in "Edit Custom Tool" dialog
 #: zim/gui/customtools.py:700
 msgid "Output should replace current selection"
-msgstr "Đầu ra nên thay thế lựa chọn hiện tại"
+msgstr ""
 
 #. Input in "Edit Custom Tool" dialog
 #: zim/gui/customtools.py:701
 msgid "Show in the toolbar"
-msgstr "Hiển thị trên thanh công cụ"
+msgstr ""
 
 #. Short help text in "Edit Custom Tool" dialog. The "%" is literal - please include the html formatting
 #: zim/gui/customtools.py:709
@@ -288,34 +276,22 @@ msgid ""
 "<b>%T</b> the selected text including wiki formatting\n"
 "</tt>\n"
 msgstr ""
-"Các tham số sau đây sẽ được thay thế\n"
-"trong lệnh khi nó được thực thi:\n"
-"<tt>\n"
-"<b>%f</b> nguồn trang dưới dạng tệp tạm thời\n"
-"<b>%d</b>  đường dẫn mục đính kèm của trang hiện tại\n"
-"<b>%s</b> tệp nguồn trang thực (nếu có)\n"
-"<b>%p</b> tên trang\n"
-"<b>%n</b> vị trí sổ ghi chép (tệp hoặc thư mục)\n"
-"<b>%D</b>  tài liệu gốc (nếu có)\n"
-"<b>%t</b> văn bản đã chọn hoặc từ dưới con trỏ\n"
-"<b>%T</b> văn bản đã chọn bao gồm định dạng wiki\n"
-"</tt>\n"
 
 #. dialog title
 #: zim/gui/exportdialog.py:32
 msgid "Export"
-msgstr "Xuất"
+msgstr "გატანა"
 
 #. Title for progressbar window
 #: zim/gui/exportdialog.py:55
 msgid "Exporting notebook"
-msgstr "Xuất sổ ghi chép"
+msgstr ""
 
 #. message heading
 #: zim/gui/exportdialog.py:140
 #, python-format
 msgid "Folder exists: %s"
-msgstr "Thư mục đã tồn tại: %s"
+msgstr ""
 
 #. detailed message, answers are Yes and No
 #: zim/gui/exportdialog.py:141
@@ -323,13 +299,11 @@ msgid ""
 "Folder already exists and has content, exporting to this folder may "
 "overwrite existing files. Do you want to continue?"
 msgstr ""
-"Thư mục đã tồn tại và có nội dung, việc xuất sang cặp này có thể bị ghi đè "
-"lên các tệp hiện có. Bạn có muốn tiếp tục không?"
 
 #. message heading
 #: zim/gui/exportdialog.py:154
 msgid "File exists"
-msgstr "Tệp tồn tại"
+msgstr "ფაილი უკვე არსებობს"
 
 #. detailed message, answers are Yes and No
 #: zim/gui/exportdialog.py:155
@@ -337,24 +311,22 @@ msgid ""
 "This file already exists.\n"
 "Do you want to overwrite it?"
 msgstr ""
-"Tệp này đã tồn tại.\n"
-"Bạn có muốn ghi đè lên nó không?"
 
 #. title of step in export dialog
 #: zim/gui/exportdialog.py:166
 msgid "Select the pages to export"
-msgstr "Chọn các trang để xuất"
+msgstr ""
 
 #. Option in export dialog to export complete notebook | 
 #. Option in versions dialog to show version for complete notebook
 #: zim/gui/exportdialog.py:172 zim/plugins/versioncontrol/__init__.py:839
 msgid "Complete _notebook"
-msgstr "Hoàn thành _notebook"
+msgstr ""
 
 #. Option in export dialog to export selection
 #: zim/gui/exportdialog.py:177
 msgid "Single _page"
-msgstr "Trang đơn"
+msgstr ""
 
 #. Input field in export dialog | 
 #. label in word count dialog | 
@@ -369,160 +341,160 @@ msgstr "Trang đơn"
 #: zim/plugins/quicknote.py:241 zim/plugins/tasklist/gui.py:748
 #: zim/plugins/tasklist/gui.py:1032 zim/plugins/tasklist/gui.py:1285
 msgid "Page"
-msgstr "Trang"
+msgstr "გვერდი"
 
 #. Input field in export dialog
 #: zim/gui/exportdialog.py:181
 msgid "Include subpages"
-msgstr "Bao gồm các trang con"
+msgstr ""
 
 #. title of step in export dialog
 #: zim/gui/exportdialog.py:208
 msgid "Select the export format"
-msgstr "Chọn định dạng xuất"
+msgstr ""
 
 #. Option in drop down menu to specify another file
 #: zim/gui/exportdialog.py:210
 msgid "Other..."
-msgstr "Khác..."
+msgstr "სხვა..."
 
 #. Input label in the export dialog | 
 #. label in "insert date" dialog
 #: zim/gui/exportdialog.py:221 zim/gui/pageview/dialogs.py:64
 msgid "Format"
-msgstr "Định dạng"
+msgstr "ფორმატი"
 
 #. Input label in the export dialog | 
 #. Field in web server gui for webpage template
 #: zim/gui/exportdialog.py:222 zim/gui/server.py:106
 msgid "Template"
-msgstr "Mẫu"
+msgstr "ნიმუში"
 
 #. radio option in export dialog
 #: zim/gui/exportdialog.py:225
 msgid "Link files under document root with full file path"
-msgstr "Liên kết tệp dưới gốc tài liệu với đường dẫn tệp đầy đủ"
+msgstr ""
 
 #. radio option in export dialog
 #: zim/gui/exportdialog.py:226
 msgid "Map document root to URL"
-msgstr "Bản đồ gốc tài liệu đến URL"
+msgstr ""
 
 #. label for button with URL
 #: zim/gui/exportdialog.py:235 zim/gui/templateeditordialog.py:70
 msgid "Get more templates online"
-msgstr "Nhận thêm các mẫu trực tuyến"
+msgstr ""
 
 #. title of step in export dialog
 #: zim/gui/exportdialog.py:307
 msgid "Select the output file or folder"
-msgstr "Chọn đầu ra tệp hoặc thư mục"
+msgstr ""
 
 #. Label for option in export dialog
 #: zim/gui/exportdialog.py:313
 msgid "Export each page to a separate file"
-msgstr "Xuất mỗi trang thành một tệp riêng biệt"
+msgstr ""
 
 #. Label for option in export dialog
 #: zim/gui/exportdialog.py:315
 msgid "Export all pages to a single file"
-msgstr "Xuất tất cả các trang vào một tệp duy nhất"
+msgstr ""
 
 #. Label for folder selection in export dialog
 #: zim/gui/exportdialog.py:318
 msgid "Output folder"
-msgstr "Đầu ra thư mục"
+msgstr ""
 
 #. Label for setting a name for the index of exported pages
 #: zim/gui/exportdialog.py:320
 msgid "Index page"
-msgstr "Chỉ mục trang"
+msgstr ""
 
 #. Label for file selection in export dialog
 #: zim/gui/exportdialog.py:323
 msgid "Output file"
-msgstr "Đầu ra tệp"
+msgstr "გამოტანის ფაილი"
 
 #. label in export dialog
 #: zim/gui/exportdialog.py:412
 #, python-format
 msgid "%(n_error)i errors and %(n_warning)i warnings occurred, see log"
-msgstr "%(n_error)i lỗi và %(n_warning)i cảnh báo đã xảy ra, xem nhật ký"
+msgstr ""
 
 #. label in export dialog
 #: zim/gui/exportdialog.py:415
 #, python-format
 msgid "%i errors occurred, see log"
-msgstr "%i lỗi đã xảy ra, xem nhật ký"
+msgstr ""
 
 #. label in export dialog
 #: zim/gui/exportdialog.py:418
 #, python-format
 msgid "%i warnings occurred, see log"
-msgstr "%i cảnh báo đã xảy ra, xem nhật ký"
+msgstr ""
 
 #. label in export dialog
 #: zim/gui/exportdialog.py:423
 msgid "Export completed"
-msgstr "Xuất đã hoàn tất"
+msgstr ""
 
 #. button in export dialog | 
 #. button in e.g. equation editor dialog
 #: zim/gui/exportdialog.py:426 zim/plugins/base/imagegenerator.py:444
 msgid "View _Log"
-msgstr "Xem _Log"
+msgstr "დაათვალიერე _ჟურნალი"
 
 #. Label for object manager
 #: zim/gui/insertedobjects.py:276
 #, python-format
 msgid "No plugin available to display objects of type: %s"
-msgstr "Không có plugin có sẵn dùng để hiển thị các đối tượng thuộc loại: %s"
+msgstr ""
 
 #. Label for object manager - "%s" is the plugin name
 #: zim/gui/insertedobjects.py:284
 #, python-format
 msgid "Plugin \"%s\" is required to display this object"
-msgstr "Plugin \"%s\" được yêu cầu để hiển thị đối tượng này"
+msgstr ""
 
 #. Label for object manager
 #: zim/gui/insertedobjects.py:288
 msgid "Enable plugin"
-msgstr "Bật plugin"
+msgstr "დამატების ჩართვა"
 
 #. label for inserted object
 #: zim/gui/insertedobjects.py:321
 msgid "Unkown Object"
-msgstr "Đối tượng chưa xác minh"
+msgstr ""
 
 #. label for inserted object
 #: zim/gui/insertedobjects.py:362
 msgid "Unkown Image type"
-msgstr "Loại Ảnh Không Xác định"
+msgstr ""
 
 #. Menu title
 #: zim/gui/mainwindow.py:49
 msgid "_File"
-msgstr "_Tệp"
+msgstr "_ფაილი"
 
 #. Menu title | 
 #. Button label
 #: zim/gui/mainwindow.py:50 zim/gui/pageview/dialogs.py:85
 #: zim/gui/templateeditordialog.py:49 zim/plugins/insertsymbol.py:155
 msgid "_Edit"
-msgstr "_Chỉnh sửa"
+msgstr "_ჩასწორება"
 
 #. Menu title | 
 #. button label
 #: zim/gui/mainwindow.py:51 zim/gui/templateeditordialog.py:43
 msgid "_View"
-msgstr "_Xem"
+msgstr "_ხედი"
 
 #. Menu title | 
 #. Button label
 #: zim/gui/mainwindow.py:52 zim/gui/pageview/dialogs.py:35
 #: zim/plugins/insertsymbol.py:131
 msgid "_Insert"
-msgstr "_Chèn"
+msgstr "ჩა_სმა"
 
 #. Menu title | 
 #. input label | 
@@ -530,38 +502,38 @@ msgstr "_Chèn"
 #: zim/gui/mainwindow.py:53 zim/gui/searchdialog.py:40
 #: zim/plugins/tasklist/gui.py:555
 msgid "_Search"
-msgstr "_Tìm kiếm"
+msgstr "_ძებნა"
 
 #. Menu title
 #: zim/gui/mainwindow.py:54
 msgid "For_mat"
-msgstr "_Định dạng"
+msgstr "_ფორმატი"
 
 #. Menu title
 #: zim/gui/mainwindow.py:55
 msgid "_Tools"
-msgstr "_Công cụ"
+msgstr "_ხელსაწყოები"
 
 #. Menu title
 #: zim/gui/mainwindow.py:56
 msgid "_Go"
-msgstr "_Go"
+msgstr "_წინ"
 
 #. Menu title | 
 #. Button label
 #: zim/gui/mainwindow.py:57 zim/gui/widgets.py:3076
 msgid "_Help"
-msgstr "_Trợ giúp"
+msgstr "_დახმარება"
 
 #. Menu title
 #: zim/gui/mainwindow.py:58
 msgid "_Checkbox"
-msgstr "_ Checkbox"
+msgstr ""
 
 #. option for preferences dialog
 #: zim/gui/mainwindow.py:68
 msgid "Prefer dark theme"
-msgstr ""
+msgstr "მუქი თემის არჩევანი"
 
 #. info text for preferences dialog
 #: zim/gui/mainwindow.py:69
@@ -583,42 +555,42 @@ msgstr ""
 #: zim/gui/mainwindow.py:73
 #, python-format
 msgid "Use %s to switch to the side pane"
-msgstr "Sử dụng %s để chuyển sang ngăn bên"
+msgstr ""
 
 #. Option in the preferences dialog
 #: zim/gui/mainwindow.py:77
 msgid "Always use last cursor position when opening a page"
-msgstr "Luôn sử dụng vị trí con trỏ cuối cùng khi mở trang"
+msgstr ""
 
 #. button label for fullscreen window header
 #: zim/gui/mainwindow.py:152 zim/gui/mainwindow.py:273
 msgid "Leave Fullscreen"
-msgstr "Rời khỏi chế độ Toàn màn hình"
+msgstr "სრული ეკრანიდან გასვლა"
 
 #. Menu item
 #: zim/gui/mainwindow.py:295
 msgid "_Fullscreen"
-msgstr "_ Fullscreen"
+msgstr "სრული ეკრა_ნზე"
 
 #. menu item
 #: zim/gui/mainwindow.py:303
 msgid "Toggle _Editable"
-msgstr "Chuyển đổi _Editable"
+msgstr ""
 
 #. menu item
 #: zim/gui/mainwindow.py:303
 msgid "Toggle editable"
-msgstr "Chuyển đổi có thể chỉnh sửa"
+msgstr ""
 
 #. message in toggle editable tooltip
 #: zim/gui/mainwindow.py:332
 msgid "Page is read-only and cannot be edited"
-msgstr "Trang ở chế độ chỉ-đọc và không thể chỉnh sửa"
+msgstr ""
 
 #. Menu item
 #: zim/gui/mainwindow.py:366
 msgid "_Side Panes"
-msgstr "_ Side Panes"
+msgstr ""
 
 #. menu item
 #: zim/gui/mainwindow.py:391
@@ -629,17 +601,17 @@ msgstr ""
 #. Button label
 #: zim/gui/mainwindow.py:633 zim/gui/widgets.py:3027
 msgid "_Close"
-msgstr "_ Close"
+msgstr "და_ხურვა"
 
 #. label for View->Menubar menu item
 #: zim/gui/mainwindow.py:702
 msgid "Menubar"
-msgstr "thanh Menu"
+msgstr "მენიუს ზოლი"
 
 #. short question on open-page if file exists
 #: zim/gui/mainwindow.py:816 zim/gui/uiactions.py:493
 msgid "File exists, do you want to import?"
-msgstr "Tệp tồn tại, bạn có muốn nhập không?"
+msgstr ""
 
 #. longer question on open-page if file exists
 #: zim/gui/mainwindow.py:817 zim/gui/uiactions.py:494
@@ -664,23 +636,23 @@ msgstr ""
 #. Button label
 #: zim/gui/mainwindow.py:905 zim/gui/widgets.py:3949
 msgid "_Back"
-msgstr ""
+msgstr "_უკან"
 
 #. tooltip for navigation button
 #: zim/gui/mainwindow.py:907
 msgid "Go back"
-msgstr ""
+msgstr "უკან გადასვლა"
 
 #. Menu item | 
 #. Button label
 #: zim/gui/mainwindow.py:918 zim/gui/widgets.py:3953
 msgid "_Forward"
-msgstr ""
+msgstr "_წინ"
 
 #. tooltip for navigation button
 #: zim/gui/mainwindow.py:920
 msgid "Go forward"
-msgstr ""
+msgstr "წინ გადასვლა"
 
 #. Menu item
 #: zim/gui/mainwindow.py:930
@@ -705,7 +677,7 @@ msgstr ""
 #. Menu item
 #: zim/gui/mainwindow.py:973
 msgid "_Home"
-msgstr ""
+msgstr "_საწყისი"
 
 #. Menu item
 #: zim/gui/mainwindow.py:973
@@ -723,17 +695,17 @@ msgstr[1] ""
 #. Dialog title
 #: zim/gui/mainwindow.py:1162
 msgid "Jump to"
-msgstr ""
+msgstr "გადასვლა"
 
 #. Button label
 #: zim/gui/mainwindow.py:1163
 msgid "_Jump"
-msgstr ""
+msgstr "_გადასვლა"
 
 #. Label for page input
 #: zim/gui/mainwindow.py:1168
 msgid "Jump to Page"
-msgstr ""
+msgstr "გვერდზე გადასვლა"
 
 #. Column heading in 'open notebook' dialog | 
 #. Field in web server gui | 
@@ -741,7 +713,7 @@ msgstr ""
 #: zim/gui/notebookdialog.py:200 zim/gui/propertiesdialog.py:70
 #: zim/gui/server.py:102 zim/plugins/quicknote.py:213
 msgid "Notebook"
-msgstr ""
+msgstr "ნოუთბუქი"
 
 #. dialog title
 #: zim/gui/notebookdialog.py:307
@@ -751,12 +723,12 @@ msgstr ""
 #. Button label
 #: zim/gui/notebookdialog.py:336
 msgid "_Add"
-msgstr ""
+msgstr "_დამატება"
 
 #. Button label
 #: zim/gui/notebookdialog.py:340 zim/gui/templateeditordialog.py:52
 msgid "_Remove"
-msgstr ""
+msgstr "_წაშლა"
 
 #. Input label in 'open notebook' dialog
 #: zim/gui/notebookdialog.py:356
@@ -766,7 +738,7 @@ msgstr ""
 #. Dialog window title
 #: zim/gui/notebookdialog.py:418
 msgid "Add Notebook"
-msgstr ""
+msgstr "წიგნაკის დამატება"
 
 #. Label in Add Notebook dialog
 #: zim/gui/notebookdialog.py:420
@@ -776,14 +748,14 @@ msgstr ""
 #. input field in 'Add Notebook' dialog
 #: zim/gui/notebookdialog.py:438
 msgid "Folder"
-msgstr ""
+msgstr "საქაღალდე"
 
 #. choice field in 'Add Notebook' dialog
 #: zim/gui/notebookdialog.py:439
 #, fuzzy
-#| msgid "Default"
+#| msgid "Default text"
 msgid "Default file format"
-msgstr "Mặc định"
+msgstr "ნაგულისხმევი ტექსტი"
 
 #. choice field in 'Add Notebook' dialog
 #: zim/gui/notebookdialog.py:439
@@ -796,7 +768,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Template"
 msgid "Page template"
-msgstr "Mẫu"
+msgstr "ნიმუში"
 
 #. help text in the 'Add Notebook' dialog
 #: zim/gui/notebookdialog.py:448
@@ -917,12 +889,12 @@ msgstr ""
 #: zim/gui/pageview/__init__.py:287 zim/gui/pageview/dialogs.py:324
 #: zim/gui/searchdialog.py:52 zim/gui/widgets.py:92
 msgid "_Cancel"
-msgstr ""
+msgstr "გაუ_ქმება"
 
 #. Button in error dialog
 #: zim/gui/pageview/__init__.py:292
 msgid "_Discard Changes"
-msgstr ""
+msgstr "_ცვლილებების გაუქმება"
 
 #. Button in error dialog
 #: zim/gui/pageview/__init__.py:297
@@ -970,7 +942,7 @@ msgstr ""
 #. menu item for formatting
 #: zim/gui/pageview/__init__.py:513 zim/gui/pageview/__init__.py:528
 msgid "_Mark"
-msgstr ""
+msgstr "დანიშვ_ნა"
 
 #. Menu item | 
 #. menu item for formatting
@@ -997,7 +969,7 @@ msgstr ""
 #. menu item for formatting
 #: zim/gui/pageview/__init__.py:531
 msgid "Su_perscript"
-msgstr ""
+msgstr "ზედა _ხაზზე"
 
 #. menu item for formatting
 #: zim/gui/pageview/__init__.py:532
@@ -1056,7 +1028,7 @@ msgstr ""
 #. context menu item
 #: zim/gui/pageview/__init__.py:1502
 msgid "Copy _Link"
-msgstr ""
+msgstr "ბმუ_ლის კოპირება"
 
 #. context menu item
 #: zim/gui/pageview/__init__.py:1503
@@ -1066,19 +1038,19 @@ msgstr ""
 #. context menu item
 #: zim/gui/pageview/__init__.py:1516
 msgid "Copy Email Address"
-msgstr ""
+msgstr "ელფოსტის მისამართის კოპირება"
 
 #. menu item to open containing folder of files
 #: zim/gui/pageview/__init__.py:1531
 msgid "Open Folder"
-msgstr ""
+msgstr "საქაღალდის გახსნა"
 
 #. menu item for sub menu with applications | 
 #. menu item
 #: zim/gui/pageview/__init__.py:1540 zim/gui/pageview/__init__.py:1551
 #: zim/plugins/attachmentbrowser/filebrowser.py:400
 msgid "Open With..."
-msgstr ""
+msgstr "გამხსნელი პროგრამა…"
 
 #. menu item to open a link | 
 #. Menu item | 
@@ -1086,7 +1058,7 @@ msgstr ""
 #: zim/gui/pageview/__init__.py:1561 zim/gui/uiactions.py:131
 #: zim/plugins/backlinkpane.py:143 zim/plugins/tableofcontents.py:453
 msgid "Open in New _Window"
-msgstr ""
+msgstr "ახალ _ფანჯარაში გახსნა"
 
 #. menu item to open a link or file | 
 #. Button label | 
@@ -1094,7 +1066,7 @@ msgstr ""
 #: zim/gui/pageview/__init__.py:1571 zim/gui/widgets.py:3627
 #: zim/plugins/attachmentbrowser/filebrowser.py:407
 msgid "_Open"
-msgstr ""
+msgstr "_გახსნა"
 
 #. popup menu menuitem
 #: zim/gui/pageview/__init__.py:1586
@@ -1128,27 +1100,27 @@ msgstr ""
 #: zim/gui/pageview/__init__.py:1599 zim/gui/widgets.py:3629
 #: zim/plugins/versioncontrol/__init__.py:771
 msgid "_Save"
-msgstr ""
+msgstr "_შენახვა"
 
 #. Menu item
 #: zim/gui/pageview/__init__.py:1609
 msgid "_Reload"
-msgstr ""
+msgstr "თავიდან ჩატვი_რთვა"
 
 #. Menu item
 #: zim/gui/pageview/__init__.py:1619
 msgid "_Undo"
-msgstr ""
+msgstr "გა_უქმება"
 
 #. Menu item
 #: zim/gui/pageview/__init__.py:1626
 msgid "_Redo"
-msgstr ""
+msgstr "გამეო_რება"
 
 #. Menu item
 #: zim/gui/pageview/__init__.py:1633
 msgid "Cu_t"
-msgstr ""
+msgstr "ა_მოჭრა"
 
 #. Menu item | 
 #. Button label | 
@@ -1156,17 +1128,17 @@ msgstr ""
 #: zim/gui/pageview/__init__.py:1638 zim/gui/templateeditordialog.py:46
 #: zim/plugins/tasklist/gui.py:1257
 msgid "_Copy"
-msgstr ""
+msgstr "_კოპირება"
 
 #. Menu item
 #: zim/gui/pageview/__init__.py:1643
 msgid "_Paste"
-msgstr ""
+msgstr "ჩ_ასმა"
 
 #. Menu item
 #: zim/gui/pageview/__init__.py:1648
 msgid "_Delete"
-msgstr ""
+msgstr "_წაშლა"
 
 #. Menu item
 #: zim/gui/pageview/__init__.py:1659
@@ -1201,7 +1173,7 @@ msgstr ""
 #. menu item to cut current line to clipboard
 #: zim/gui/pageview/__init__.py:1767
 msgid "Cut Line"
-msgstr ""
+msgstr "ხაზის ამოჭრა"
 
 #. Menu item
 #: zim/gui/pageview/__init__.py:1780
@@ -1259,7 +1231,7 @@ msgstr ""
 #. message when no file templates are found in ~/Templates
 #: zim/gui/pageview/__init__.py:1970
 msgid "No templates installed"
-msgstr ""
+msgstr "არც ერთი დაყენებული შაბლონი"
 
 #. Menu item in "Insert > New File Attachment" submenu
 #: zim/gui/pageview/__init__.py:2019
@@ -1279,17 +1251,17 @@ msgstr ""
 #. Menu item
 #: zim/gui/pageview/__init__.py:2077
 msgid "_Find..."
-msgstr ""
+msgstr "ძებ_ნა..."
 
 #. Menu item
 #: zim/gui/pageview/__init__.py:2094
 msgid "Find Ne_xt"
-msgstr ""
+msgstr "შემდეგის პოვ_ნა"
 
 #. Menu item
 #: zim/gui/pageview/__init__.py:2102
 msgid "Find Pre_vious"
-msgstr ""
+msgstr "წინას პო_ვნა"
 
 #. Menu item
 #: zim/gui/pageview/__init__.py:2108
@@ -1304,17 +1276,17 @@ msgstr ""
 #. Menu item
 #: zim/gui/pageview/__init__.py:2120
 msgid "_Zoom In"
-msgstr ""
+msgstr "_გადიდება"
 
 #. Menu item
 #: zim/gui/pageview/__init__.py:2125
 msgid "Zoom _Out"
-msgstr ""
+msgstr "და_პატარავება"
 
 #. Menu item to reset zoom
 #: zim/gui/pageview/__init__.py:2153
 msgid "_Normal Size"
-msgstr ""
+msgstr "_ნორმალური ზომა"
 
 #. Dialog title
 #: zim/gui/pageview/dialogs.py:34
@@ -1325,7 +1297,7 @@ msgstr ""
 #. Column header versions dialog
 #: zim/gui/pageview/dialogs.py:50 zim/plugins/versioncontrol/__init__.py:1084
 msgid "Date"
-msgstr ""
+msgstr "თარიღი"
 
 #. check box in InsertDate dialog
 #: zim/gui/pageview/dialogs.py:80
@@ -1335,7 +1307,7 @@ msgstr ""
 #. Dialog title
 #: zim/gui/pageview/dialogs.py:173
 msgid "Insert Image"
-msgstr ""
+msgstr "გამოსახულების დამატება"
 
 #. checkbox in the "Insert Image" dialog
 #: zim/gui/pageview/dialogs.py:186
@@ -1351,7 +1323,7 @@ msgstr ""
 #. Dialog title
 #: zim/gui/pageview/dialogs.py:229
 msgid "Attach File"
-msgstr ""
+msgstr "ფაილის მიმაგრება"
 
 #. Error dialog - %s is the full page name
 #: zim/gui/pageview/dialogs.py:236
@@ -1362,7 +1334,7 @@ msgstr ""
 #. Dialog title
 #: zim/gui/pageview/dialogs.py:296
 msgid "File Exists"
-msgstr ""
+msgstr "ფაილი უკვე არსებობს"
 
 #. Dialog text in 'new filename' dialog
 #: zim/gui/pageview/dialogs.py:297
@@ -1375,64 +1347,64 @@ msgstr ""
 #. Input label
 #: zim/gui/pageview/dialogs.py:306
 msgid "Filename"
-msgstr ""
+msgstr "ფაილის სახელი"
 
 #. Button label
 #: zim/gui/pageview/dialogs.py:315 zim/gui/widgets.py:1061
 #: zim/gui/widgets.py:1085
 msgid "_Browse"
-msgstr ""
+msgstr "_დათვალიერება"
 
 #. Button label
 #: zim/gui/pageview/dialogs.py:320
 msgid "Overwrite"
-msgstr ""
+msgstr "თავზე გადაწერა"
 
 #. Button label
 #: zim/gui/pageview/dialogs.py:325 zim/gui/widgets.py:93
 msgid "_OK"
-msgstr ""
+msgstr "_დიახ"
 
 #. Dialog title
 #: zim/gui/pageview/dialogs.py:363
 msgid "Edit Image"
-msgstr ""
+msgstr "გამოსახულების ჩასწორება"
 
 #. Input in 'edit image' dialog | 
 #. Input label for the section to move a page to
 #: zim/gui/pageview/dialogs.py:385 zim/gui/uiactions.py:607
 msgid "Location"
-msgstr ""
+msgstr "მდებარეობა"
 
 #. Input in 'edit image' dialog | 
 #. Input in 'insert link' dialog
 #: zim/gui/pageview/dialogs.py:386 zim/gui/pageview/dialogs.py:557
 msgid "Link to"
-msgstr ""
+msgstr "ბმული"
 
 #. Input in 'edit image' dialog
 #: zim/gui/pageview/dialogs.py:387
 #, fuzzy
-#| msgid "Default"
+#| msgid "Default text"
 msgid "Alternate text"
-msgstr "Mặc định"
+msgstr "ნაგულისხმევი ტექსტი"
 
 #. Input in 'edit image' dialog
 #: zim/gui/pageview/dialogs.py:388
 msgid "Width"
-msgstr ""
+msgstr "სიგანე"
 
 #. Input in 'edit image' dialog
 #: zim/gui/pageview/dialogs.py:389
 msgid "Height"
-msgstr ""
+msgstr "სიმაღლე"
 
 #. tooltip label for image with anchor id | 
 #. input label for object ID
 #: zim/gui/pageview/dialogs.py:390 zim/gui/pageview/textview.py:1103
 #: zim/plugins/sourceview.py:405
 msgid "Id"
-msgstr ""
+msgstr "Id"
 
 #. Button in 'edit image' dialog
 #: zim/gui/pageview/dialogs.py:400
@@ -1447,23 +1419,23 @@ msgstr ""
 #. Dialog title
 #: zim/gui/pageview/dialogs.py:548
 msgid "Edit Link"
-msgstr ""
+msgstr "ბმულის ჩასწორება"
 
 #. Dialog title
 #: zim/gui/pageview/dialogs.py:550
 msgid "Insert Link"
-msgstr ""
+msgstr "ბმულის ჩასმა"
 
 #. Dialog button
 #: zim/gui/pageview/dialogs.py:552
 msgid "_Link"
-msgstr ""
+msgstr "ბმუ_ლი"
 
 #. Input in 'insert link' dialog | 
 #. toolbar style
 #: zim/gui/pageview/dialogs.py:558 zim/plugins/toolbar.py:20
 msgid "Text"
-msgstr ""
+msgstr "ტექსტი"
 
 #. Input in 'insert link' dialog | 
 #. Input in 'move text' dialog
@@ -1474,37 +1446,37 @@ msgstr ""
 #. Dialog title
 #: zim/gui/pageview/dialogs.py:672
 msgid "Word Count"
-msgstr ""
+msgstr "სიტყვების რაოდენობა"
 
 #. label in word count dialog
 #: zim/gui/pageview/dialogs.py:715
 msgid "Paragraph"
-msgstr ""
+msgstr "პარაგრაფი"
 
 #. label in word count dialog
 #: zim/gui/pageview/dialogs.py:716
 msgid "Selection"
-msgstr ""
+msgstr "მონიშნული"
 
 #. label in word count dialog
 #: zim/gui/pageview/dialogs.py:717
 msgid "Words"
-msgstr ""
+msgstr "საკვანძო სიტყვები"
 
 #. label in word count dialog
 #: zim/gui/pageview/dialogs.py:718
 msgid "Lines"
-msgstr ""
+msgstr "ხაზები"
 
 #. label in word count dialog
 #: zim/gui/pageview/dialogs.py:719
 msgid "Characters"
-msgstr ""
+msgstr "სიმბოლოები"
 
 #. label in word count dialog
 #: zim/gui/pageview/dialogs.py:720
 msgid "Characters excluding spaces"
-msgstr ""
+msgstr "სიმბოლოები ჰარეების არჩათვლით"
 
 #. Dialog title
 #: zim/gui/pageview/dialogs.py:771
@@ -1514,7 +1486,7 @@ msgstr ""
 #. Button label
 #: zim/gui/pageview/dialogs.py:772
 msgid "_Move"
-msgstr ""
+msgstr "_გადატანა"
 
 #. Input in 'move text' dialog
 #: zim/gui/pageview/dialogs.py:784
@@ -1539,17 +1511,17 @@ msgstr ""
 #. Dialog title
 #: zim/gui/pageview/dialogs.py:850
 msgid "New File"
-msgstr ""
+msgstr "ახალი ფაილი"
 
 #. button in find bar and find & replace dialog
 #: zim/gui/pageview/find.py:571
 msgid "_Next"
-msgstr ""
+msgstr "_შემდეგი"
 
 #. button in find bar and find & replace dialog
 #: zim/gui/pageview/find.py:577
 msgid "_Previous"
-msgstr ""
+msgstr "_წინა"
 
 #. checkbox option in find bar and find & replace dialog
 #: zim/gui/pageview/find.py:583
@@ -1565,22 +1537,22 @@ msgstr ""
 #. checkbox option in find bar and find & replace dialog
 #: zim/gui/pageview/find.py:593
 msgid "_Regular expression"
-msgstr ""
+msgstr "_რეგულარული გამოსახულება"
 
 #. checkbox option in find bar and find & replace dialog
 #: zim/gui/pageview/find.py:598
 msgid "_Highlight"
-msgstr ""
+msgstr "_მარკერი"
 
 #. label for input in find bar on bottom of page
 #: zim/gui/pageview/find.py:678
 msgid "Find"
-msgstr ""
+msgstr "ძებნა"
 
 #. Dialog title
 #: zim/gui/pageview/find.py:722
 msgid "Find and Replace"
-msgstr ""
+msgstr "ძებნა და ჩანაცვლება"
 
 #. input label in find & replace dialog
 #: zim/gui/pageview/find.py:732
@@ -1590,17 +1562,17 @@ msgstr ""
 #. input label in find & replace dialog
 #: zim/gui/pageview/find.py:742
 msgid "Replace with"
-msgstr ""
+msgstr "_ჩანაცვლება"
 
 #. Button in search & replace dialog
 #: zim/gui/pageview/find.py:756
 msgid "_Replace"
-msgstr ""
+msgstr "_ჩანაცვლება"
 
 #. Button in search & replace dialog
 #: zim/gui/pageview/find.py:761
 msgid "Replace _All"
-msgstr ""
+msgstr "ყველ_აფრის ჩანაცვლება"
 
 #. tooltip for button in anchor popover
 #: zim/gui/pageview/textview.py:827
@@ -1610,17 +1582,17 @@ msgstr ""
 #. tooltip label for image with href
 #: zim/gui/pageview/textview.py:1101
 msgid "Link"
-msgstr ""
+msgstr "ბმული"
 
 #. Tab in preferences dialog
 #: zim/gui/preferencesdialog.py:31
 msgid "Interface"
-msgstr ""
+msgstr "ინტერფეისი"
 
 #. Tab in preferences dialog
 #: zim/gui/preferencesdialog.py:32
 msgid "Editing"
-msgstr ""
+msgstr "ჩასწორება"
 
 #. warning message, %s is the current locale - e.g. "NL_nl"
 #: zim/gui/preferencesdialog.py:39
@@ -1635,22 +1607,22 @@ msgstr ""
 #. Dialog title
 #: zim/gui/preferencesdialog.py:55
 msgid "Preferences"
-msgstr ""
+msgstr "მორგება"
 
 #. Heading in preferences dialog
 #: zim/gui/preferencesdialog.py:118
 msgid "Key bindings"
-msgstr ""
+msgstr "კლავიატურის ბმები"
 
 #. Heading in preferences dialog
 #: zim/gui/preferencesdialog.py:123
 msgid "Plugins"
-msgstr ""
+msgstr "დამატებები"
 
 #. Heading in preferences dialog
 #: zim/gui/preferencesdialog.py:132
 msgid "Applications"
-msgstr ""
+msgstr "აპლიკაციები"
 
 #. option in preferences dialog
 #: zim/gui/preferencesdialog.py:138
@@ -1660,17 +1632,17 @@ msgstr ""
 #. Button in plugin tab
 #: zim/gui/preferencesdialog.py:249
 msgid "_More"
-msgstr ""
+msgstr "_მეტი"
 
 #. Button in plugin tab
 #: zim/gui/preferencesdialog.py:254
 msgid "C_onfigure"
-msgstr ""
+msgstr "მ_ორგება"
 
 #. Button in plugin tab
 #: zim/gui/preferencesdialog.py:259
 msgid "_Properties"
-msgstr ""
+msgstr "_თვისებები"
 
 #. button label
 #: zim/gui/preferencesdialog.py:274
@@ -1700,54 +1672,54 @@ msgstr ""
 #. Heading in plugins tab of preferences dialog
 #: zim/gui/preferencesdialog.py:350
 msgid "Dependencies"
-msgstr ""
+msgstr "დამოკიდებულებები"
 
 #. label in plugin info in preferences dialog
 #: zim/gui/preferencesdialog.py:353
 msgid "No dependencies"
-msgstr ""
+msgstr "დამოკიდებულებების გარეშე"
 
 #. dependency is OK
 #: zim/gui/preferencesdialog.py:359
 msgid "OK"
-msgstr ""
+msgstr "დიახ"
 
 #. dependency failed
 #: zim/gui/preferencesdialog.py:361 zim/gui/preferencesdialog.py:364
 msgid "Failed"
-msgstr ""
+msgstr "ჩავარდა"
 
 #. optional dependency
 #: zim/gui/preferencesdialog.py:365
 msgid "Optional"
-msgstr ""
+msgstr "არასავალდებულო"
 
 #. Heading in plugins tab of preferences dialog | 
 #. Column header versions dialog
 #: zim/gui/preferencesdialog.py:369 zim/plugins/versioncontrol/__init__.py:1085
 msgid "Author"
-msgstr ""
+msgstr "ავტორი"
 
 #. Column in plugin tab
 #: zim/gui/preferencesdialog.py:467
 msgid "Enabled"
-msgstr ""
+msgstr "ჩართულია"
 
 #. Column in plugin tab
 #: zim/gui/preferencesdialog.py:470
 msgid "Plugin"
-msgstr ""
+msgstr "დამატება"
 
 #. Dialog title
 #: zim/gui/preferencesdialog.py:477
 msgid "Configure Plugin"
-msgstr ""
+msgstr "დამატების გამართვა"
 
 #. Heading for 'configure plugin' dialog - %s is the plugin name
 #: zim/gui/preferencesdialog.py:482
 #, python-format
 msgid "Options for plugin %s"
-msgstr ""
+msgstr "დამატების (%s) პარამეტრები"
 
 #. info text in the preferences dialog
 #: zim/gui/preferencesdialog.py:497
@@ -1778,12 +1750,12 @@ msgstr ""
 #. Column header for keybinding list
 #: zim/gui/preferencesdialog.py:578
 msgid "Action"
-msgstr ""
+msgstr "ქმედება"
 
 #. Column header for keybinding list
 #: zim/gui/preferencesdialog.py:589
 msgid "Key Binding"
-msgstr ""
+msgstr "კლავიატურის ბმები"
 
 #. label for properties dialog
 #: zim/gui/propertiesdialog.py:22
@@ -1793,7 +1765,7 @@ msgstr ""
 #. label for properties dialog
 #: zim/gui/propertiesdialog.py:29
 msgid "Home Page"
-msgstr ""
+msgstr "საწყისი გვერდი"
 
 #. label for properties dialog
 #: zim/gui/propertiesdialog.py:30
@@ -1817,7 +1789,7 @@ msgstr ""
 #. Dialog title
 #: zim/gui/propertiesdialog.py:38
 msgid "Properties"
-msgstr ""
+msgstr "თვისებები"
 
 #. Dialog title
 #: zim/gui/recentchangesdialog.py:20
@@ -1827,17 +1799,17 @@ msgstr ""
 #. label for modified time
 #: zim/gui/recentchangesdialog.py:72
 msgid "Today"
-msgstr ""
+msgstr "დღეს"
 
 #. label for modified time
 #: zim/gui/recentchangesdialog.py:75
 msgid "Yesterday"
-msgstr ""
+msgstr "გუშინ"
 
 #. Column header
 #: zim/gui/recentchangesdialog.py:88
 msgid "Last Modified"
-msgstr ""
+msgstr "ბოლო ცვლილება"
 
 #. help text for the search dialog
 #: zim/gui/searchdialog.py:19
@@ -1849,12 +1821,12 @@ msgstr ""
 #. Dialog title
 #: zim/gui/searchdialog.py:32
 msgid "Search"
-msgstr ""
+msgstr "ძებნა"
 
 #. Button label
 #: zim/gui/searchdialog.py:46
 msgid "_Find"
-msgstr ""
+msgstr "_პოვნა"
 
 #. checkbox option in search dialog
 #: zim/gui/searchdialog.py:55
@@ -1868,25 +1840,23 @@ msgstr ""
 
 #. placeholder label when search has started
 #: zim/gui/searchdialog.py:73
-#, fuzzy
-#| msgid "_Search"
 msgid "Searching ..."
-msgstr "_Tìm kiếm"
+msgstr "ძებნა ..."
 
 #. placeholder label when search has no results
 #: zim/gui/searchdialog.py:74
 msgid "No results"
-msgstr ""
+msgstr "შედეგების გარეშე"
 
 #. Column header search dialog
 #: zim/gui/searchdialog.py:190
 msgid "Score"
-msgstr ""
+msgstr "ქულები"
 
 #. Window title
 #: zim/gui/server.py:46
 msgid "Web Server"
-msgstr ""
+msgstr "ვებ-სერვერი"
 
 #. Status in web server gui
 #: zim/gui/server.py:54
@@ -1906,17 +1876,17 @@ msgstr ""
 #. Field in web server gui for HTTP port (e.g. port 80)
 #: zim/gui/server.py:104
 msgid "Port"
-msgstr ""
+msgstr "პორტი"
 
 #. Field in web server gui
 #: zim/gui/server.py:110
 msgid "Username"
-msgstr ""
+msgstr "მომხმარებლის სახელი"
 
 #. Field in web server gui
 #: zim/gui/server.py:112
 msgid "Password"
-msgstr ""
+msgstr "პაროლი"
 
 #. Status in web server gui
 #: zim/gui/server.py:187
@@ -1932,12 +1902,12 @@ msgstr ""
 #. Section in dialog
 #: zim/gui/templateeditordialog.py:22 zim/gui/templateeditordialog.py:27
 msgid "Templates"
-msgstr ""
+msgstr "შაბლონები"
 
 #. button label
 #: zim/gui/templateeditordialog.py:59
 msgid "Browse"
-msgstr ""
+msgstr "პოვნა"
 
 #. Dialog title
 #: zim/gui/templateeditordialog.py:157
@@ -1977,7 +1947,7 @@ msgstr ""
 #. Menu item
 #: zim/gui/uiactions.py:154
 msgid "E_xport..."
-msgstr ""
+msgstr "გატანა..."
 
 #. Menu item
 #: zim/gui/uiactions.py:161
@@ -2008,7 +1978,7 @@ msgstr ""
 #. menu item in tray icon menu
 #: zim/gui/uiactions.py:228 zim/plugins/trayicon.py:151
 msgid "_Quit"
-msgstr ""
+msgstr "გასვ_ლა"
 
 #. Menu item
 #: zim/gui/uiactions.py:234
@@ -2018,17 +1988,17 @@ msgstr ""
 #. Menu item
 #: zim/gui/uiactions.py:240
 msgid "_Templates"
-msgstr ""
+msgstr "_ნიმუშები"
 
 #. Menu item
 #: zim/gui/uiactions.py:246
 msgid "Pr_eferences"
-msgstr ""
+msgstr "_მორგება"
 
 #. Menu item
 #: zim/gui/uiactions.py:256
 msgid "_Search..."
-msgstr ""
+msgstr "ძ_ებნა..."
 
 #. Menu item for search a sub-set of the notebook
 #: zim/gui/uiactions.py:277
@@ -2082,10 +2052,8 @@ msgstr ""
 
 #. menu item
 #: zim/gui/uiactions.py:352
-#, fuzzy
-#| msgid "View _Log"
 msgid "View Debug Log"
-msgstr "Xem _Log"
+msgstr ""
 
 #. Menu item
 #: zim/gui/uiactions.py:366
@@ -2100,7 +2068,7 @@ msgstr ""
 #. Menu item
 #: zim/gui/uiactions.py:411
 msgid "_Contents"
-msgstr ""
+msgstr "შემ_ცველობა"
 
 #. Menu item
 #: zim/gui/uiactions.py:419
@@ -2120,7 +2088,7 @@ msgstr ""
 #. Menu item
 #: zim/gui/uiactions.py:434
 msgid "_About"
-msgstr ""
+msgstr "_შესახებ"
 
 #. Dialog title
 #: zim/gui/uiactions.py:450
@@ -2131,7 +2099,7 @@ msgstr ""
 #. Dialog title
 #: zim/gui/uiactions.py:452
 msgid "New Page"
-msgstr ""
+msgstr "ახალი გვერდი"
 
 #. Dialog text in 'new page' dialog
 #: zim/gui/uiactions.py:456
@@ -2153,7 +2121,7 @@ msgstr ""
 #. Dialog title
 #: zim/gui/uiactions.py:522
 msgid "Import Page"
-msgstr ""
+msgstr "გვერდის შემოტანა"
 
 #. File filter for all supported import formats (.txt, .md)
 #: zim/gui/uiactions.py:528
@@ -2163,7 +2131,7 @@ msgstr ""
 #. File filter for '*.txt'
 #: zim/gui/uiactions.py:535
 msgid "Text Files"
-msgstr ""
+msgstr "ტექსტური ფაილები"
 
 #. File filter for '*.md'
 #: zim/gui/uiactions.py:536
@@ -2173,7 +2141,7 @@ msgstr ""
 #. Dialog title of file save dialog
 #: zim/gui/uiactions.py:559
 msgid "Save Copy"
-msgstr ""
+msgstr "ასლის შენახვა"
 
 #. Dialog title
 #: zim/gui/uiactions.py:584
@@ -2247,7 +2215,7 @@ msgstr ""
 #. Dialog title
 #: zim/gui/uiactions.py:768
 msgid "Delete Page"
-msgstr ""
+msgstr "გვერდის წაშლა"
 
 #. Heading in 'delete page' dialog - %s is the page name
 #: zim/gui/uiactions.py:769
@@ -2281,12 +2249,12 @@ msgstr ""
 #. This string needs to be translated with names of the translators for this language
 #: zim/gui/uiactions.py:813
 msgid "translator-credits"
-msgstr ""
+msgstr "ეკატერინე პაპავა"
 
 #. dialog title
 #: zim/gui/widgets.py:519 zim/gui/widgets.py:1602
 msgid "Select File"
-msgstr ""
+msgstr "აირჩიეთ ფაილი"
 
 #. menu item in context menu
 #: zim/gui/widgets.py:647
@@ -2296,22 +2264,22 @@ msgstr ""
 #. menu item in context menu
 #: zim/gui/widgets.py:649
 msgid "_Collapse All"
-msgstr ""
+msgstr "_ყველას ჩაკეცვა"
 
 #. tooltip for the inline icon to clear a text entry widget
 #: zim/gui/widgets.py:1454
 msgid "Clear"
-msgstr ""
+msgstr "გასუფთავება"
 
 #. dialog title
 #: zim/gui/widgets.py:1598
 msgid "Select Folder"
-msgstr ""
+msgstr "აირჩიეთ საქაღალდე"
 
 #. dialog title
 #: zim/gui/widgets.py:1600
 msgid "Select Image"
-msgstr ""
+msgstr "აირჩიეთ გამოსახულება"
 
 #. default text for empty page section selection
 #: zim/gui/widgets.py:1727
@@ -2341,30 +2309,30 @@ msgstr ""
 #. position of widget in window
 #: zim/gui/widgets.py:2093
 msgid "Top"
-msgstr ""
+msgstr "ზედა"
 
 #. position of widget in window
 #: zim/gui/widgets.py:2094
 msgid "Bottom"
-msgstr ""
+msgstr "ქვემო"
 
 #. position of widget in window | 
 #. alignment option
 #: zim/gui/widgets.py:2095 zim/plugins/tableeditor.py:54
 #: zim/plugins/tableeditor.py:945
 msgid "Left"
-msgstr ""
+msgstr "მარცხენა"
 
 #. position of widget in window | 
 #. alignment option
 #: zim/gui/widgets.py:2096 zim/plugins/tableeditor.py:56
 msgid "Right"
-msgstr ""
+msgstr "მარჯვენა"
 
 #. label for menu item which opens preferences dialog
 #: zim/gui/widgets.py:2406
 msgid "Preferences..."
-msgstr ""
+msgstr "მორგება..."
 
 #. Menu item
 #: zim/gui/widgets.py:2842
@@ -2381,12 +2349,12 @@ msgstr ""
 #. Filter in open file dialog, shows all files (*)
 #: zim/gui/widgets.py:3760
 msgid "All Files"
-msgstr ""
+msgstr "ყველა ფაილი"
 
 #. Filter in open file dialog, shows image files only
 #: zim/gui/widgets.py:3787
 msgid "Images"
-msgstr ""
+msgstr "გამოსახულებები"
 
 #. lable in progressbar giving number of items and total
 #: zim/gui/widgets.py:3883
@@ -2397,7 +2365,7 @@ msgstr ""
 #. dialog title for log view dialog - e.g. for Equation Editor
 #: zim/gui/widgets.py:3905
 msgid "Log file"
-msgstr ""
+msgstr "ჟურნალის ფაილი"
 
 #. Error verbose description
 #: zim/main/__init__.py:137
@@ -2529,7 +2497,7 @@ msgstr ""
 #. plugin name
 #: zim/plugins/arithmetic.py:16
 msgid "Arithmetic"
-msgstr ""
+msgstr "არითმეტიკა"
 
 #. plugin description
 #: zim/plugins/arithmetic.py:17
@@ -2607,52 +2575,52 @@ msgstr ""
 #. menu item to delete file
 #: zim/plugins/attachmentbrowser/filebrowser.py:392
 msgid "_Delete..."
-msgstr ""
+msgstr "წ_აშლა..."
 
 #. menu item to rename file
 #: zim/plugins/attachmentbrowser/filebrowser.py:396
 msgid "_Rename..."
-msgstr ""
+msgstr "სახელის გადა_რქმევა..."
 
 #. unspecified value for file modification time
 #: zim/plugins/attachmentbrowser/filebrowser.py:429
 msgid "Unknown"
-msgstr ""
+msgstr "უცნობი"
 
 #. label for file type
 #: zim/plugins/attachmentbrowser/filebrowser.py:442
 msgid "Type"
-msgstr ""
+msgstr "ტიპი"
 
 #. label for file size
 #: zim/plugins/attachmentbrowser/filebrowser.py:443
 msgid "Size"
-msgstr ""
+msgstr "ზომა"
 
 #. label for file modification date
 #: zim/plugins/attachmentbrowser/filebrowser.py:444
 msgid "Modified"
-msgstr ""
+msgstr "ცვლილების დროით"
 
 #. popup menu action on drag-drop of a file
 #: zim/plugins/attachmentbrowser/filebrowser.py:481
 msgid "_Move Here"
-msgstr ""
+msgstr "_აქ გადმოტანა"
 
 #. popup menu action on drag-drop of a file
 #: zim/plugins/attachmentbrowser/filebrowser.py:485
 msgid "_Copy Here"
-msgstr ""
+msgstr "აქ ა_სლის გადაღება"
 
 #. popup menu action on drag-drop of a file
 #: zim/plugins/attachmentbrowser/filebrowser.py:490
 msgid "Cancel"
-msgstr ""
+msgstr "გაუქმება"
 
 #. dialog title
 #: zim/plugins/attachmentbrowser/filerenamedialog.py:18
 msgid "Rename file"
-msgstr ""
+msgstr "ფაილის გადარქმევა"
 
 #. Error message
 #: zim/plugins/attachmentbrowser/filerenamedialog.py:69
@@ -2662,7 +2630,7 @@ msgstr ""
 #. Error message
 #: zim/plugins/attachmentbrowser/filerenamedialog.py:72
 msgid "A file with that name already exists."
-msgstr ""
+msgstr "ფაილი ამ სახელით უკვე არსებობს."
 
 #. Error message
 #: zim/plugins/attachmentbrowser/filerenamedialog.py:75
@@ -2714,18 +2682,18 @@ msgstr[1] ""
 #. context menu for inserted objects
 #: zim/plugins/base/imagegenerator.py:381
 msgid "_Edit..."
-msgstr ""
+msgstr "_ჩასწორება..."
 
 #. dialog title, %s is the object name like "Equation"
 #: zim/plugins/base/imagegenerator.py:410
 #, python-format
 msgid "Edit %s"
-msgstr ""
+msgstr "%s-ის ჩასწორება"
 
 #. button in e.g. equation editor dialog
 #: zim/plugins/base/imagegenerator.py:435
 msgid "_Preview"
-msgstr ""
+msgstr "_მინიატურა"
 
 #. Question prompt when e.g. equation editor encountered an error generating the image to insert
 #: zim/plugins/base/imagegenerator.py:498
@@ -2754,7 +2722,7 @@ msgstr ""
 #. preferences option
 #: zim/plugins/bookmarksbar.py:46
 msgid "Save bookmarks"
-msgstr ""
+msgstr "სანიშნების შენახვა"
 
 #. preferences option
 #: zim/plugins/bookmarksbar.py:47
@@ -2764,12 +2732,12 @@ msgstr ""
 #. menu item bookmark plugin
 #: zim/plugins/bookmarksbar.py:99 zim/plugins/bookmarksbar.py:160
 msgid "Add Bookmark"
-msgstr ""
+msgstr "სანიშნეს დამატება"
 
 #. menu item bookmark plugin
 #: zim/plugins/bookmarksbar.py:149
 msgid "Bookmarks"
-msgstr ""
+msgstr "სანიშნეები"
 
 #. button label
 #: zim/plugins/bookmarksbar.py:184
@@ -2799,27 +2767,27 @@ msgstr ""
 #. menu item
 #: zim/plugins/bookmarksbar.py:404
 msgid "Remove"
-msgstr ""
+msgstr "წაშლა"
 
 #. menu item
 #: zim/plugins/bookmarksbar.py:405
 msgid "Remove All"
-msgstr ""
+msgstr "ყველას წაშლა"
 
 #. menu item
 #: zim/plugins/bookmarksbar.py:407
 msgid "Copy"
-msgstr ""
+msgstr "კოპირება"
 
 #. menu item
 #: zim/plugins/bookmarksbar.py:408
 msgid "Paste"
-msgstr ""
+msgstr "ჩასმა"
 
 #. menu item
 #: zim/plugins/bookmarksbar.py:410
 msgid "Open in New Window"
-msgstr ""
+msgstr "ახალ ფანჯარაში გახსნა"
 
 #. menu item
 #: zim/plugins/bookmarksbar.py:413
@@ -2859,15 +2827,13 @@ msgstr ""
 
 #. Plugin preference for diagram editor
 #: zim/plugins/diagrameditor.py:44
-#, fuzzy
-#| msgid "Default"
 msgid "Default text"
-msgstr "Mặc định"
+msgstr "ნაგულისხმევი ტექსტი"
 
 #. menu item
 #: zim/plugins/diagrameditor.py:58
 msgid "Diagram"
-msgstr ""
+msgstr "დიაგრამა"
 
 #. plugin name
 #: zim/plugins/distractionfree.py:25
@@ -2895,7 +2861,7 @@ msgstr ""
 #. preference option for sourceview plugin
 #: zim/plugins/distractionfree.py:38 zim/plugins/sourceview.py:101
 msgid "Border width"
-msgstr ""
+msgstr "საზღვრის სიგანე"
 
 #. plugin preference
 #: zim/plugins/distractionfree.py:39
@@ -2905,7 +2871,7 @@ msgstr ""
 #. plugin preference
 #: zim/plugins/distractionfree.py:40
 msgid "Text foreground color"
-msgstr ""
+msgstr "ტექსტის წინა პლანის ფერი"
 
 #. plugin name
 #: zim/plugins/ditaaeditor.py:28
@@ -2946,7 +2912,7 @@ msgstr ""
 #. plugin preference
 #: zim/plugins/equationeditor.py:34
 msgid "Font size"
-msgstr ""
+msgstr "ფონტის ზომა"
 
 #. plugin preference
 #: zim/plugins/equationeditor.py:35
@@ -2956,7 +2922,7 @@ msgstr ""
 #. menu item
 #: zim/plugins/equationeditor.py:49
 msgid "Equation"
-msgstr ""
+msgstr "განტოლება"
 
 #. plugin name
 #: zim/plugins/gnu_r_ploteditor.py:35
@@ -2986,7 +2952,7 @@ msgstr ""
 #. menu item
 #: zim/plugins/gnuplot_ploteditor.py:49
 msgid "Gnuplot"
-msgstr ""
+msgstr "Gnuplot"
 
 #. plugin name
 #: zim/plugins/indexed_fts.py:48
@@ -3045,7 +3011,7 @@ msgstr ""
 #. Dialog title
 #: zim/plugins/insertsymbol.py:25 zim/plugins/insertsymbol.py:130
 msgid "Insert Symbol"
-msgstr ""
+msgstr "სიმბოლოს ჩასმა"
 
 #. plugin description
 #: zim/plugins/insertsymbol.py:26
@@ -3064,7 +3030,7 @@ msgstr ""
 #. plugin name
 #: zim/plugins/journal.py:97
 msgid "Journal"
-msgstr ""
+msgstr "ჟურნალი"
 
 #. plugin description
 #: zim/plugins/journal.py:98
@@ -3077,22 +3043,22 @@ msgstr ""
 #. option value
 #: zim/plugins/journal.py:109
 msgid "Day"
-msgstr ""
+msgstr "დღე"
 
 #. option value
 #: zim/plugins/journal.py:110
 msgid "Week"
-msgstr ""
+msgstr "კვირა"
 
 #. option value
 #: zim/plugins/journal.py:111
 msgid "Month"
-msgstr ""
+msgstr "თვე"
 
 #. option value
 #: zim/plugins/journal.py:112
 msgid "Year"
-msgstr ""
+msgstr "წელი"
 
 #. preferences option
 #: zim/plugins/journal.py:117
@@ -3102,7 +3068,7 @@ msgstr ""
 #. input label
 #: zim/plugins/journal.py:121
 msgid "Section"
-msgstr ""
+msgstr "განყოფილება"
 
 #. preferences option, values will be "Day", "Month", ...
 #: zim/plugins/journal.py:122
@@ -3112,12 +3078,12 @@ msgstr ""
 #. menu item
 #: zim/plugins/journal.py:272
 msgid "To_day"
-msgstr ""
+msgstr "_დღეს"
 
 #. side pane title
 #: zim/plugins/journal.py:336
 msgid "_Journal"
-msgstr ""
+msgstr "_ჟურნალი"
 
 #. strftime format for current date label
 #: zim/plugins/journal.py:397
@@ -3308,7 +3274,7 @@ msgstr ""
 #. Menu option for View->Pathbar
 #: zim/plugins/pathbar.py:81
 msgid "_None"
-msgstr ""
+msgstr "არ_ცერთი"
 
 #. Menu option for View->Pathbar
 #: zim/plugins/pathbar.py:82
@@ -3323,7 +3289,7 @@ msgstr ""
 #. Menu option for View->Pathbar
 #: zim/plugins/pathbar.py:84
 msgid "_History"
-msgstr ""
+msgstr "_ისტორია"
 
 #. Menu option for View->Pathbar
 #: zim/plugins/pathbar.py:85
@@ -3355,7 +3321,7 @@ msgstr ""
 #. menu item
 #: zim/plugins/printtobrowser.py:75
 msgid "_Print"
-msgstr ""
+msgstr "_დაბეჭდვა"
 
 #. menu item
 #: zim/plugins/printtobrowser.py:75
@@ -3394,14 +3360,12 @@ msgstr ""
 #. text entry field; title when creating a new page.
 #: zim/plugins/quicknote.py:244 zim/plugins/tableeditor.py:1004
 msgid "Title"
-msgstr ""
+msgstr "სათაური"
 
 #. checkbox; open page.
 #: zim/plugins/quicknote.py:245
-#, fuzzy
-#| msgid "Single _page"
 msgid "Open _page"
-msgstr "Trang đơn"
+msgstr ""
 
 #. confirm closing quick note dialog
 #: zim/plugins/quicknote.py:355
@@ -3459,7 +3423,7 @@ msgstr ""
 #. menu item for insert screenshot plugin
 #: zim/plugins/screenshot.py:180
 msgid "_Screenshot..."
-msgstr ""
+msgstr "_ეკრანის ანაბეჭდი..."
 
 #. option in 'insert screenshot' dialog
 #: zim/plugins/screenshot.py:198
@@ -3474,12 +3438,12 @@ msgstr ""
 #. input in 'insert screenshot' dialog
 #: zim/plugins/screenshot.py:209
 msgid "Delay"
-msgstr ""
+msgstr "დაყოვნება"
 
 #. label behind timer
 #: zim/plugins/screenshot.py:215
 msgid "seconds"
-msgstr ""
+msgstr "წამი"
 
 #. Error message in "insert screenshot" dialog, %s will be replaced by application name
 #: zim/plugins/screenshot.py:240
@@ -3502,7 +3466,7 @@ msgstr ""
 #. menu item
 #: zim/plugins/sequencediagrameditor.py:52
 msgid "Sequence Diagram"
-msgstr ""
+msgstr "მიმდევრობის დიაგრამა"
 
 #. plugin name
 #: zim/plugins/sourceview.py:72
@@ -3549,12 +3513,12 @@ msgstr ""
 #. preference option for sourceview plugin
 #: zim/plugins/sourceview.py:93
 msgid "Highlight current line"
-msgstr ""
+msgstr "მიმდინარე ხაზის გამოკვეთა"
 
 #. preference option for sourceview plugin
 #: zim/plugins/sourceview.py:95
 msgid "Show right margin"
-msgstr ""
+msgstr "მარჯვენა ზღვრის ჩვენება"
 
 #. preference option for sourceview plugin
 #: zim/plugins/sourceview.py:97
@@ -3564,7 +3528,7 @@ msgstr ""
 #. preference option for sourceview plugin
 #: zim/plugins/sourceview.py:99
 msgid "Tab width"
-msgstr ""
+msgstr "ტაბულაციის სიგანე"
 
 #. preference option for sourceview plugin
 #: zim/plugins/sourceview.py:103
@@ -3574,22 +3538,22 @@ msgstr ""
 #. preference option for sourceview plugin
 #: zim/plugins/sourceview.py:105
 msgid "Theme"
-msgstr ""
+msgstr "თემა"
 
 #. menu item
 #: zim/plugins/sourceview.py:120
 msgid "Code Block"
-msgstr ""
+msgstr "კოდის ბლოკი"
 
 #. preference option for sourceview plugin
 #: zim/plugins/sourceview.py:347
 msgid "Show Line Numbers"
-msgstr ""
+msgstr "ხაზის ნომრების ჩვენება"
 
 #. input label
 #: zim/plugins/sourceview.py:357 zim/plugins/sourceview.py:383
 msgid "Syntax"
-msgstr ""
+msgstr "სინტაქსი"
 
 #. dialog title
 #: zim/plugins/sourceview.py:374
@@ -3599,12 +3563,12 @@ msgstr ""
 #. input checkbox
 #: zim/plugins/sourceview.py:410
 msgid "Display line numbers"
-msgstr ""
+msgstr "ხაზების ნომრების ჩვენება"
 
 #. plugin name
 #: zim/plugins/spell.py:121
 msgid "Spell Checker"
-msgstr ""
+msgstr "მართლწერის შემოწმება"
 
 #. plugin description
 #: zim/plugins/spell.py:122
@@ -3630,17 +3594,17 @@ msgstr ""
 #. menu item
 #: zim/plugins/spell.py:187
 msgid "Check _spelling"
-msgstr ""
+msgstr "მართლწერის _შემოწმება"
 
 #. alignment option
 #: zim/plugins/tableeditor.py:55
 msgid "Center"
-msgstr ""
+msgstr "ცენტრი"
 
 #. alignment option
 #: zim/plugins/tableeditor.py:57
 msgid "Unspecified"
-msgstr ""
+msgstr "მიუთითებელი"
 
 #. plugin name
 #: zim/plugins/tableeditor.py:121
@@ -3689,18 +3653,18 @@ msgstr ""
 #. menu item
 #: zim/plugins/tableeditor.py:193
 msgid "Table"
-msgstr ""
+msgstr "ცხრილი"
 
 #. tooltip on mouse hover | 
 #. menu item
 #: zim/plugins/tableeditor.py:534 zim/plugins/tableeditor.py:690
 msgid "Add row"
-msgstr ""
+msgstr "მწკრივის დამატება"
 
 #. tooltip on mouse hover
 #: zim/plugins/tableeditor.py:535
 msgid "Remove row"
-msgstr ""
+msgstr "მწკრივის წაშლა"
 
 #. tooltip on mouse hover | 
 #. menu item
@@ -3734,7 +3698,7 @@ msgstr ""
 #. menu item
 #: zim/plugins/tableeditor.py:691
 msgid "Delete row"
-msgstr ""
+msgstr "მწკრივის წაშლა"
 
 #. menu item
 #: zim/plugins/tableeditor.py:694
@@ -3756,7 +3720,7 @@ msgstr ""
 #. Dialog title
 #: zim/plugins/tableeditor.py:941
 msgid "Insert Table"
-msgstr ""
+msgstr "ცხრილის ჩასმა"
 
 #. Dialog title
 #: zim/plugins/tableeditor.py:941
@@ -3771,7 +3735,7 @@ msgstr ""
 #. Initial data for column title in table
 #: zim/plugins/tableeditor.py:980
 msgid "Column 1"
-msgstr ""
+msgstr "სვეტი 1"
 
 #. table header
 #: zim/plugins/tableeditor.py:1013
@@ -3783,17 +3747,17 @@ msgstr ""
 #. table header
 #: zim/plugins/tableeditor.py:1023
 msgid "Align"
-msgstr ""
+msgstr "სწორება"
 
 #. hoover tooltip
 #: zim/plugins/tableeditor.py:1050
 msgid "Add column"
-msgstr ""
+msgstr "სვეტის დამატება"
 
 #. hoover tooltip
 #: zim/plugins/tableeditor.py:1051
 msgid "Remove column"
-msgstr ""
+msgstr "სვეტის წაშლა"
 
 #. hoover tooltip
 #: zim/plugins/tableeditor.py:1052
@@ -3813,7 +3777,7 @@ msgstr ""
 #. plugin name
 #: zim/plugins/tableofcontents.py:93
 msgid "Table of Contents"
-msgstr ""
+msgstr "შინაარსი"
 
 #. plugin description
 #: zim/plugins/tableofcontents.py:94
@@ -3847,12 +3811,12 @@ msgstr ""
 #. action to lower level of heading in the text
 #: zim/plugins/tableofcontents.py:431
 msgid "Demote"
-msgstr ""
+msgstr "დაქვეითება"
 
 #. action to raise level of heading in the text
 #: zim/plugins/tableofcontents.py:433
 msgid "Promote"
-msgstr ""
+msgstr "დაწინაურება"
 
 #. widget label
 #: zim/plugins/tableofcontents.py:547
@@ -3868,7 +3832,7 @@ msgstr ""
 #. header in selection drop down
 #: zim/plugins/tags.py:37 zim/plugins/tasklist/gui.py:746
 msgid "Tags"
-msgstr ""
+msgstr "ჭდეები"
 
 #. plugin description
 #: zim/plugins/tags.py:38
@@ -3880,7 +3844,7 @@ msgstr ""
 #. title for sidepane tab
 #: zim/plugins/tags.py:101
 msgid "T_ags"
-msgstr ""
+msgstr "_ჭდეები"
 
 #. menu option
 #: zim/plugins/tags.py:151
@@ -3895,13 +3859,13 @@ msgstr ""
 #. Context menu item for tag cloud
 #: zim/plugins/tags.py:447
 msgid "Sort alphabetically"
-msgstr ""
+msgstr "ანბანის მიხედვით დალაგება"
 
 #. plugin name | 
 #. menu item
 #: zim/plugins/tasklist/__init__.py:31 zim/plugins/tasklist/__init__.py:163
 msgid "Task List"
-msgstr ""
+msgstr "ამოცანების სია"
 
 #. plugin description
 #: zim/plugins/tasklist/__init__.py:32
@@ -4006,17 +3970,17 @@ msgstr ""
 #. list with tasks
 #: zim/plugins/tasklist/gui.py:94
 msgid "All Tasks"
-msgstr ""
+msgstr "ყველა დავალება"
 
 #. list with tasks
 #: zim/plugins/tasklist/gui.py:95
 msgid "Active"
-msgstr ""
+msgstr "აქტიური"
 
 #. list with tasks (GTD style category)
 #: zim/plugins/tasklist/gui.py:96
 msgid "Inbox"
-msgstr ""
+msgstr "საფოსტო ყუთი"
 
 #. list with tasks (GTD style category)
 #: zim/plugins/tasklist/gui.py:97
@@ -4026,17 +3990,17 @@ msgstr ""
 #. list with tasks (GTD style category)
 #: zim/plugins/tasklist/gui.py:98
 msgid "Projects"
-msgstr ""
+msgstr "პროექტები"
 
 #. list with tasks (GTD style category)
 #: zim/plugins/tasklist/gui.py:99
 msgid "Waiting"
-msgstr ""
+msgstr "მოლოდინი"
 
 #. placeholder label for sidepane
 #: zim/plugins/tasklist/gui.py:145
 msgid "No tasks"
-msgstr ""
+msgstr "ამოცანების გარეშე"
 
 #. tooltip
 #: zim/plugins/tasklist/gui.py:171
@@ -4056,7 +4020,7 @@ msgstr ""
 #. Window title for tasklist
 #: zim/plugins/tasklist/gui.py:371 zim/plugins/tasklist/gui.py:376
 msgid "Tasks"
-msgstr ""
+msgstr "ამოცანები"
 
 #. number of tasks shown in tasklist window
 #: zim/plugins/tasklist/gui.py:450
@@ -4092,44 +4056,44 @@ msgstr ""
 #. Header for list selection in tasklist window
 #: zim/plugins/tasklist/gui.py:596
 msgid "Lists"
-msgstr ""
+msgstr "სიები"
 
 #. selection of tasks without tags
 #: zim/plugins/tasklist/gui.py:689
 msgid "Untagged"
-msgstr ""
+msgstr "ჭდის გარეშე"
 
 #. header in selection drop down
 #: zim/plugins/tasklist/gui.py:744
 msgid "Labels"
-msgstr ""
+msgstr "ჭდეები"
 
 #. Column header Task List dialog
 #: zim/plugins/tasklist/gui.py:962
 msgid "Task"
-msgstr ""
+msgstr "დავალება"
 
 #. Column header Task List dialog | 
 #. due date for task
 #: zim/plugins/tasklist/gui.py:1013 zim/plugins/tasklist/gui.py:1283
 msgid "Due"
-msgstr ""
+msgstr "ვადა"
 
 #. Column header Task List dialog | 
 #. start date for task
 #: zim/plugins/tasklist/gui.py:1014 zim/plugins/tasklist/gui.py:1281
 msgid "Start"
-msgstr ""
+msgstr "დაწყება"
 
 #. toolbar style
 #: zim/plugins/toolbar.py:19
 msgid "Icons"
-msgstr ""
+msgstr "ხატულები"
 
 #. toolbar style
 #: zim/plugins/toolbar.py:21
 msgid "Icons & Text"
-msgstr ""
+msgstr "ხატულები და ტექსტი"
 
 #. toolbar style
 #: zim/plugins/toolbar.py:22
@@ -4139,12 +4103,12 @@ msgstr ""
 #. Toolbar size small
 #: zim/plugins/toolbar.py:30
 msgid "Small"
-msgstr ""
+msgstr "პატარა"
 
 #. Toolbar size large
 #: zim/plugins/toolbar.py:31
 msgid "Large"
-msgstr ""
+msgstr "დიდი"
 
 #. plugin name
 #: zim/plugins/toolbar.py:41
@@ -4159,7 +4123,7 @@ msgstr ""
 #. option for plugin preferences
 #: zim/plugins/toolbar.py:51
 msgid "Show toolbar"
-msgstr ""
+msgstr "ხელსაწყოთა ზოლის ჩვენება"
 
 #. option for plugin preferences
 #: zim/plugins/toolbar.py:53
@@ -4206,12 +4170,12 @@ msgstr ""
 #. menu item in tray icon menu
 #: zim/plugins/trayicon.py:144
 msgid "_Other..."
-msgstr ""
+msgstr "სხვა..."
 
 #. menu item in tray icon menu
 #: zim/plugins/trayicon.py:200
 msgid "Notebooks"
-msgstr ""
+msgstr "წიგნაკები"
 
 #. tooltip for tray icon | 
 #. short description of zim
@@ -4222,7 +4186,7 @@ msgstr ""
 #. plugin name
 #: zim/plugins/versioncontrol/__init__.py:54
 msgid "Version Control"
-msgstr ""
+msgstr "ვერსიის კონტროლი"
 
 #. plugin description
 #: zim/plugins/versioncontrol/__init__.py:55
@@ -4253,7 +4217,7 @@ msgstr ""
 #: zim/plugins/versioncontrol/__init__.py:69
 #: zim/plugins/versioncontrol/__init__.py:76
 msgid "Autosave interval in minutes"
-msgstr ""
+msgstr "ავტოშენახვის ინტერვალი წუთებში"
 
 #. Label for notebook properties
 #: zim/plugins/versioncontrol/__init__.py:73
@@ -4289,22 +4253,22 @@ msgstr ""
 #. option value
 #: zim/plugins/versioncontrol/__init__.py:276
 msgid "Bazaar"
-msgstr ""
+msgstr "Bazaar"
 
 #. option value
 #: zim/plugins/versioncontrol/__init__.py:277
 msgid "Mercurial"
-msgstr ""
+msgstr "Mercurial"
 
 #. option value
 #: zim/plugins/versioncontrol/__init__.py:278
 msgid "Git"
-msgstr ""
+msgstr "Git"
 
 #. option value
 #: zim/plugins/versioncontrol/__init__.py:279
 msgid "Fossil"
-msgstr ""
+msgstr "არქეოლოგიური"
 
 #. Question dialog
 #: zim/plugins/versioncontrol/__init__.py:739
@@ -4321,7 +4285,7 @@ msgstr ""
 #. option to chose versioncontrol backend
 #: zim/plugins/versioncontrol/__init__.py:752
 msgid "Backend"
-msgstr ""
+msgstr "უკანაბოლო"
 
 #. dialog title
 #: zim/plugins/versioncontrol/__init__.py:770
@@ -4342,7 +4306,7 @@ msgstr ""
 #: zim/plugins/versioncontrol/__init__.py:817
 #: zim/plugins/versioncontrol/__init__.py:834
 msgid "Versions"
-msgstr ""
+msgstr "ვერსიები"
 
 #. Option in versions dialog to show version for single page
 #: zim/plugins/versioncontrol/__init__.py:841
@@ -4364,7 +4328,7 @@ msgstr ""
 #. version details
 #: zim/plugins/versioncontrol/__init__.py:886
 msgid "Comment"
-msgstr ""
+msgstr "კომენტარი"
 
 #. Button label
 #: zim/plugins/versioncontrol/__init__.py:901
@@ -4404,7 +4368,7 @@ msgstr ""
 #. dialog title
 #: zim/plugins/versioncontrol/__init__.py:1025
 msgid "Changes"
-msgstr ""
+msgstr "ცვლილებები"
 
 #. Column header versions dialog
 #: zim/plugins/versioncontrol/__init__.py:1083
@@ -4433,10 +4397,8 @@ msgstr ""
 
 #. Option for Window Title template
 #: zim/plugins/windowtitleeditor.py:23
-#, fuzzy
-#| msgid "Customize..."
 msgid "Custom"
-msgstr "Tùy chỉnh..."
+msgstr "ხელით"
 
 #. plugin name
 #: zim/plugins/windowtitleeditor.py:28
@@ -4454,10 +4416,8 @@ msgstr ""
 
 #. window title editor preference option
 #: zim/plugins/windowtitleeditor.py:41
-#, fuzzy
-#| msgid "Template"
 msgid "Title template"
-msgstr "Mẫu"
+msgstr ""
 
 #. window title editor preference option
 #: zim/plugins/windowtitleeditor.py:45
@@ -4487,25 +4447,25 @@ msgstr ""
 
 #: data/templates/wiki/Default.txt:2 data/templates/wiki/Journal.txt:22
 msgid "Created"
-msgstr ""
+msgstr "შექმნის თარიღით"
 
 #: data/templates/html/Default.html:46 data/templates/html/Default.html:48
 #: data/templates/html/Default_with_index.html:55
 #: data/templates/html/Default_with_index.html:57
 msgid "Prev"
-msgstr ""
+msgstr "წინა"
 
 #: data/templates/html/Default.html:52 data/templates/html/Default.html:54
 #: data/templates/html/Default_with_index.html:61
 #: data/templates/html/Default_with_index.html:63
 msgid "Index"
-msgstr ""
+msgstr "ინდექსი"
 
 #: data/templates/html/Default.html:58 data/templates/html/Default.html:60
 #: data/templates/html/Default_with_index.html:67
 #: data/templates/html/Default_with_index.html:69
 msgid "Next"
-msgstr ""
+msgstr "შემდეგი"
 
 #: data/templates/html/Default.html:82
 #: data/templates/html/Default_with_index.html:97
@@ -4515,8 +4475,4 @@ msgstr ""
 #: data/templates/html/Default.html:91
 #: data/templates/html/Default_with_index.html:106
 msgid "Attachments:"
-msgstr ""
-
-#, python-format
-#~ msgid "No such file: %s"
-#~ msgstr "Không có tệp như vậy: %s"
+msgstr "მიმაგრებული ფაილები:"

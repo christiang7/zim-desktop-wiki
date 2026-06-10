@@ -6,8 +6,8 @@ import tests
 
 from tests.pageview import TextBufferTestCaseMixin, Path, TextBuffer
 
-from zim.gui.pageview.find import FindQuery, TextBufferFindMixin, PluginInsertedObjectFindMixin, \
-	FIND_CASE_SENSITIVE, FIND_REGEX, FIND_WHOLE_WORD, FIND_HAS_MATCH, FIND_HAS_HIGHLIGHT
+from zim.gui.pageview.find import FindQuery, TextBufferFindMixin, find_string_to_regex, \
+	SEARCH_CASE_SENSITIVE, SEARCH_REGEX, SEARCH_WHOLE_WORD, FIND_HAS_MATCH, FIND_HAS_HIGHLIGHT, SearchFlag
 
 import re
 
@@ -26,17 +26,17 @@ class TestFindQuery(tests.TestCase):
 	def runTest(self):
 		#i = 0
 		for (string, flags, regex) in (
-			('test*', 0, re.compile('test\\*', re.I)),
-			('test*', FIND_CASE_SENSITIVE, re.compile('test\\*')),
-			('test*', FIND_CASE_SENSITIVE | FIND_REGEX, re.compile('test*')),
-			('test*', FIND_CASE_SENSITIVE | FIND_REGEX | FIND_WHOLE_WORD, re.compile('\\btest*\\b')),
-			('test*', FIND_REGEX, re.compile('test*', re.I)),
-			('test*', FIND_REGEX | FIND_WHOLE_WORD, re.compile('\\btest*\\b', re.I)),
-			('test*', FIND_WHOLE_WORD, re.compile('\\btest\\*\\b', re.I)),
-			('test*', FIND_WHOLE_WORD | FIND_CASE_SENSITIVE, re.compile('\\btest\\*\\b')),
+			('test*', SearchFlag(0), re.compile('\\btest\\S*', re.I)),
+			('test*', SEARCH_CASE_SENSITIVE, re.compile('\\btest\\S*')),
+			('test*', SEARCH_REGEX, re.compile('test*', re.I)),
+			('test*', SEARCH_CASE_SENSITIVE | SEARCH_REGEX, re.compile('test*')),
+			('test*', SEARCH_CASE_SENSITIVE | SEARCH_WHOLE_WORD | SEARCH_REGEX, re.compile('\\btest*')),
+			('test*', SEARCH_WHOLE_WORD, re.compile('\\btest\\S*', re.I)),
+			('test*', SEARCH_WHOLE_WORD | SEARCH_CASE_SENSITIVE, re.compile('\\btest\\S*')),
+			('Foo*|Bar', SearchFlag(0), re.compile('\\bFoo\\S*|Bar', re.I)),
+			('*test', SearchFlag(0), re.compile('\\S*test\\b', re.I)),
+			('test\\b', SEARCH_REGEX|SEARCH_WHOLE_WORD, re.compile('\\btest\\b', re.I)) # no additional word end at end
 		):
-			#i += 1
-			#print(">>", i, string, flags, regex)
 			query = FindQuery(string, flags)
 			self.assertEqual(query.string, string)
 			self.assertEqual(query.flags, flags)
@@ -102,7 +102,7 @@ myTEXT test mytext
 		self.buffer.set_text(self.TEXT)
 
 	def testFindNext(self):
-		query = FindQuery('text', FIND_WHOLE_WORD)
+		query = FindQuery('text', SEARCH_WHOLE_WORD)
 		self.buffer.place_cursor(self.buffer.get_iter_at_line(2))
 		for line, offset, text in self.FORWARD_MATCHES_FROM_LINE_TWO:
 			self.assertTrue(self.buffer.find_next(query))
@@ -110,7 +110,7 @@ myTEXT test mytext
 
 	def testFindNextMatchesAtCursor(self):
 		# Behavior for match at cursor depends on whether it was highlighted already or not
-		query = FindQuery('text', FIND_WHOLE_WORD)
+		query = FindQuery('text', SEARCH_WHOLE_WORD)
 		self.buffer.place_cursor(self.buffer.get_iter_at_line(2))
 		match_pos_one = self.FORWARD_MATCHES_FROM_LINE_TWO[0]
 		match_pos_two = self.FORWARD_MATCHES_FROM_LINE_TWO[1]
@@ -125,7 +125,7 @@ myTEXT test mytext
 		self.assertMatchPosition(*match_pos_two) # move forward
 
 	def testFindPrevious(self):
-		query = FindQuery('text', FIND_WHOLE_WORD)
+		query = FindQuery('text', SEARCH_WHOLE_WORD)
 		self.buffer.place_cursor(self.buffer.get_iter_at_line(2))
 		for line, offset, text in self.BACKWARD_MATCHES_FROM_LINE_TWO:
 			self.assertTrue(self.buffer.find_previous(query))
@@ -158,7 +158,7 @@ myTEXT test mytext
 		self.assertFalse(end.forward_to_tag_toggle(self.buffer._find_match_tag)) # no other tag found before end of buffer
 
 	def testHighlightAll(self):
-		query = FindQuery('text', FIND_WHOLE_WORD)
+		query = FindQuery('text', SEARCH_WHOLE_WORD)
 		self.assertHighlightPositions([], 'text')
 		self.buffer.find_highlight_all(query)
 		self.assertHighlightPositions(self.ALL_MATCHES_FOR_HIGHLIGHT, 'text')
@@ -167,7 +167,7 @@ myTEXT test mytext
 
 	def testFindNextPreviousClearHighlight(self):
 		# Test the implied statefull behavior
-		query = FindQuery('text', FIND_WHOLE_WORD)
+		query = FindQuery('text', SEARCH_WHOLE_WORD)
 		self.buffer.find_highlight_all(query)
 		self.assertHighlightPositions(self.ALL_MATCHES_FOR_HIGHLIGHT, 'text')
 		self.buffer.find_next(query)
@@ -195,7 +195,7 @@ myTEXT test mytext
 		self.assertEqual(matches, wanted)
 
 	def testReplaceAtCursor(self):
-		query = FindQuery('text', FIND_WHOLE_WORD)
+		query = FindQuery('text', SEARCH_WHOLE_WORD)
 		self.buffer.place_cursor(self.buffer.get_iter_at_line(2))
 		self.buffer.find_replace_at_cursor(query, 'mytext')
 		start, end = self.buffer.get_bounds()
@@ -206,8 +206,8 @@ myTEXT test mytext
 		self.assertEqual(start.get_text(end), self.TEXT_REPLACE_ONE)
 
 	def testReplaceAll(self):
-		# Added FIND_REGEX to test regex replacement
-		query = FindQuery('(text)', FIND_WHOLE_WORD | FIND_REGEX)
+		# Added SEARCH_REGEX to test regex replacement
+		query = FindQuery('(\\btext\\b)', SEARCH_REGEX)
 		self.assertTrue(self.buffer.find_replace_all(query, 'my\\1'))
 		start, end = self.buffer.get_bounds()
 		self.assertEqual(start.get_text(end), self.TEXT_REPLACE_ALL)
@@ -251,7 +251,7 @@ class TestFindWithFormattedTextBuffer(TestFindWithGtkTextBuffer):
 
 		start, end = self.buffer.get_bounds()
 		self.TEXT = start.get_text(end)
-		query = FindQuery('text', FIND_WHOLE_WORD)
+		query = FindQuery('text', SEARCH_WHOLE_WORD)
 		text_matches = _get_text_matches(self.TEXT, query)
 		assert len(text_matches) == 3, 'Should be 3 text matches'
 		self.ALL_MATCHES_FOR_HIGHLIGHT = [m[0:2] for m in text_matches] # Text matches only
@@ -428,7 +428,7 @@ foo Bar Baz Foo
 
 		# Case sensitive
 		buffer.find_clear() # reset state
-		buffer.find_next(FindQuery('Foo', FIND_CASE_SENSITIVE))
+		buffer.find_next(FindQuery('Foo', SEARCH_CASE_SENSITIVE))
 		self.assertSelection(buffer, 0, 4, 'Foo')
 
 		for line, offset, text in (
@@ -437,12 +437,12 @@ foo Bar Baz Foo
 			(2, 12, 'Foo'),
 			(0, 4, 'Foo'),
 		):
-			buffer.find_next(FindQuery('Foo', FIND_CASE_SENSITIVE))
+			buffer.find_next(FindQuery('Foo', SEARCH_CASE_SENSITIVE))
 			self.assertSelection(buffer, line, offset, text)
 
 		# Whole word
 		buffer.find_clear() # reset state
-		buffer.find_next(FindQuery('Foo', FIND_WHOLE_WORD))
+		buffer.find_next(FindQuery('Foo', SEARCH_WHOLE_WORD))
 		self.assertSelection(buffer, 1, 7, 'Foo')
 
 		for line, offset, text in (
@@ -451,12 +451,12 @@ foo Bar Baz Foo
 			(0, 0, 'FOO'),
 			(1, 7, 'Foo'),
 		):
-			buffer.find_next(FindQuery('Foo', FIND_WHOLE_WORD))
+			buffer.find_next(FindQuery('Foo', SEARCH_WHOLE_WORD))
 			self.assertSelection(buffer, line, offset, text)
 
 		# Regular expression
 		buffer.find_clear() # reset state
-		query = FindQuery(r'Foo\s*Bar', FIND_REGEX | FIND_CASE_SENSITIVE)
+		query = FindQuery(r'Foo\s*Bar', SEARCH_REGEX | SEARCH_CASE_SENSITIVE)
 		buffer.find_next(query)
 		self.assertSelection(buffer, 1, 7, 'Foo Bar')
 		buffer.find_next(query)

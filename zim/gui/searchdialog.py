@@ -8,7 +8,6 @@ import logging
 
 from zim.notebook import Path
 from zim.gui.widgets import Dialog, BrowserTreeView, InputEntry, ErrorDialog, ScrolledWindow, StatusPage
-from zim.gui.pageview.find import FIND_REGEX
 
 from zim.search import *
 
@@ -55,12 +54,17 @@ class SearchDialog(Dialog):
 
 		self.namespacecheckbox = Gtk.CheckButton.new_with_mnemonic(_('_Limit search to the current page and sub-pages'))
 			# T: checkbox option in search dialog
-		if page is not None:
-			self.vbox.pack_start(self.namespacecheckbox, False, True, 0)
+		if page is None:
+			self.namespacecheckbox.set_sensitive(False)
 
-		# TODO advanced query editor
-		# TODO checkbox _('Match c_ase')
-		# TODO checkbox _('Whole _word')
+		self.matchcasecheckbox = Gtk.CheckButton.new_with_mnemonic(_('Match c_ase')) # T: checkbox option in search dialog
+		self.wholewordcheckbox = Gtk.CheckButton.new_with_mnemonic(_('Whole _word')) # T: checkbox option in search dialog
+
+		self.uistate.setdefault('search_flags', '')
+		self._set_flags(SearchFlag.from_letters(self.uistate['search_flags'] or ''))
+
+		for widget in (self.namespacecheckbox, self.matchcasecheckbox, self.wholewordcheckbox):
+			self.vbox.pack_start(widget, False, True, 0)
 
 		self.results_treeview = SearchResultsTreeView(notebook, navigation)
 		self._stack = Gtk.Stack()
@@ -80,6 +84,9 @@ class SearchDialog(Dialog):
 
 		self._set_state(self.READY)
 
+	def save_uistate(self):
+		self.uistate['search_flags'] = self._get_flags().to_letters()
+
 	def search(self, query):
 		'''Trigger a search to be performed.
 		Because search can take a long time to execute it is best to
@@ -90,16 +97,29 @@ class SearchDialog(Dialog):
 		self.query_entry.set_text(query)
 		self._search()
 
+	def _set_flags(self, flags):
+		self.matchcasecheckbox.set_active(SEARCH_CASE_SENSITIVE in flags)
+		self.wholewordcheckbox.set_active(SEARCH_WHOLE_WORD in flags)
+
+	def _get_flags(self):
+		flags = SearchFlag(0)
+		if self.matchcasecheckbox.get_active():
+			flags |= SEARCH_CASE_SENSITIVE
+		if self.wholewordcheckbox.get_active():
+			flags |= SEARCH_WHOLE_WORD
+		return flags
+
 	def _search(self):
 		string = self.query_entry.get_text()
 		if self.namespacecheckbox.get_active():
 			assert self.page is not None
-			string = 'Section: "%s" ' % self.page.name + string
-		#~ print('!! QUERY: ' + string)
+			string = 'Section: "%s" and (%s)' % (self.page.name, string)
+
+		flags = self._get_flags()
 
 		self._set_state(self.SEARCHING)
 		try:
-			self.results_treeview.search(string, self._set_show_results)
+			self.results_treeview.search(string, flags, self._set_show_results)
 		except Exception as error:
 			ErrorDialog(self, error).run()
 
@@ -190,14 +210,15 @@ class SearchResultsTreeView(BrowserTreeView):
 		if self.cancelled:
 			raise SearchCancelledException
 
-	def search(self, query, set_show_results_cb=None):
+	def search(self, query, flags, set_show_results_cb=None):
 		query = query.strip()
 		if not query:
 			return
 		logger.info('Searching for: %s', query)
 
 		self.cancelled = False
-		self.query = self._page_search.parse_page_search_query(query)
+		self.query = self._page_search.parse_page_search_query(query, flags)
+		logger.debug('Parsed query: %s', self.query)
 
 		model = self.get_model()
 		if not model:

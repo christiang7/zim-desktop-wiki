@@ -8,29 +8,26 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-09 18:44+0200\n"
-"PO-Revision-Date: 2022-06-28 00:15+0000\n"
-"Last-Translator: Nguyễn Phú Lâm <nguyenphulam44@gmail.com>\n"
-"Language-Team: Vietnamese <https://hosted.weblate.org/projects/zim/master/vi/"
-">\n"
-"Language: vi\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: kab\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.13.1-dev\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
 
 #. Error message when external application could not be found, %s is the command
 #: zim/applications.py:133
-#, fuzzy, python-format
-#| msgid "Failed to run application: %s"
+#, python-format
 msgid "Cound not find application: %s"
-msgstr "Chạy ứng dụng thất bại: %s"
+msgstr ""
 
 #. Error message when external application failed, %s is the command
 #: zim/applications.py:150
 #, python-format
 msgid "Failed to run application: %s"
-msgstr "Chạy ứng dụng thất bại: %s"
+msgstr ""
 
 #. Error message when external application failed, %(cmd)s is the command, %(code)i the exit code
 #: zim/applications.py:153
@@ -39,60 +36,58 @@ msgid ""
 "%(cmd)s\n"
 "returned non-zero exit status %(code)i"
 msgstr ""
-"%(cmd)s\n"
-"trở lại non-zero trạng thái thoát %(code)i"
 
 #. error when application failed to start
 #: zim/applications.py:436
 #, python-format
 msgid "Failed running: %s"
-msgstr "Chạy thất bại: %s"
+msgstr ""
 
 #. label for default webbrowser | 
 #. label for default application
 #: zim/applications.py:457 zim/applications.py:500 zim/gui/applications.py:1170
 msgid "Default"
-msgstr "Mặc định"
+msgstr ""
 
 #. Translate to "calendar:week_start:0" if you want Sunday to be the first day of the week or to "calendar:week_start:1" if you want Monday to be the first day of the week
 #: zim/datetimetz.py:102
 msgid "calendar:week_start:0"
-msgstr "calendar:week_start:1"
+msgstr ""
 
 #. generic error dialog
 #: zim/errors.py:46
 msgid "Looks like you found a bug"
-msgstr "Dường như bạn đã tìm thấy một lỗi"
+msgstr ""
 
 #. message for FileUnicodeError (%s is the file name)
 #: zim/fs.py:275 zim/newfs/base.py:67
 #, python-format
 msgid "Could not read: %s"
-msgstr "Không thể đọc: %s"
+msgstr ""
 
 #. message for FileUnicodeError
 #: zim/fs.py:277 zim/newfs/base.py:69
 msgid "This usually means the file contains invalid characters"
-msgstr "Điều này thường có nghĩa là tệp chứa các ký tự không hợp lệ"
+msgstr ""
 
 #. label for detailed error | 
 #. section for version details in "save version" dialog
 #: zim/fs.py:279 zim/newfs/base.py:71
 #: zim/plugins/versioncontrol/__init__.py:791
 msgid "Details"
-msgstr "Thông tin chi tiết"
+msgstr ""
 
 #. Error message
 #: zim/fs.py:1171
 #, python-format
 msgid "File is not writable: %s"
-msgstr "Tệp không thể ghi được: %s"
+msgstr ""
 
 #. error message
 #: zim/fs.py:1243
 #, python-format
 msgid "File changed on disk: %s"
-msgstr "Tệp đã thay đổi trên đĩa: %s"
+msgstr ""
 
 #. option in preferences dialog
 #: zim/gui/applications.py:45
@@ -104,7 +99,7 @@ msgstr ""
 #. Heading in a question dialog for creating a folder
 #: zim/gui/applications.py:594
 msgid "Create folder?"
-msgstr "Tạo thư mục?"
+msgstr ""
 
 #. Text in a question dialog for creating a folder, %s will be the folder base name
 #: zim/gui/applications.py:596
@@ -113,20 +108,18 @@ msgid ""
 "The folder \"%s\" does not yet exist.\n"
 "Do you want to create it now?"
 msgstr ""
-"Thư mục \"%s\" chưa tồn tại.\n"
-"Bạn có muốn tạo nó ngay bây giờ không?"
 
 #. error when external application fails
 #: zim/gui/applications.py:663 zim/gui/applications.py:737
 #, python-format
 msgid "Could not open: %s"
-msgstr "Không thể mở: %s"
+msgstr ""
 
 #. main text for dialog for editing external files
 #: zim/gui/applications.py:728
 #, python-format
 msgid "Editing file: %s"
-msgstr "Chỉnh sửa tệp: %s"
+msgstr ""
 
 #. description for dialog for editing external files
 #: zim/gui/applications.py:730
@@ -134,37 +127,34 @@ msgid ""
 "You are editing a file in an external application. You can close this dialog "
 "when you are done"
 msgstr ""
-"Bạn đang chỉnh sửa tệp trong một ứng dụng bên ngoài. Bạn có thể đóng hộp "
-"thoại này khi bạn đã hoàn tất"
 
 #. Error message when external application could not be run in terminal, %s is the command
 #: zim/gui/applications.py:826
-#, fuzzy, python-format
-#| msgid "Failed to run application: %s"
+#, python-format
 msgid "Cound not find terminal emulator to run application: %s"
-msgstr "Chạy ứng dụng thất bại: %s"
+msgstr ""
 
 #. label to customize 'open with' menu
 #: zim/gui/applications.py:1080
 msgid "Customize..."
-msgstr "Tùy chỉnh..."
+msgstr ""
 
 #. message when no applications in "Open With" menu
 #: zim/gui/applications.py:1106
 msgid "No Applications Found"
-msgstr "Không tìm thấy ứng dụng"
+msgstr ""
 
 #. menu item to open a file with an application, %s is the app name
 #: zim/gui/applications.py:1136
 #, python-format
 msgid "Open with \"%s\""
-msgstr "Mở bằng \"%s\""
+msgstr ""
 
 #. Text in the 'custom command' dialog, "%s" will be URL scheme like "http://" or "ssh://"
 #: zim/gui/applications.py:1145
 #, python-format
 msgid "Configure an application to open \"%s\" links"
-msgstr "Định cấu hình ứng dụng để mở liên kết \"%s\""
+msgstr ""
 
 #. Text in the 'custom command' dialog, "%s" will be mimetype like "text/plain"
 #: zim/gui/applications.py:1148
@@ -173,24 +163,22 @@ msgid ""
 "Configure an application to open files\n"
 "of type \"%s\""
 msgstr ""
-"Định cấu hình ứng dụng để mở\n"
-" tệp loại \"%s\""
 
 #. Dialog title
 #: zim/gui/applications.py:1160
 msgid "Configure Applications"
-msgstr "Định cấu hình ứng dụng"
+msgstr ""
 
 #. Button for adding a new application to the 'open with' menu | 
 #. Dialog title
 #: zim/gui/applications.py:1174 zim/gui/applications.py:1282
 msgid "Add Application"
-msgstr "Thêm Ứng dụng"
+msgstr ""
 
 #. Label for default application handler
 #: zim/gui/applications.py:1222
 msgid "System Default"
-msgstr "Mặc định Hệ thống"
+msgstr ""
 
 #. Field in 'custom command' dialog | 
 #. Input in "Edit Custom Tool" dialog | 
@@ -207,29 +195,29 @@ msgstr "Mặc định Hệ thống"
 #: zim/gui/templateeditordialog.py:159 zim/gui/uiactions.py:605
 #: zim/plugins/attachmentbrowser/filebrowser.py:441
 msgid "Name"
-msgstr "Tên"
+msgstr ""
 
 #. Field in 'custom command' dialog | 
 #. Input in "Edit Custom Tool" dialog
 #: zim/gui/applications.py:1287 zim/gui/customtools.py:676
 msgid "Command"
-msgstr "Lệnh"
+msgstr ""
 
 #. Field in 'custom command' dialog
 #: zim/gui/applications.py:1288
 msgid "Make default application"
-msgstr "Tạo ứng dụng mặc định"
+msgstr ""
 
 #. Error message for new commands in "open with" dialog
 #: zim/gui/applications.py:1305
 #, python-format
 msgid "Could not find executable \"%s\""
-msgstr "Không thể tìm thấy \"%s\" có thể thực thi"
+msgstr ""
 
 #. Dialog title
 #: zim/gui/customtools.py:533
 msgid "Custom Tools"
-msgstr "Công cụ Tùy chỉnh"
+msgstr ""
 
 #. help text in "Custom Tools" dialog
 #: zim/gui/customtools.py:538
@@ -237,40 +225,38 @@ msgid ""
 "You can configure custom tools that will appear\n"
 "in the tool menu and in the tool bar or context menus."
 msgstr ""
-"Bạn có thể định cấu hình các công cụ tùy chỉnh đó sẽ xuất hiện\n"
-" trong menu công cụ và trong thanh công cụ hoặc menu ngữ cảnh."
 
 #. Dialog title
 #: zim/gui/customtools.py:654
 msgid "Edit Custom Tool"
-msgstr "Sửa Công cụ Tùy chỉnh"
+msgstr ""
 
 #. Input in "Edit Custom Tool" dialog | 
 #. Heading in plugins tab of preferences dialog
 #: zim/gui/customtools.py:675 zim/gui/preferencesdialog.py:348
 msgid "Description"
-msgstr "Sự mô tả"
+msgstr ""
 
 #. Input in "Edit Custom Tool" dialog | 
 #. label for properties dialog
 #: zim/gui/customtools.py:690 zim/gui/propertiesdialog.py:23
 msgid "Icon"
-msgstr "Biểu tượng"
+msgstr ""
 
 #. Input in "Edit Custom Tool" dialog
 #: zim/gui/customtools.py:699
 msgid "Command does not modify data"
-msgstr "Lệnh không sửa đổi dữ liệu"
+msgstr ""
 
 #. Input in "Edit Custom Tool" dialog
 #: zim/gui/customtools.py:700
 msgid "Output should replace current selection"
-msgstr "Đầu ra nên thay thế lựa chọn hiện tại"
+msgstr ""
 
 #. Input in "Edit Custom Tool" dialog
 #: zim/gui/customtools.py:701
 msgid "Show in the toolbar"
-msgstr "Hiển thị trên thanh công cụ"
+msgstr ""
 
 #. Short help text in "Edit Custom Tool" dialog. The "%" is literal - please include the html formatting
 #: zim/gui/customtools.py:709
@@ -288,34 +274,22 @@ msgid ""
 "<b>%T</b> the selected text including wiki formatting\n"
 "</tt>\n"
 msgstr ""
-"Các tham số sau đây sẽ được thay thế\n"
-"trong lệnh khi nó được thực thi:\n"
-"<tt>\n"
-"<b>%f</b> nguồn trang dưới dạng tệp tạm thời\n"
-"<b>%d</b>  đường dẫn mục đính kèm của trang hiện tại\n"
-"<b>%s</b> tệp nguồn trang thực (nếu có)\n"
-"<b>%p</b> tên trang\n"
-"<b>%n</b> vị trí sổ ghi chép (tệp hoặc thư mục)\n"
-"<b>%D</b>  tài liệu gốc (nếu có)\n"
-"<b>%t</b> văn bản đã chọn hoặc từ dưới con trỏ\n"
-"<b>%T</b> văn bản đã chọn bao gồm định dạng wiki\n"
-"</tt>\n"
 
 #. dialog title
 #: zim/gui/exportdialog.py:32
 msgid "Export"
-msgstr "Xuất"
+msgstr ""
 
 #. Title for progressbar window
 #: zim/gui/exportdialog.py:55
 msgid "Exporting notebook"
-msgstr "Xuất sổ ghi chép"
+msgstr ""
 
 #. message heading
 #: zim/gui/exportdialog.py:140
 #, python-format
 msgid "Folder exists: %s"
-msgstr "Thư mục đã tồn tại: %s"
+msgstr ""
 
 #. detailed message, answers are Yes and No
 #: zim/gui/exportdialog.py:141
@@ -323,13 +297,11 @@ msgid ""
 "Folder already exists and has content, exporting to this folder may "
 "overwrite existing files. Do you want to continue?"
 msgstr ""
-"Thư mục đã tồn tại và có nội dung, việc xuất sang cặp này có thể bị ghi đè "
-"lên các tệp hiện có. Bạn có muốn tiếp tục không?"
 
 #. message heading
 #: zim/gui/exportdialog.py:154
 msgid "File exists"
-msgstr "Tệp tồn tại"
+msgstr ""
 
 #. detailed message, answers are Yes and No
 #: zim/gui/exportdialog.py:155
@@ -337,24 +309,22 @@ msgid ""
 "This file already exists.\n"
 "Do you want to overwrite it?"
 msgstr ""
-"Tệp này đã tồn tại.\n"
-"Bạn có muốn ghi đè lên nó không?"
 
 #. title of step in export dialog
 #: zim/gui/exportdialog.py:166
 msgid "Select the pages to export"
-msgstr "Chọn các trang để xuất"
+msgstr ""
 
 #. Option in export dialog to export complete notebook | 
 #. Option in versions dialog to show version for complete notebook
 #: zim/gui/exportdialog.py:172 zim/plugins/versioncontrol/__init__.py:839
 msgid "Complete _notebook"
-msgstr "Hoàn thành _notebook"
+msgstr ""
 
 #. Option in export dialog to export selection
 #: zim/gui/exportdialog.py:177
 msgid "Single _page"
-msgstr "Trang đơn"
+msgstr ""
 
 #. Input field in export dialog | 
 #. label in word count dialog | 
@@ -369,160 +339,160 @@ msgstr "Trang đơn"
 #: zim/plugins/quicknote.py:241 zim/plugins/tasklist/gui.py:748
 #: zim/plugins/tasklist/gui.py:1032 zim/plugins/tasklist/gui.py:1285
 msgid "Page"
-msgstr "Trang"
+msgstr ""
 
 #. Input field in export dialog
 #: zim/gui/exportdialog.py:181
 msgid "Include subpages"
-msgstr "Bao gồm các trang con"
+msgstr ""
 
 #. title of step in export dialog
 #: zim/gui/exportdialog.py:208
 msgid "Select the export format"
-msgstr "Chọn định dạng xuất"
+msgstr ""
 
 #. Option in drop down menu to specify another file
 #: zim/gui/exportdialog.py:210
 msgid "Other..."
-msgstr "Khác..."
+msgstr ""
 
 #. Input label in the export dialog | 
 #. label in "insert date" dialog
 #: zim/gui/exportdialog.py:221 zim/gui/pageview/dialogs.py:64
 msgid "Format"
-msgstr "Định dạng"
+msgstr ""
 
 #. Input label in the export dialog | 
 #. Field in web server gui for webpage template
 #: zim/gui/exportdialog.py:222 zim/gui/server.py:106
 msgid "Template"
-msgstr "Mẫu"
+msgstr ""
 
 #. radio option in export dialog
 #: zim/gui/exportdialog.py:225
 msgid "Link files under document root with full file path"
-msgstr "Liên kết tệp dưới gốc tài liệu với đường dẫn tệp đầy đủ"
+msgstr ""
 
 #. radio option in export dialog
 #: zim/gui/exportdialog.py:226
 msgid "Map document root to URL"
-msgstr "Bản đồ gốc tài liệu đến URL"
+msgstr ""
 
 #. label for button with URL
 #: zim/gui/exportdialog.py:235 zim/gui/templateeditordialog.py:70
 msgid "Get more templates online"
-msgstr "Nhận thêm các mẫu trực tuyến"
+msgstr ""
 
 #. title of step in export dialog
 #: zim/gui/exportdialog.py:307
 msgid "Select the output file or folder"
-msgstr "Chọn đầu ra tệp hoặc thư mục"
+msgstr ""
 
 #. Label for option in export dialog
 #: zim/gui/exportdialog.py:313
 msgid "Export each page to a separate file"
-msgstr "Xuất mỗi trang thành một tệp riêng biệt"
+msgstr ""
 
 #. Label for option in export dialog
 #: zim/gui/exportdialog.py:315
 msgid "Export all pages to a single file"
-msgstr "Xuất tất cả các trang vào một tệp duy nhất"
+msgstr ""
 
 #. Label for folder selection in export dialog
 #: zim/gui/exportdialog.py:318
 msgid "Output folder"
-msgstr "Đầu ra thư mục"
+msgstr ""
 
 #. Label for setting a name for the index of exported pages
 #: zim/gui/exportdialog.py:320
 msgid "Index page"
-msgstr "Chỉ mục trang"
+msgstr ""
 
 #. Label for file selection in export dialog
 #: zim/gui/exportdialog.py:323
 msgid "Output file"
-msgstr "Đầu ra tệp"
+msgstr ""
 
 #. label in export dialog
 #: zim/gui/exportdialog.py:412
 #, python-format
 msgid "%(n_error)i errors and %(n_warning)i warnings occurred, see log"
-msgstr "%(n_error)i lỗi và %(n_warning)i cảnh báo đã xảy ra, xem nhật ký"
+msgstr ""
 
 #. label in export dialog
 #: zim/gui/exportdialog.py:415
 #, python-format
 msgid "%i errors occurred, see log"
-msgstr "%i lỗi đã xảy ra, xem nhật ký"
+msgstr ""
 
 #. label in export dialog
 #: zim/gui/exportdialog.py:418
 #, python-format
 msgid "%i warnings occurred, see log"
-msgstr "%i cảnh báo đã xảy ra, xem nhật ký"
+msgstr ""
 
 #. label in export dialog
 #: zim/gui/exportdialog.py:423
 msgid "Export completed"
-msgstr "Xuất đã hoàn tất"
+msgstr ""
 
 #. button in export dialog | 
 #. button in e.g. equation editor dialog
 #: zim/gui/exportdialog.py:426 zim/plugins/base/imagegenerator.py:444
 msgid "View _Log"
-msgstr "Xem _Log"
+msgstr ""
 
 #. Label for object manager
 #: zim/gui/insertedobjects.py:276
 #, python-format
 msgid "No plugin available to display objects of type: %s"
-msgstr "Không có plugin có sẵn dùng để hiển thị các đối tượng thuộc loại: %s"
+msgstr ""
 
 #. Label for object manager - "%s" is the plugin name
 #: zim/gui/insertedobjects.py:284
 #, python-format
 msgid "Plugin \"%s\" is required to display this object"
-msgstr "Plugin \"%s\" được yêu cầu để hiển thị đối tượng này"
+msgstr ""
 
 #. Label for object manager
 #: zim/gui/insertedobjects.py:288
 msgid "Enable plugin"
-msgstr "Bật plugin"
+msgstr ""
 
 #. label for inserted object
 #: zim/gui/insertedobjects.py:321
 msgid "Unkown Object"
-msgstr "Đối tượng chưa xác minh"
+msgstr ""
 
 #. label for inserted object
 #: zim/gui/insertedobjects.py:362
 msgid "Unkown Image type"
-msgstr "Loại Ảnh Không Xác định"
+msgstr ""
 
 #. Menu title
 #: zim/gui/mainwindow.py:49
 msgid "_File"
-msgstr "_Tệp"
+msgstr ""
 
 #. Menu title | 
 #. Button label
 #: zim/gui/mainwindow.py:50 zim/gui/pageview/dialogs.py:85
 #: zim/gui/templateeditordialog.py:49 zim/plugins/insertsymbol.py:155
 msgid "_Edit"
-msgstr "_Chỉnh sửa"
+msgstr ""
 
 #. Menu title | 
 #. button label
 #: zim/gui/mainwindow.py:51 zim/gui/templateeditordialog.py:43
 msgid "_View"
-msgstr "_Xem"
+msgstr ""
 
 #. Menu title | 
 #. Button label
 #: zim/gui/mainwindow.py:52 zim/gui/pageview/dialogs.py:35
 #: zim/plugins/insertsymbol.py:131
 msgid "_Insert"
-msgstr "_Chèn"
+msgstr ""
 
 #. Menu title | 
 #. input label | 
@@ -530,33 +500,33 @@ msgstr "_Chèn"
 #: zim/gui/mainwindow.py:53 zim/gui/searchdialog.py:40
 #: zim/plugins/tasklist/gui.py:555
 msgid "_Search"
-msgstr "_Tìm kiếm"
+msgstr ""
 
 #. Menu title
 #: zim/gui/mainwindow.py:54
 msgid "For_mat"
-msgstr "_Định dạng"
+msgstr ""
 
 #. Menu title
 #: zim/gui/mainwindow.py:55
 msgid "_Tools"
-msgstr "_Công cụ"
+msgstr ""
 
 #. Menu title
 #: zim/gui/mainwindow.py:56
 msgid "_Go"
-msgstr "_Go"
+msgstr ""
 
 #. Menu title | 
 #. Button label
 #: zim/gui/mainwindow.py:57 zim/gui/widgets.py:3076
 msgid "_Help"
-msgstr "_Trợ giúp"
+msgstr ""
 
 #. Menu title
 #: zim/gui/mainwindow.py:58
 msgid "_Checkbox"
-msgstr "_ Checkbox"
+msgstr ""
 
 #. option for preferences dialog
 #: zim/gui/mainwindow.py:68
@@ -583,42 +553,42 @@ msgstr ""
 #: zim/gui/mainwindow.py:73
 #, python-format
 msgid "Use %s to switch to the side pane"
-msgstr "Sử dụng %s để chuyển sang ngăn bên"
+msgstr ""
 
 #. Option in the preferences dialog
 #: zim/gui/mainwindow.py:77
 msgid "Always use last cursor position when opening a page"
-msgstr "Luôn sử dụng vị trí con trỏ cuối cùng khi mở trang"
+msgstr ""
 
 #. button label for fullscreen window header
 #: zim/gui/mainwindow.py:152 zim/gui/mainwindow.py:273
 msgid "Leave Fullscreen"
-msgstr "Rời khỏi chế độ Toàn màn hình"
+msgstr ""
 
 #. Menu item
 #: zim/gui/mainwindow.py:295
 msgid "_Fullscreen"
-msgstr "_ Fullscreen"
+msgstr ""
 
 #. menu item
 #: zim/gui/mainwindow.py:303
 msgid "Toggle _Editable"
-msgstr "Chuyển đổi _Editable"
+msgstr ""
 
 #. menu item
 #: zim/gui/mainwindow.py:303
 msgid "Toggle editable"
-msgstr "Chuyển đổi có thể chỉnh sửa"
+msgstr ""
 
 #. message in toggle editable tooltip
 #: zim/gui/mainwindow.py:332
 msgid "Page is read-only and cannot be edited"
-msgstr "Trang ở chế độ chỉ-đọc và không thể chỉnh sửa"
+msgstr ""
 
 #. Menu item
 #: zim/gui/mainwindow.py:366
 msgid "_Side Panes"
-msgstr "_ Side Panes"
+msgstr ""
 
 #. menu item
 #: zim/gui/mainwindow.py:391
@@ -629,17 +599,17 @@ msgstr ""
 #. Button label
 #: zim/gui/mainwindow.py:633 zim/gui/widgets.py:3027
 msgid "_Close"
-msgstr "_ Close"
+msgstr ""
 
 #. label for View->Menubar menu item
 #: zim/gui/mainwindow.py:702
 msgid "Menubar"
-msgstr "thanh Menu"
+msgstr ""
 
 #. short question on open-page if file exists
 #: zim/gui/mainwindow.py:816 zim/gui/uiactions.py:493
 msgid "File exists, do you want to import?"
-msgstr "Tệp tồn tại, bạn có muốn nhập không?"
+msgstr ""
 
 #. longer question on open-page if file exists
 #: zim/gui/mainwindow.py:817 zim/gui/uiactions.py:494
@@ -780,10 +750,8 @@ msgstr ""
 
 #. choice field in 'Add Notebook' dialog
 #: zim/gui/notebookdialog.py:439
-#, fuzzy
-#| msgid "Default"
 msgid "Default file format"
-msgstr "Mặc định"
+msgstr ""
 
 #. choice field in 'Add Notebook' dialog
 #: zim/gui/notebookdialog.py:439
@@ -793,10 +761,8 @@ msgstr ""
 #. choice field in 'Add Notebook' dialog | 
 #. label for properties dialog
 #: zim/gui/notebookdialog.py:440 zim/gui/propertiesdialog.py:28
-#, fuzzy
-#| msgid "Template"
 msgid "Page template"
-msgstr "Mẫu"
+msgstr ""
 
 #. help text in the 'Add Notebook' dialog
 #: zim/gui/notebookdialog.py:448
@@ -1412,10 +1378,8 @@ msgstr ""
 
 #. Input in 'edit image' dialog
 #: zim/gui/pageview/dialogs.py:387
-#, fuzzy
-#| msgid "Default"
 msgid "Alternate text"
-msgstr "Mặc định"
+msgstr ""
 
 #. Input in 'edit image' dialog
 #: zim/gui/pageview/dialogs.py:388
@@ -1868,10 +1832,8 @@ msgstr ""
 
 #. placeholder label when search has started
 #: zim/gui/searchdialog.py:73
-#, fuzzy
-#| msgid "_Search"
 msgid "Searching ..."
-msgstr "_Tìm kiếm"
+msgstr ""
 
 #. placeholder label when search has no results
 #: zim/gui/searchdialog.py:74
@@ -2082,10 +2044,8 @@ msgstr ""
 
 #. menu item
 #: zim/gui/uiactions.py:352
-#, fuzzy
-#| msgid "View _Log"
 msgid "View Debug Log"
-msgstr "Xem _Log"
+msgstr ""
 
 #. Menu item
 #: zim/gui/uiactions.py:366
@@ -2859,10 +2819,8 @@ msgstr ""
 
 #. Plugin preference for diagram editor
 #: zim/plugins/diagrameditor.py:44
-#, fuzzy
-#| msgid "Default"
 msgid "Default text"
-msgstr "Mặc định"
+msgstr ""
 
 #. menu item
 #: zim/plugins/diagrameditor.py:58
@@ -3398,10 +3356,8 @@ msgstr ""
 
 #. checkbox; open page.
 #: zim/plugins/quicknote.py:245
-#, fuzzy
-#| msgid "Single _page"
 msgid "Open _page"
-msgstr "Trang đơn"
+msgstr ""
 
 #. confirm closing quick note dialog
 #: zim/plugins/quicknote.py:355
@@ -4433,10 +4389,8 @@ msgstr ""
 
 #. Option for Window Title template
 #: zim/plugins/windowtitleeditor.py:23
-#, fuzzy
-#| msgid "Customize..."
 msgid "Custom"
-msgstr "Tùy chỉnh..."
+msgstr ""
 
 #. plugin name
 #: zim/plugins/windowtitleeditor.py:28
@@ -4454,10 +4408,8 @@ msgstr ""
 
 #. window title editor preference option
 #: zim/plugins/windowtitleeditor.py:41
-#, fuzzy
-#| msgid "Template"
 msgid "Title template"
-msgstr "Mẫu"
+msgstr ""
 
 #. window title editor preference option
 #: zim/plugins/windowtitleeditor.py:45
@@ -4516,7 +4468,3 @@ msgstr ""
 #: data/templates/html/Default_with_index.html:106
 msgid "Attachments:"
 msgstr ""
-
-#, python-format
-#~ msgid "No such file: %s"
-#~ msgstr "Không có tệp như vậy: %s"

@@ -6,7 +6,7 @@ from zim.parse.searchquery import *
 from zim.search import *
 from zim.notebook import Path
 from zim.plugins import PluginManager, indexed_fts
-from zim.gui.pageview.find import FindQuery, FIND_CASE_SENSITIVE, FIND_WHOLE_WORD, FIND_REGEX
+from zim.gui.pageview.find import FindQuery
 
 
 # some aliases to define queries
@@ -23,6 +23,22 @@ def _not(t):
 
 
 class TestParseSearchQuery(tests.TestCase):
+
+	def assertParseQuery(self, string, wanted, keywords, flags=SearchFlag(0)):
+		query = parse_search_query(string, keywords, flags=flags)
+		#print('==== string: %r got: "%s" wanted: "%s"' % (string, query, wanted))
+		self.assertEqual(query, wanted)
+
+		mystring = str(query)
+		myquery = parse_search_query(mystring, keywords, flags=flags)
+		self.assertEqual(myquery, wanted) # ensure string representation leads to same parsing result
+
+	def testFlags(self):
+		keywords = {'links'}
+		string = 'foo AND NOT bar OR baz'
+		wanted = _and(_any('foo'), _or(_not(_any('bar')), _any('baz')))
+		wanted.flags = SEARCH_CASE_SENSITIVE|SEARCH_WHOLE_WORD
+		self.assertParseQuery(string, wanted, keywords, flags=SEARCH_CASE_SENSITIVE|SEARCH_WHOLE_WORD)
 
 	def testKeywordParsing(self):
 		keywords = {'links'}
@@ -47,9 +63,7 @@ class TestParseSearchQuery(tests.TestCase):
 			('links<=foo', _q(_t('links', 'foo', kw_operator=OPERATOR_LESS_EQUAL))),
 			('links:<=foo', _q(_t('links', 'foo', kw_operator=OPERATOR_LESS_EQUAL))),
 		):
-			query = parse_search_query(string, keywords)
-			#print('====', string, '\n', query, '\n', wanted)
-			self.assertEqual(query, wanted)
+			self.assertParseQuery(string, wanted, keywords)
 
 	def testImplicitKeywordMatch(self):
 		keywords = {'tag': {'implicit_match': search_tag_re}}
@@ -58,9 +72,7 @@ class TestParseSearchQuery(tests.TestCase):
 			('@Foo', _q(_t('tag', '@Foo'))),
 			('"@Foo"', _q(_any('@Foo'))),
 		):
-			query = parse_search_query(string, keywords)
-			#print('====', string, '\n', query, '\n', wanted)
-			self.assertEqual(query, wanted)
+			self.assertParseQuery(string, wanted, keywords)
 
 	def testOperatorPrecedence(self):
 		# Example from docs:
@@ -85,9 +97,7 @@ class TestParseSearchQuery(tests.TestCase):
 			('foo OR bar OR test', # only OR -> skip top-level AND group
 				_or(_any('foo'), _any('bar'), _any('test'))),
 		):
-			query = parse_search_query(string, keywords)
-			#print('====', string, '\n', query, '\n', wanted)
-			self.assertEqual(query, wanted)
+			self.assertParseQuery(string, wanted, keywords)
 
 	def testNotOperator(self):
 		keywords = {'links'}
@@ -107,9 +117,7 @@ class TestParseSearchQuery(tests.TestCase):
 			('links NOT Foo', _and(_any('links'), _not(_any('Foo')))),
 			('NOT links -Foo', _and(_not(_any('links')), _not(_any('Foo')))),
 		):
-			query = parse_search_query(string, keywords)
-			#print('====', string, '\n', query, '\n', wanted)
-			self.assertEqual(query, wanted)
+			self.assertParseQuery(string, wanted, keywords)
 
 	def testQuotedStrings(self):
 		# Examples from docs
@@ -118,9 +126,7 @@ class TestParseSearchQuery(tests.TestCase):
 			('"foo bar" and "+1"', _and(_any('foo bar'), _any('+1'))),
 			('NOT LinksTo: ":Done"', _q(_not(_t('linksto', ':Done')))),
 		):
-			query = parse_search_query(string, keywords)
-			#print('====', string, '\n', query, '\n', wanted)
-			self.assertEqual(query, wanted)
+			self.assertParseQuery(string, wanted, keywords)
 
 	def testExplicitGrouping(self):
 		keywords = {'links'}
@@ -149,8 +155,7 @@ class TestParseSearchQuery(tests.TestCase):
 				_and(_t('links', 'bar'), _t('links', 'and'), _t('links', 'baz'), _not(_t('links', 'dus')))
 			)
 		):
-			query = parse_search_query(string, keywords)
-			self.assertEqual(query, wanted)
+			self.assertParseQuery(string, wanted, keywords)
 
 	def testFixingInvalidQueries(self):
 		keywords = {'links'}
@@ -184,76 +189,85 @@ class TestParseSearchQuery(tests.TestCase):
 		):
 			#print('====', string)
 			with tests.LoggingFilter('zim.parsing') as warning:
-				query = parse_search_query(string, keywords)
 				wanted = parse_search_query(equivalent, keywords)
-				self.assertEqual(query, wanted)
+				self.assertParseQuery(string, wanted, keywords)
 				self.assertTrue(warning.captured)
 
 
 class TestSearchQueryTermToRegex(tests.TestCase):
 
 	def runTest(self):
-		for value, regex in (
-			('foo', '\\bfoo'),
-			(' foo', '\\bfoo'),
-			('*foo', 'foo'),
-			('foo bar', '\\bfoo\\s+bar'),
-			('foo*bar', '\\bfoo\\S*bar'),
-			('foo*', '\\bfoo'),
-			('foo+', '\\bfoo\\+'),
-			('foo ', '\\bfoo\\b'),
-			(' foo ', '\\bfoo\\b'),
-			('*foo*', 'foo'),
-			(' foo bar ', '\\bfoo\\s+bar\\b'),
-			('\u4e00foo', '\u4e00foo'), # chineses char changes behavior
-			('*\u4e00foo', '\u4e00foo'),
-			(' \u4e00foo', '\\b\u4e00foo'),
-			('+foo', '\\+foo'), # no word boundery at non-word character
-			('Lorem ip* dolor', '\\bLorem\\s+ip\\S*\\s+dolor'),
-			('Lorem *sum dolor', '\\bLorem\\s+\\S*sum\\s+dolor'),
+		for value, regex, regex_word in (
+			('foo', 'foo', '\\bfoo\\b'),
+			('*foo', 'foo\\b', 'foo\\b'),
+			('foo bar', 'foo\\W+bar', '\\bfoo\\W+bar\\b'),
+			('foo*bar', '\\bfoo\\S*bar\\b', '\\bfoo\\S*bar\\b'),
+			('foo*', '\\bfoo', '\\bfoo'),
+			('*foo*', 'foo', 'foo'),
+			('foo+', 'foo\\+', '\\bfoo\\+'),
+			(' foo', '\\bfoo', '\\bfoo\\b'),
+			('foo ', 'foo\\b', '\\bfoo\\b'),
+			(' foo ', '\\bfoo\\b', '\\bfoo\\b'),
+			(' foo bar ', '\\bfoo\\W+bar\\b', '\\bfoo\\W+bar\\b'),
+			('\u4e00foo*', '\u4e00foo', '\\b\u4e00foo'), # chinese char never wants implicit word boundary
+			('*\u4e00foo', '\u4e00foo\\b', '\u4e00foo\\b'),
+			(' \u4e00foo', '\\b\u4e00foo', '\\b\u4e00foo\\b'),
+			('+foo*', '\\+foo', '\\+foo'), # no word boundery at non-word character
+			('Lorem ip* dolor', '\\bLorem\\W+ip\\S*\\W+dolor\\b', '\\bLorem\\W+ip\\S*\\W+dolor\\b'),
+			('Lorem *sum dolor', '\\bLorem\\W+\\S*sum\\W+dolor\\b', '\\bLorem\\W+\\S*sum\\W+dolor\\b'),
 		):
-			self.assertEqual(search_query_term_to_regex(_t('kw', value)), re.compile(regex, re.I))
+			self.assertEqual(search_query_term_to_regex(_t('kw', value)), re.compile(regex, re.I), msg="Query: %r" % value)
+			self.assertEqual(search_query_term_to_regex(_t('kw', value), flags=SEARCH_WHOLE_WORD), re.compile(regex_word, re.I), msg="Query: %r" % value)
 			self.assertEqual(search_query_term_to_regex(_t('kw', value, kw_operator=OPERATOR_EQUAL)), re.compile(regex))
+			self.assertEqual(search_query_term_to_regex(_t('kw', value), flags=SEARCH_CASE_SENSITIVE), re.compile(regex))
+			self.assertEqual(search_query_term_to_regex(_t('kw', value), flags=SEARCH_CASE_SENSITIVE|SEARCH_WHOLE_WORD), re.compile(regex_word))
 
 
 class TestSearchQueryPageNameTermToRegex(tests.TestCase):
 
 	def runTest(self):
-		for value, regex in (
-			('foo', 'foo'),
-			(' foo', '\\s+foo'),
-			('*foo', 'foo'),
-			('foo bar', 'foo\\s+bar'),
-			('foo*', 'foo'),
-			('foo+', 'foo\\+'),
-			('foo ', 'foo\\s+'),
-			(' foo ', '\\s+foo\\s+'),
-			('*foo*', 'foo'),
-			(' foo bar ', '\\s+foo\\s+bar\\s+'),
-			(' foo*bar ', '\\s+foo.*bar\\s+'),
-			(':foo:', '(^:?|:)foo(:|:?$)'),
-			('::foo::', '^:?foo:?$'),
-			('::foo:+', '^:?foo:.+'),
+		for value, regex, regex_word in (
+			('foo', 'foo', '\\bfoo\\b'),
+			(' foo', '\\bfoo', '\\bfoo\\b'),
+			('*foo', 'foo\\b', 'foo\\b'),
+			('foo bar', 'foo\\W+bar', '\\bfoo\\W+bar\\b'),
+			('foo*', '\\bfoo', '\\bfoo'),
+			('foo+', 'foo\\+', '\\bfoo\\+'),
+			('foo ', 'foo\\b', '\\bfoo\\b'),
+			(' foo ', '\\bfoo\\b', '\\bfoo\\b'),
+			('*foo*', 'foo', 'foo'),
+			(' foo bar ', '\\bfoo\\W+bar\\b', '\\bfoo\\W+bar\\b'),
+			(' foo*bar ', '\\bfoo[^\\s:]*bar\\b', '\\bfoo[^\\s:]*bar\\b'),
+			(':foo:', '(^:?|:)foo(:|:?$)', '(^:?|:)foo(:|:?$)'),
+			('::foo::', '^:?foo:?$', '^:?foo:?$'),
+			('::foo:+', '^:?foo:.+', '^:?foo:.+'),
 		):
-			self.assertEqual(search_query_pagename_term_to_regex(_t('kw', value)), re.compile(regex, re.I))
+			self.assertEqual(search_query_pagename_term_to_regex(_t('kw', value)), re.compile(regex, re.I), msg="Query: %r" % value)
+			self.assertEqual(search_query_pagename_term_to_regex(_t('kw', value), flags=SEARCH_WHOLE_WORD), re.compile(regex_word, re.I), msg="Query: %r" % value)
 			self.assertEqual(search_query_pagename_term_to_regex(_t('kw', value, kw_operator=OPERATOR_EQUAL)), re.compile(regex))
+			self.assertEqual(search_query_pagename_term_to_regex(_t('kw', value), flags=SEARCH_CASE_SENSITIVE), re.compile(regex))
+			self.assertEqual(search_query_pagename_term_to_regex(_t('kw', value), flags=SEARCH_CASE_SENSITIVE|SEARCH_WHOLE_WORD), re.compile(regex_word))
 
 
 class TestSearchQueryTagsTermToRegex(tests.TestCase):
 
 	def runTest(self):
-		for value, regex in (
-			('foo', 'foo'),
-			('foo*', 'foo'),
-			('*foo', 'foo'),
-			('*foo*', 'foo'),
-			('foo*bar', 'foo.*bar'),
-			('foo+', 'foo\\+'),
-			('@foo', '\\bfoo'),
-			('foo@', 'foo\\b'),
-			('@foo@', '\\bfoo\\b')
+		for value, regex, regex_word in (
+			('foo', 'foo', '\\bfoo\\b'),
+			('foo*', '\\bfoo', '\\bfoo'),
+			('*foo', 'foo\\b', 'foo\\b'),
+			('*foo*', 'foo', 'foo'),
+			('foo*bar', '\\bfoo\\S*bar\\b', '\\bfoo\\S*bar\\b'),
+			('foo+', 'foo\\+', '\\bfoo\\+'),
+			('@foo', '\\bfoo', '\\bfoo\\b'),
+			('foo@', 'foo\\b', '\\bfoo\\b'),
+			('@foo@', '\\bfoo\\b', '\\bfoo\\b')
 		):
-			self.assertEqual(search_query_tags_term_to_regex(_t('kw', value)), re.compile(regex, re.I))
+			self.assertEqual(search_query_tags_term_to_regex(_t('kw', value)), re.compile(regex, re.I), msg="Query: %r" % value)
+			self.assertEqual(search_query_tags_term_to_regex(_t('kw', value), flags=SEARCH_WHOLE_WORD), re.compile(regex_word, re.I), msg="Query: %r" % value)
+			self.assertEqual(search_query_tags_term_to_regex(_t('kw', value, kw_operator=OPERATOR_EQUAL)), re.compile(regex, re.I))
+			self.assertEqual(search_query_tags_term_to_regex(_t('kw', value), flags=SEARCH_CASE_SENSITIVE), re.compile(regex, re.I))
+			self.assertEqual(search_query_tags_term_to_regex(_t('kw', value), flags=SEARCH_CASE_SENSITIVE|SEARCH_WHOLE_WORD), re.compile(regex_word, re.I))
 
 
 class TestSearchQueryToFindQuery(tests.TestCase):
@@ -262,26 +276,27 @@ class TestSearchQueryToFindQuery(tests.TestCase):
 		notebook = self.setUpNotebook()
 		page_search = PageSearch(notebook)
 
-		for string, value, options in (
-			('Foo', '\\bFoo', FIND_REGEX),
-			('*Foo*', 'Foo', 0),
-			('Foo Bar', '\\bFoo|\\bBar', FIND_REGEX),
-			('Foo -Bar', '\\bFoo', FIND_REGEX), # Bar negated
-			('Links: Foo', None, 0), # no content match in this query
-			('Tag: Foo', '@Foo\\b', FIND_REGEX),
-			('@Foo', '@Foo', 0),
-			('@Foo Bar', '@Foo|\\bBar', FIND_REGEX),
-			('Foo... Bar', '\\bFoo\\.\\.\\.|\\bBar', FIND_REGEX),
-			('"Foo... Bar"', '\\bFoo\\.\\.\\.\\s+Bar', FIND_REGEX),
-			('NOT foo', None, 0),
-			('Foo*Bar', '\\bFoo\\S*Bar', FIND_REGEX),
-			('*Foo*Bar*', 'Foo\\S*Bar', FIND_REGEX),
-			('Foo AND (Bar OR Dus)', '\\bFoo|\\bBar|\\bDus', FIND_REGEX),
-			('Foo AND NOT (Bar OR Dus)', '\\bFoo', FIND_REGEX),
+		for string, value in (
+			('Foo', 'Foo'),
+			('*Foo*', '*Foo*'),
+			('" Foo "', ' Foo '),
+			('Foo Bar', 'Foo|Bar'),
+			('Foo -Bar', 'Foo'), # Bar negated
+			('Links: Foo', None), # no content match in this query
+			('Tag: Foo', '@Foo '),
+			('@Foo', '@Foo'),
+			('@Foo Bar', '@Foo|Bar'),
+			('Foo... Bar', 'Foo...|Bar'),
+			('"Foo... Bar"', 'Foo... Bar'),
+			('NOT foo', None),
+			('Foo*Bar', 'Foo*Bar'),
+			('*Foo*Bar*', '*Foo*Bar*'),
+			('Foo AND (Bar OR Dus)', 'Foo|Bar|Dus'),
+			('Foo AND NOT (Bar OR Dus)', 'Foo'),
 		):
 			squery = page_search.parse_page_search_query(string)
 			fquery = page_search.find_query_from_search_query(squery)
-			self.assertEqual(fquery, FindQuery(value, options) if value else None)
+			self.assertEqual(fquery.string if fquery else fquery, value, msg="Query: %r" % string)
 
 
 class TestPageSearchProviders(tests.TestCase):
@@ -314,13 +329,14 @@ class TestPageSearchProviders(tests.TestCase):
 		self.assertTrue(set(r.path.name for r in results).isdisjoint(set(Path(p).name for p in paths)))
 
 	def testPageNameProvider(self):
-		content = ('Test', 'FooBar', 'Baz', 'Dus', 'Test:Bar')
+		content = ('Test', 'FooBar', 'baz', 'Dus', 'Test:Bar')
 		query = 'ba'
-		match = ('FooBar', 'Baz', 'Test:Bar')
+		match = ('FooBar', 'baz', 'Test:Bar')
 		nomatch = ('Test', 'Dus')
 
 		notebook = self.setUpNotebook(content=content)
 		self.assertProviderResults(PageNameProvider(notebook, SearchQueryTerm('name', query)), match)
+		self.assertProviderResults(PageNameProvider(notebook, SearchQueryTerm('name', query), flags=SEARCH_CASE_SENSITIVE), ('baz',))
 		self.assertProviderResults(PageNameProvider(notebook, SearchQueryTerm('name', query, negate=True)), nomatch)
 
 		self.assertProviderResults(PageNameProvider(notebook, SearchQueryTerm('name', 'te')), ('Test', 'Test:Bar')) # test matching sub-page as well
@@ -345,6 +361,8 @@ class TestPageSearchProviders(tests.TestCase):
 		notebook = self.setUpNotebook(content=content)
 		self.assertProviderResults(LinksProvider(notebook, SearchQueryTerm('links', query)), matchfrom)
 		self.assertProviderResults(LinksProvider(notebook, SearchQueryTerm('linksfrom', query)), matchfrom)
+		self.assertProviderResults(LinksProvider(notebook, SearchQueryTerm('links', query), flags=SEARCH_WHOLE_WORD), ('Dest',)) # LinkToFoo no longer matches
+
 		self.assertProviderResults(LinksProvider(notebook, SearchQueryTerm('linksto', query)), matchto)
 		self.assertFalse(LinksProvider.SUPPORTS_NEGATE) # else test here
 
@@ -356,17 +374,23 @@ class TestPageSearchProviders(tests.TestCase):
 		self.assertProviderResults(TagsProvider(notebook, SearchQueryTerm('tag', 'foo')), ('Page1', 'Page2'))
 
 	def testTagsProvider(self):
-		content = {'A': '@projectA', 'B': '@projectB', 'some': '@someproject', 'project': '@project', 'empty': ''}
+		content = {'A': '@projectA', 'B': '@projectB', 'some': '@someproject', 'project': '@PROJECT', 'empty': ''}
 		notebook = self.setUpNotebook(content=content)
 		self.assertProviderResults(TagsProvider(notebook, SearchQueryTerm('tags', 'project')), ('A', 'B', 'some', 'project'))
+		self.assertProviderResults(TagsProvider(notebook, SearchQueryTerm('tags', 'project'), flags=SEARCH_CASE_SENSITIVE), ('A', 'B', 'some', 'project')) # tags always case in-sensitive
+		self.assertProviderResults(TagsProvider(notebook, SearchQueryTerm('tags', 'project'), flags=SEARCH_WHOLE_WORD), ('project',))
+
 		self.assertProviderResults(TagsProvider(notebook, SearchQueryTerm('tags', '@project')), ('A', 'B', 'project'))
 		self.assertProviderResults(TagsProvider(notebook, SearchQueryTerm('tags', '@project@')), ('project',))
 
 	def testTextProvider(self, cls=TextProvider):
 		# Also used by test for FTS plugin below
-		notebook = self.setUpNotebook(content={'test1': 'foo', 'test2': 'barfoo', 'test3': 'foobar', 'test4': 'foo**bar**'})
-		self.assertProviderResults(cls(notebook, SearchQueryTerm('text', 'foo')), ('test1', 'test3', 'test4'))
+		notebook = self.setUpNotebook(content={'test1': 'foo', 'test2': 'barfoo', 'test3': 'Foobar', 'test4': 'foo**bar**'})
+		self.assertProviderResults(cls(notebook, SearchQueryTerm('text', 'foo')), ('test1', 'test2', 'test3', 'test4'))
+		self.assertProviderResults(cls(notebook, SearchQueryTerm('text', ' foo')), ('test1', 'test3', 'test4'))
 			# test2 does not match due to not starts word
+		self.assertProviderResults(cls(notebook, SearchQueryTerm('text', 'foo'), flags=SEARCH_WHOLE_WORD), ('test1',))
+		self.assertProviderResults(cls(notebook, SearchQueryTerm('text', 'foo'), flags=SEARCH_CASE_SENSITIVE), ('test1', 'test2', 'test4'))
 		self.assertProviderResults(cls(notebook, SearchQueryTerm('text', 'foo*bar')), ('test3', 'test4'))
 			# to match test4, search should ignore formatting
 
@@ -423,6 +447,11 @@ class TestPageSearch(tests.TestCase):
 		self.assertTrue(Path('Test:foo') in results)
 		self.assertTrue(Path('Test:foo:bar') in results)
 
+		query = page_search.parse_page_search_query('foo bar', flags=SEARCH_CASE_SENSITIVE)
+		case_results = [r.path for r in page_search.search_pages(query)]
+		self.assertTrue(len(case_results) > 0)
+		self.assertTrue(len(case_results) < len(results)) # test flags are passed on
+
 		query = page_search.parse_page_search_query('+TODO -bar')
 		self.assertEqual(query, _and(_t('any', 'TODO'), _not(_t('any', 'bar'))))
 		query = page_search.parse_page_search_query('TODO not bar')
@@ -460,6 +489,12 @@ class TestPageSearch(tests.TestCase):
 		self.assertEqual(query, _q(_t('name', 'foo')))
 		results = [r.path for r in page_search.search_pages(query)]
 		self.assertTrue(len(results) > 0)
+
+		query = page_search.parse_page_search_query('Name: foo', flags=SEARCH_CASE_SENSITIVE)
+		self.assertEqual(query, _q(_t('name', 'foo')))
+		case_results = [r.path for r in page_search.search_pages(query)]
+		self.assertTrue(len(case_results) > 0)
+		self.assertTrue(len(case_results) < len(results))
 
 	def testSectionKeyword(self):
 		page_search = PageSearch(self.notebook)
@@ -575,10 +610,10 @@ class TestPageSearch(tests.TestCase):
 		# Has seperate test case with more queries, test here to make sure
 		# plugin tests deriving from this class also check it
 		page_search = PageSearch(self.notebook)
-		query = page_search.parse_page_search_query('foo bar')
+		query = page_search.parse_page_search_query('foo bar', SEARCH_CASE_SENSITIVE)
 		self.assertEqual(query, _and(_t('any', 'foo'), _t('any', 'bar')))
 		fquery = page_search.find_query_from_search_query(query)
-		self.assertEqual(fquery, FindQuery('\\bfoo|\\bbar', FIND_REGEX))
+		self.assertEqual(fquery, FindQuery('foo|bar', SEARCH_CASE_SENSITIVE))
 
 
 @tests.slowTest
@@ -607,8 +642,7 @@ class TestPageSearchIndexed(TestPageSearch):
 		TestPageSearchProviders().testTextProvider(cls=indexed_fts.FTSSearchProvider)
 
 		term = _t('content', 'foo')
-		pattern = indexed_fts.FTSSearchProvider.get_find_regex(term)
-		self.assertEqual(pattern, '\\bfoo')
+		self.assertEqual(indexed_fts.FTSSearchProvider.get_find_string(term), 'foo')
 
 
 class TestUnicodeSearchTerms(tests.TestCase):

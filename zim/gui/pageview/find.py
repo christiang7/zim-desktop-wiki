@@ -10,6 +10,7 @@ many pages.
 
 from gi.repository import GObject
 from gi.repository import Gtk
+from gi.repository import Pango
 
 import re
 import logging
@@ -17,6 +18,8 @@ import itertools
 
 from typing import Optional
 
+from zim.parse.searchquery import find_string_to_regex, \
+	SearchFlag, SEARCH_CASE_SENSITIVE, SEARCH_WHOLE_WORD, SEARCH_REGEX
 from zim.gui.widgets import Dialog, IconButton, InputEntry
 
 from .constants import *
@@ -30,12 +33,6 @@ FIND_HIGHLIGHT_TAG = 'find-highlight'
 FIND_MATCH_TAG = 'find-match'
 
 
-# Query options
-FIND_CASE_SENSITIVE = 1 #: Constant to find case sensitive
-FIND_WHOLE_WORD = 2 #: Constant to find whole words only
-FIND_REGEX = 4 #: Constant to find based on regexes
-
-
 class FindQuery():
 	'''Object which represents a query for the find functionality
 
@@ -43,10 +40,10 @@ class FindQuery():
 	all queries can be represented as regular expressions.
 	'''
 
-	def __init__(self, string: str, flags: int = 0):
+	def __init__(self, string: str, flags: SearchFlag=SearchFlag(0)):
 		self.string = string
 		self.flags = flags
-		self.regex = self._compile_regex(string, flags)
+		self.regex = find_string_to_regex(string, flags)
 
 	def __repr__(self):
 		return "<%s %r %i %r>" % (self.__class__.__name__, self.string, self.flags, self.regex)
@@ -56,22 +53,6 @@ class FindQuery():
 
 	def __bool__(self):
 		return bool(self.string)
-
-	@staticmethod
-	def _compile_regex(string, flags):
-		assert isinstance(string, str)
-		assert isinstance(flags, int)
-
-		if not flags & FIND_REGEX:
-			string = re.escape(string)
-
-		if flags & FIND_WHOLE_WORD:
-			string = '\\b' + string + '\\b'
-
-		if flags & FIND_CASE_SENSITIVE:
-			return re.compile(string, re.U)
-		else:
-			return re.compile(string, re.U | re.I)
 
 
 class FindInterface():
@@ -198,7 +179,7 @@ class TextBufferFindMixin(FindInterface):
 		# Generator for all matches and objects in range
 		# objects are yielded if they support FindInterface, but not checked for matches
 
-		if query.flags & FIND_WHOLE_WORD:
+		if SEARCH_WHOLE_WORD in query.flags:
 			if start.inside_word() and not start.starts_word():
 				start.forward_word_end()
 
@@ -397,7 +378,7 @@ class TextBufferFindMixin(FindInterface):
 				return match.find_replace_at_cursor(query, replacement)
 			else:
 				# Regex text match
-				if query.flags & FIND_REGEX:
+				if SEARCH_REGEX in query.flags:
 					try:
 						replacement = match.expand(replacement)
 					except:
@@ -432,7 +413,7 @@ class TextBufferFindMixin(FindInterface):
 			else:
 				# Regex text match
 				my_replacement = replacement
-				if query.flags & FIND_REGEX:
+				if SEARCH_REGEX in query.flags:
 					try:
 						my_replacement = match.expand(replacement)
 					except:
@@ -621,13 +602,13 @@ class FindWidget(object):
 
 	def _get_query(self):
 		string = self.find_entry.get_text()
-		flags = 0
+		flags = SearchFlag(0)
 		if self.case_option_checkbox.get_active():
-			flags = flags | FIND_CASE_SENSITIVE
+			flags = flags | SEARCH_CASE_SENSITIVE
 		if self.word_option_checkbox.get_active():
-			flags = flags | FIND_WHOLE_WORD
+			flags = flags | SEARCH_WHOLE_WORD
 		if self.regex_option_checkbox.get_active():
-			flags = flags | FIND_REGEX
+			flags = flags | SEARCH_REGEX
 		return FindQuery(string, flags)
 
 	def on_find_entry_changed(self, match_at_cursor=True):
@@ -664,9 +645,9 @@ class FindWidget(object):
 
 	def find(self, query: FindQuery, highlight: bool=False):
 		self.find_entry.set_text(query.string)
-		self.case_option_checkbox.set_active(query.flags & FIND_CASE_SENSITIVE)
-		self.word_option_checkbox.set_active(query.flags & FIND_WHOLE_WORD)
-		self.regex_option_checkbox.set_active(query.flags & FIND_REGEX)
+		self.case_option_checkbox.set_active(SEARCH_CASE_SENSITIVE in query.flags)
+		self.word_option_checkbox.set_active(SEARCH_WHOLE_WORD in query.flags)
+		self.regex_option_checkbox.set_active(SEARCH_REGEX in query.flags)
 		self.highlight_checkbox.set_active(highlight)
 		self.on_find_entry_changed()
 
@@ -699,8 +680,17 @@ class FindBar(FindWidget, Gtk.ActionBar):
 		self.pack_start(self.find_entry)
 		self.pack_start(self.previous_button)
 		self.pack_start(self.next_button)
-		self.pack_start(self.case_option_checkbox)
-		self.pack_start(self.highlight_checkbox)
+
+		for checkbox in (
+			self.case_option_checkbox,
+			self.word_option_checkbox,
+			self.regex_option_checkbox,
+			self.highlight_checkbox
+		):
+			label = checkbox.get_child()
+			label.set_ellipsize(Pango.EllipsizeMode.END)
+			checkbox.set_tooltip_text(label.get_text())
+			self.pack_start(checkbox)
 
 		close_button = IconButton(Gtk.STOCK_CLOSE, relief=False, size=Gtk.IconSize.MENU)
 		close_button.connect_object('clicked', self.__class__.hide, self)

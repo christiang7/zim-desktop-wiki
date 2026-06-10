@@ -109,20 +109,26 @@ class PageSearchProvider():
 	SUPPORTS_NEGATE = False #: flag whether providers supports negation (NOT) or needs a wrapper
 	EXECUTION_PRIO = EXECUTION_PRIO_CONTENT # conservative default
 
-	def __init__(self, notebook: 'Notebook', term: SearchQueryTerm, ui_callback: Optional[Callable]=None):
+	def __init__(self, notebook: 'Notebook', term: SearchQueryTerm, flags: SearchFlag=SearchFlag(0), ui_callback: Optional[Callable]=None):
 		'''Constructor
 		@param notebook: the C{Notebook} object to search
 		@param term: a L{SearchQueryTerm} to search
-		@param ui_callback: an optional callback function that should be called once in a while for
-		longer running operations
+		@param flags: optional SEARCH_CASE_SENSITIVE and SEARCH_WHOLE_WORD options
+		@param ui_callback: an optional callback function that should be called once in a while for longer running operations
 		'''
+		assert isinstance(flags, SearchFlag)
 		self.notebook = notebook
 		self.term = term
 		self.ui_callback = ui_callback
+		self.flags = flags
 
 	@classmethod
-	def get_find_regex(cls, term: SearchQueryTerm) -> str|None:
-		'''Get a regex pattern to match this term in content or C{None}, only applicable for content terms'''
+	def get_find_string(cls, term: SearchQueryTerm) -> str|None:
+		'''Get a string to match this term in content or C{None}, only applicable for content terms
+		Used to translate a query to a string for the findbar in the textview
+		Since this method does not get the SEARCH_CASE_SENSITIVE or SEARCH_WHOLE_WORD flags, assume standard behavior.
+		The flags are applied in the wrapper.
+		'''
 		return None
 
 	def walk_notebook(self) -> Iterable[PageSearchResult]:
@@ -212,6 +218,10 @@ class ContentSearchProvider(PageSearchProvider):
 			if check(r):
 				yield r
 
+	@classmethod
+	def get_find_string(cls, term):
+		return term.value
+
 
 class PageNameProvider(IndexedSearchProvider):
 	'''Provider for the keywords `name`, `section` and `namespace`'''
@@ -221,11 +231,11 @@ class PageNameProvider(IndexedSearchProvider):
 		# In comparison to other index providers this one also does optimized check and filter
 		# --> raise prio, let other index provider do generation if possible in query
 
-	def __init__(self, notebook, term, ui_callback=None):
-		super().__init__(notebook, term, ui_callback)
+	def __init__(self, notebook, term, flags=SearchFlag(0), ui_callback=None):
+		super().__init__(notebook, term, flags, ui_callback)
 		if term.keyword in ('namespace', 'section'):
 			term = term.copy(value= '::' + term.value.strip(':') + ':') # force absolute lookup
-		self.regex = search_query_pagename_term_to_regex(term)
+		self.regex = search_query_pagename_term_to_regex(term, self.flags)
 
 	def generate(self):
 		if self.term.negate:
@@ -254,7 +264,9 @@ class PageNameProvider(IndexedSearchProvider):
 				yield r
 
 	def checker(self):
-		if self.term.negate:
+		if not self.regex:
+			return lambda r: False
+		elif self.term.negate:
 			return lambda r: not self.regex.search(r.path.name)
 		else:
 			def check(r):
@@ -269,10 +281,10 @@ class PageNameProvider(IndexedSearchProvider):
 class LinksProvider(IndexedSearchProvider):
 	'''Provider for the keywords `links`, `linksfrom` and `linksto`'''
 
-	def __init__(self, notebook, term, ui_callback=None):
-		super().__init__(notebook, term, ui_callback)
+	def __init__(self, notebook, term, flags=SearchFlag(0), ui_callback=None):
+		super().__init__(notebook, term, flags, ui_callback)
 		self.link_dir = LINK_DIR_FORWARD if term.keyword in ('links', 'linksfrom') else LINK_DIR_BACKWARD
-		self.inner = PageNameProvider(notebook, term, ui_callback)
+		self.inner = PageNameProvider(notebook, term, flags=flags, ui_callback=ui_callback)
 
 	def generate(self):
 		for pagename_result in self.inner.generate():
@@ -288,26 +300,26 @@ class LinksProvider(IndexedSearchProvider):
 class TagsProvider(IndexedSearchProvider):
 	'''Provider for the `tags` keyword'''
 
-	def __init__(self, notebook, term, ui_callback=None):
-		super().__init__(notebook, term, ui_callback)
+	def __init__(self, notebook, term, flags=SearchFlag(0), ui_callback=None):
+		super().__init__(notebook, term, flags, ui_callback)
 		if term.keyword == 'tag' or re.match('^@\\w+@$', term.value):
 			# Backward compatible exact match
 			# Or optimized for direct match
 			self.regex = None
 			self.generate = self.generate_exact
 		else:
-			self.regex = search_query_tags_term_to_regex(term)
-			self.generate = self.generate_glob
+			self.regex = search_query_tags_term_to_regex(term, self.flags)
+			if self.regex:
+				self.generate = self.generate_glob
+			else:
+				self.generate = lambda: [] # do nothing
 
 	@classmethod
-	def get_find_regex(cls, term):
+	def get_find_string(cls, term):
 		if term.keyword == 'tag' or re.match('^@\\w+@$', term.value):
-			return '@' + re.escape(term.value.strip('@')) + '\\b'
+			return '@%s ' % term.value.strip('@')
 		else:
-			pattern = search_query_tags_term_to_regex(term).pattern
-			if pattern.startswith('\\b'):
-				pattern = pattern[2:]
-			return '@' + pattern
+			return '@' + term.value.strip('@')
 
 	def generate_exact(self):
 		tag = self.term.value.strip('@')
@@ -335,19 +347,18 @@ class TextProvider(ContentSearchProvider):
 
 	SUPPORTS_NEGATE = True
 
-	def __init__(self, notebook, term, ui_callback=None):
-		super().__init__(notebook, term, ui_callback)
-		self.regex = search_query_term_to_regex(term)
+	def __init__(self, notebook, term, flags=SearchFlag(0), ui_callback=None):
+		super().__init__(notebook, term, flags, ui_callback)
+		self.regex = search_query_term_to_regex(term, self.flags)
 		self.ui_callback_counter = 0
-
-	@classmethod
-	def get_find_regex(cls, term):
-		return search_query_term_to_regex(term).pattern
 
 	def checker(self):
 		return self.check_content
 
 	def check_content(self, result):
+		if not self.regex:
+			return False
+
 		try:
 			page = result.get_page(self.notebook)
 			if page.peek_has_parsetree():
@@ -564,9 +575,9 @@ class PageSearch(object):
 		self.ui_callback = ui_callback
 		self.ui_callback_counter = 0
 
-	def parse_page_search_query(self, string: str) -> SearchQuery:
+	def parse_page_search_query(self, string: str, flags: SearchFlag=SearchFlag(0)) -> SearchQuery:
 		'''Parse string into L{SearchQuery} object'''
-		return parse_search_query(string, self.KEYWORDS, default_keyword=self.DEFAULT_KEYWORD)
+		return parse_search_query(string, self.KEYWORDS, default_keyword=self.DEFAULT_KEYWORD, flags=flags)
 
 	def search_pages(self, query: SearchQuery) -> Iterable[PageSearchResult]:
 		'''Generator for page search results
@@ -574,7 +585,7 @@ class PageSearch(object):
 		@param query: L{SearchQuery} object created by L{parse_page_search_query()}
 		@returns: yields sets with results
 		'''
-		provider = self._compile_page_search(query)
+		provider = self._compile_page_search(query, query.flags)
 		try:
 			for r in provider.generate():
 				r._page = None # avoid leaking lots of Page references, keeping content in memory
@@ -589,8 +600,9 @@ class PageSearch(object):
 		except SearchCancelledException:
 			pass
 
-	def _compile_page_search(self, query):
+	def _compile_page_search(self, query, flags):
 		assert isinstance(query, SearchQuery)
+		flags = query.flags if query.flags else flags # can be overruled, else take parent flags (enum, do not use "or" here)
 
 		if query.operator == OPERATOR_OR and query.negate:
 			# Optimize for equivalence NOT(a OR b) = (NOT a AND NOT b) since AND is more efficiently implemented
@@ -599,12 +611,12 @@ class PageSearch(object):
 		members = []
 		for term in query.terms:
 			if isinstance(term, SearchQuery):
-				provider = self._compile_page_search(term) # recurs for nested group
+				provider = self._compile_page_search(term, flags) # recurs for nested group
 			elif 'expand_terms' in self.KEYWORDS[term.keyword]:
-				provider = self._compile_expand_terms(term)
+				provider = self._compile_expand_terms(term, flags)
 			else:
 				cls = self.KEYWORDS[term.keyword]['provider']
-				provider = cls(self.notebook, term, self.ui_callback)
+				provider = cls(self.notebook, term, flags, self.ui_callback)
 				if term.negate and not provider.SUPPORTS_NEGATE:
 					provider = NegateOperator(provider)
 
@@ -628,7 +640,7 @@ class PageSearch(object):
 
 		return group
 
-	def _compile_expand_terms(self, term):
+	def _compile_expand_terms(self, term, flags):
 		# Expand terms of an "any" keyword
 		# Either `a (a OR b)`` or a `NOT a AND NOT b` group
 		query = SearchQuery(OPERATOR_AND if term.negate else OPERATOR_OR)
@@ -636,13 +648,13 @@ class PageSearch(object):
 			t = term.copy(keyword=keyword)
 			query.terms.append(t)
 
-		return self._compile_page_search(query)
+		return self._compile_page_search(query, flags) # indirect recurs
 
 	def find_query_from_search_query(self, query: SearchQuery) -> 'FindQuery|None':
 		'''Turn a C{SearchQuery} into a C{FindQuery}
 		All positive terms that match content are taken into account
 		'''
-		from zim.gui.pageview.find import FindQuery, FIND_CASE_SENSITIVE, FIND_WHOLE_WORD, FIND_REGEX
+		from zim.gui.pageview.find import FindQuery
 
 		seen = set()
 		def is_double(r):
@@ -652,14 +664,9 @@ class PageSearch(object):
 				seen.add(r)
 				return False
 
-		regexes = list(r for r in self._walk_search_query_for_find(query) if not is_double(r))
-		if regexes and len(regexes) == 1:
-			if re.escape(regexes[0]) == regexes[0]: # no special characters
-				return FindQuery(regexes[0])
-			else:
-				return FindQuery(regexes[0], FIND_REGEX)
-		elif regexes:
-			return FindQuery('|'.join(regexes), FIND_REGEX)
+		strings = list(r for r in self._walk_search_query_for_find(query) if not is_double(r))
+		if strings:
+			return FindQuery('|'.join(strings), query.flags)
 		else:
 			return None
 
@@ -680,9 +687,9 @@ class PageSearch(object):
 					#	q.add(t)
 					#yield from self._walk_search_query_for_find(q) # recurs
 
-					yield TextProvider.get_find_regex(term)
+					yield TextProvider.get_find_string(term)
 				else:
 					cls = self.KEYWORDS[term.keyword]['provider']
-					regex = cls.get_find_regex(term)
-					if regex:
-						yield regex
+					string = cls.get_find_string(term)
+					if string:
+						yield string

@@ -14,10 +14,10 @@ from zim.plugins import PluginClass
 from zim.notebook import NotebookExtension, Path
 from zim.notebook.index.base import IndexerBase
 from zim.parse.tokenlist import tokens_to_text
-from zim.parse.searchquery import search_query_term_to_regex
+from zim.parse.searchquery import search_query_term_to_regex, SearchFlag
 from zim.search import PageSearchExtension, \
 	IndexedSearchProvider, PageSearchResult, TextProvider, \
-	EXECUTION_PRIO_MIXED, OPERATOR_EQUAL
+	EXECUTION_PRIO_MIXED, OPERATOR_EQUAL, SEARCH_WHOLE_WORD, SEARCH_CASE_SENSITIVE
 
 
 logger = logging.getLogger("zim.plugins.indexed_fts")
@@ -109,9 +109,7 @@ def escape_for_glob(keyword):
 
 
 class FTSSearchProvider(IndexedSearchProvider):
-	'''Base class supports simple case, use MATCH to get term or phrase, optional ending in glob'''
-
-	# FUTURE: use BM25 ranking to set matching score ?
+	# Provider for content search using this plugin
 
 	# NOTE: depending on the query there are several ways to query the database
 	#
@@ -128,53 +126,65 @@ class FTSSearchProvider(IndexedSearchProvider):
 	#
 	# Since the FTS table is case-insensitive, strategy 3 is also required for case-sensitive queries
 
-	def __init__(self, notebook, term, ui_callback = None):
-		super().__init__(notebook, term, ui_callback)
-		if term.kw_operator == OPERATOR_EQUAL or any(c.isspace() for c in term.value):
-			# OPERATOR_EQUAL is interpreted as exact match, so case sensitive
+	# FUTURE: use BM25 ranking to set matching score ?
+
+	def __init__(self, notebook, term, flags=SearchFlag(0), ui_callback=None):
+		super().__init__(notebook, term, flags, ui_callback)
+		if flags or term.kw_operator == OPERATOR_EQUAL or any(c.isspace() for c in term.value):
+			# flags and equal operator are handled by filter through TextProvider check
+			# and OPERATOR_EQUAL is also interpreted as exact match, so case sensitive
 			self.EXECUTION_PRIO = EXECUTION_PRIO_MIXED
 			self.generate = self.generate_phrase
 		else:
 			self.generate = self.generate_word
 
+		self.glob = self._get_glob(term)
+
+	def _get_glob(self, term):
+		glob = term.value.lower().strip()
+		if not glob.replace('*', '').strip():
+			return None
+		elif not "*" in glob and not SEARCH_WHOLE_WORD in self.flags:
+			# If glob is used in the term already, assume automatic start/end of the word
+			if not term.value[0].isspace() and not glob[0] == '*':
+				glob = '*' + glob # default glob word start
+
+			if not term.value[-1].isspace() and not glob[-1] == '*':
+				glob += '*' # default glob word ending
+		# else keep start/end as is
+
+		return glob.strip()
+
 	@classmethod
-	def get_find_regex(cls, term):
-		return search_query_term_to_regex(term).pattern
+	def get_find_string(cls, term):
+		return term.value
 
 	def generate_word(self):
-		term = self.term.value.lower().strip()
-
-		if not term.replace('*', '').strip():
+		if not self.glob:
 			# Protect against a possibly long-running query if accidentally searching for "*"
 			return []
-		elif not self.term.value[-1].isspace():
-			term += '*' # default glob word ending
 
-		for row in self.generate_inner(term):
+		for row in self.generate_inner(self.glob):
 			yield PageSearchResult(Path(row["name"]), score=row["score"])
 
 	def generate_phrase(self):
-		term = self.term.value.lower().strip()
-
-		if not term.replace('*', '').strip():
+		if not self.glob:
 			# Protect against a possibly long-running query if accidentally searching for "*"
 			return []
-		elif not self.term.value[-1].isspace():
-			term += '*' # default glob word ending
 
-		tokens = term.split()
+		tokens = self.glob.split()
 		tokens.sort(key=lambda w: len(w))
 		longest = tokens[-1]
 
-		textprovider = TextProvider(self.notebook, self.term, self.ui_callback)
+		textprovider = TextProvider(self.notebook, self.term, self.flags, self.ui_callback)
 		check = textprovider.checker()
 		for row in self.generate_inner(longest):
 			result = PageSearchResult(Path(row["name"]), 0)
 			if check(result):
 				yield result
 
-	def generate_inner(self, term):
-		#print(">>GLOB>>", term)
+	def generate_inner(self, glob):
+		#print(">>GLOB>>", glob)
 		return self.notebook.index._db.execute(
 			"SELECT p.name AS name, count(v.offset) AS score "
 			"FROM pages_fts as f "
@@ -183,7 +193,7 @@ class FTSSearchProvider(IndexedSearchProvider):
 			"JOIN pages_ftsv AS v ON f.rowid = v.doc "
 			"WHERE v.term GLOB ? "
 			"GROUP BY p.name;",
-			(escape_for_glob(term),)
+			(escape_for_glob(glob),)
 		)
 
 

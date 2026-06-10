@@ -28,6 +28,7 @@ For other cases, the helper function L{compile_search_query_check_function()} ca
 
 
 import re
+import enum
 import logging
 
 from functools import partial
@@ -58,8 +59,7 @@ _query_operators = {
 	')': OPERATOR_GROUP_END,
 }
 _operators_allowed_in_keyword_group = ('+', '-')
-_operators_not_allowed_in_keyword_group = ('(', ')')
-# 'and' 'or' 'not' will be interpreted as string in keyword group context
+	# 'and' 'or' 'not' will be interpreted as string in keyword group context
 
 
 OPERATOR_MATCH = 'MATCH'
@@ -78,6 +78,41 @@ _keyword_operators = {
 	'>=': OPERATOR_GREATER_EQUAL,
 	'<=': OPERATOR_LESS_EQUAL,
 }
+_keyword_operators_strings = {v: k for k, v in _keyword_operators.items()}
+
+# Query options
+class SearchFlag(enum.Flag):
+	CASE_SENSITIVE = 1
+	WHOLE_WORD = 2
+	REGEX = 4
+
+	def to_letters(self) -> str:
+		string = ''
+		for k, v in self._letter_codes.items():
+			if SearchFlag(k) in self:
+				string += v
+		return string
+
+	@classmethod
+	def from_letters(cls, string: str) -> 'SearchFlag':
+		flags = cls(0)
+		for k, v in cls._letter_codes.items():
+			if v in string:
+				flags |= cls(k)
+		return flags
+
+# hack to add "nonmember" attributes to enum class
+SearchFlag._letter_codes = {
+	SearchFlag.CASE_SENSITIVE.value: 'C',
+	SearchFlag.WHOLE_WORD.value: 'W',
+	SearchFlag.REGEX.value: 'R'
+}
+SearchFlag.from_letters_re = re.compile('^\\?([%s]+)\\:$' % ''.join(SearchFlag._letter_codes.values()))
+
+
+SEARCH_CASE_SENSITIVE = SearchFlag.CASE_SENSITIVE #: Constant to find case sensitive
+SEARCH_WHOLE_WORD = SearchFlag.WHOLE_WORD #: Constant to find whole words only
+SEARCH_REGEX =  SearchFlag.REGEX #: Constant for regex search
 
 _word_re = re.compile(r'''
 	(	'(\\'|[^'])*' |  # single quoted word
@@ -119,28 +154,29 @@ def unescape_quoted_string(string: str) -> str:
 	return unescape_string(string)
 
 
-def _indent(string):
-	return ''.join("\t"+l for l in string.splitlines(True))
-
-
 class SearchQuery:
 	'''Object to represent a search query'''
 
-	def __init__(self, operator=OPERATOR_AND, terms: 'Iterable|None'=None, negate: bool=False):
+	def __init__(self, operator=OPERATOR_AND, terms: 'Iterable|None'=None, negate: bool=False, flags: SearchFlag=SearchFlag(0)):
 		self.operator = operator
 		self.terms = list(terms) if terms else []
 		assert all(isinstance(t, (SearchQuery, SearchQueryTerm)) for t in self.terms), self.terms
 		self.negate = negate
+		self.flags = flags
 
 	def __eq__(self, other):
 		return isinstance(other, self.__class__) and \
-			(self.operator, self.negate, self.terms) == (other.operator, other.negate, other.terms)
+			(self.operator, self.negate, self.terms, self.flags) == (other.operator, other.negate, other.terms, self.flags)
 
 	def __repr__(self):
-		return "<%s op=%r negate=%r [\n%s\n]>" % (
-			self.__class__.__name__, self.operator, self.negate,
-			'\n'.join(_indent(repr(t)) for t in self.terms)
-		)
+		return '<%s "%s">' % (self.__class__.__name__, str(self))
+
+	def __str__(self):
+		sep = " %s " % self.operator
+		string = "(%s)" % sep.join(str(t) for t in self.terms)
+		if self.flags:
+			string = '(?%s: ' % self.flags.to_letters() + string[1:]
+		return "NOT " + string if self.negate else string
 
 	def __len__(self):
 		return len(self.terms)
@@ -183,10 +219,14 @@ class SearchQueryTerm:
 			(self.keyword, self.value, self.kw_operator, self.negate) == (other.keyword, other.value, self.kw_operator, other.negate)
 
 	def __repr__(self):
-		return "<%s %s %r %r negate=%r>" % (self.__class__.__name__, self.keyword, self.kw_operator, self.value, self.negate)
+		return '<%s "%s">' % (self.__class__.__name__, str(self))
+
+	def __str__(self):
+		string = self.keyword + _keyword_operators_strings[self.kw_operator] + '"%s"' % self.value
+		return "NOT " + string if self.negate else string
 
 
-def parse_search_query(string: str, keywords: dict, default_keyword: str='any') -> SearchQuery:
+def parse_search_query(string: str, keywords: dict, default_keyword: str='any', flags: SearchFlag=SearchFlag(0)) -> SearchQuery:
 	'''Parse a search query string into a L{SearchQuery} object
 
 	Parsing behavior is controlled by the `keywords` dict and the `default_keyword`.
@@ -201,10 +241,13 @@ def parse_search_query(string: str, keywords: dict, default_keyword: str='any') 
 	@param string: the string to be parsed
 	@param keywords: dict with supported keywords
 	@param default_keyword: keyword for strings without keyword specified
+	@param flags: flags to be passed on when handling the query
 	'''
+	assert isinstance(flags, SearchFlag)
 	tokens = _tokenize_search_query(string, keywords, default_keyword)
 	tokens = _collect_explicit_groups(tokens)
 	query = _process_operators(tokens)
+	query.flags = flags
 	return query
 
 
@@ -213,7 +256,9 @@ def _tokenize_search_query(string: str, keywords: dict, default_keyword: str='an
 	# terms without a keyword get the default keyword
 
 	# Bootstrap regexes
-	keyword_re = re.compile('(' + '|'.join(keywords) + ')(:?[><]=|:?[=><]|:)(.*)', re.I|re.U)
+	kws = list(keywords)
+	kws.append(default_keyword)
+	keyword_re = re.compile('(' + '|'.join(kws) + ')(:?[><]=|:?[=><]|:)(.*)', re.I|re.U)
 	implicit_keywords = {}
 	if isinstance(keywords, dict): # should always be a dict, but in testing we use sets
 		for k in keywords:
@@ -228,8 +273,7 @@ def _tokenize_search_query(string: str, keywords: dict, default_keyword: str='an
 		else:
 			return default_keyword
 
-
-	# First do a raw tokenizer
+	# Flat tokenizer
 	words = split_quoted_strings(string)
 	tokens = []
 	while words:
@@ -266,6 +310,8 @@ def _tokenize_search_query(string: str, keywords: dict, default_keyword: str='an
 				term = m_key.group(1) + m_key.group(2)
 				keyword = match_implicit_keyword(term)
 				tokens.append(SearchQueryTerm(keyword, term))
+		elif tokens and tokens[-1] == '(' and SearchFlag.from_letters_re.match(w):
+			tokens.append(SearchFlag.from_letters(w))
 		else:
 			keyword = match_implicit_keyword(w)
 			term = unescape_quoted_string(w)
@@ -333,7 +379,10 @@ def _process_operators(tokens: list) -> SearchQuery:
 		if isinstance(tokens[i], list):
 			tokens[i] = _process_operators(tokens[i]) # recurs
 
-	# Process NOT operators and remove out of place AND / OR operators
+	# Check for flags
+	flags = tokens.pop(0) if isinstance(tokens[0], SearchFlag) else SearchFlag(0)
+
+	# Remove out of place AND / OR operators
 	if tokens[0] == OPERATOR_AND:
 		# Allow for one stray AND operator, to get over "+foo +bar"
 		tokens.pop(0)
@@ -346,6 +395,7 @@ def _process_operators(tokens: list) -> SearchQuery:
 		logger.warning("Out of place operator at end of query: %s" % tokens[-1])
 		tokens.pop()
 
+	# Process operators
 	for i in range(0, len(tokens)-1):
 		if tokens[i] == OPERATOR_NOT:
 			tokens[i] = None
@@ -378,100 +428,151 @@ def _process_operators(tokens: list) -> SearchQuery:
 		group = [t for t in tokens[i-1:j] if t != OPERATOR_OR]
 		if i == 1 and j == len(tokens):
 			# We consumed the whole token list
-			return SearchQuery(OPERATOR_OR, group)
+			return SearchQuery(OPERATOR_OR, group, flags=flags)
 		else:
 			# Splice subgroup in list
 			tokens = tokens[:i-1] + [SearchQuery(OPERATOR_OR, group)] + tokens[j:]
 	else:
 		# Final group is implicit AND group
 		if len(tokens) == 1 and isinstance(tokens[0], SearchQuery):
+			if not tokens[0].flags:
+				tokens[0].flags = flags 
 			return tokens[0]
 		else:
-			return SearchQuery(OPERATOR_AND, tokens)
+			return SearchQuery(OPERATOR_AND, tokens, flags=flags)
 
 
-def search_query_term_to_regex(term: SearchQueryTerm) -> re.Pattern:
+def find_string_to_regex(string: str, flags: SearchFlag = SearchFlag(0)) -> re.Pattern|None:
+	'''Returns a regex object for a string match for in page find
+	
+	Applies the same rules as L{search_query_term_to_regex()} with additional support for
+	regex searches and supports the pipe caharacter (`|`) as inline "OR"
+	'''
+	if SEARCH_REGEX in flags:
+		regex = string
+
+		if SEARCH_WHOLE_WORD in flags:
+			if re.match(r'^\s*\w', string, re.U):
+				regex = r'\b' + regex
+
+			if re.search(r'(?<!\\)\w\s*$', string, re.U): # match ending in char, but not in escape char
+				regex = regex + r'\b'
+	else:
+		parts = [
+			_search_query_term_to_regex(SearchQueryTerm('text', p), flags, capture_glob=True)
+				for p in string.split('|') 
+		]
+		regex = '|'.join(p for p in parts if p)
+
+	return re.compile(regex, re.U) if SEARCH_CASE_SENSITIVE in flags else re.compile(regex, re.U | re.I)
+
+
+def search_query_term_to_regex(term: SearchQueryTerm, flags: SearchFlag = SearchFlag(0)) -> re.Pattern|None:
 	'''Returns a regex object for a simple string match of a L{SearchQueryTerm}
 
 	The following rules are applied:
 	  - a "*" optionally matches any non-whitespace character
 	  - a space " " matches any combination of whitespace, or begin or end of the string
-	  - by default matches begin at a word boundary, unless they start with "*" or a chinese character
-	  - a space " " at the start does nothing but the default behavior, unless the first character is chinese
-	  - by default matches can end anywhere in a word, unless they end with a space " "
-	  - a "*" at the end does nothing but the default behavior
+	  - by default, matches anywhere in the text, so implying "*" at the start and end of the word
+	  - however, if a "*" is used, begin and end will automatically match word boundaries, unless the search term starts or ends with "*"
+	  - a space " " at the start or the end forces a word bounderay, " word " only matches the whole word
+	  - if the option "Whole Word" is set, word boundaries are always added automatically, and a "*" is required to match elsewhere
+	  - by default matches case insensitive, unless the "equal" operator is used or the "Match case" option is set
 
 	@param term: a L{SearchQueryTerm}
-	@param returns: a C{re.Pattern} object
+	@param flags: a SearchFlag enum
+	@param returns: a C{re.Pattern} object or C{None} if the pattern is invalid
 	'''
 	# NOTE: changes in above rules also need to be updated in the manual
-
-	# Globs to regex
-	parts = []
-	for p in term.value.strip().strip('*').split('*'):
-		sub_parts = re.split('\\s+', p) # use regex split to have empty match at start and end of piece
-		parts.append(r'\s+'.join(map(re.escape, sub_parts)))
-	regex = r'\S*'.join(parts)
-
-	# Add word delimiters according to the rules explained above, but avoid adding them next
-	# to non-word characters or next to chinese charaters.
-	# Chinese is treated special because it does not always use whitespace as word delimiter.
-	if re.match(r'^\s+\w', term.value, re.U) \
-		or (re.match(r'^\w', term.value, re.U) and not '\u4e00' <= term.value[0] <= '\u9fff'):
-			regex = r'\b' + regex
-
-	if re.search(r'\w\s+$', term.value, re.U):
-		regex = regex + r'\b'
-
-	if term.kw_operator == OPERATOR_EQUAL:
+	regex = _search_query_term_to_regex(term, flags)
+	if not regex:
+		return None
+	elif term.kw_operator == OPERATOR_EQUAL or SEARCH_CASE_SENSITIVE in flags:
 		# OPERATOR_EQUAL is interpreted as exact match, so case sensitive
 		return re.compile(regex, re.U)
 	else:
 		return re.compile(regex, re.U | re.I)
 
 
-def search_query_pagename_term_to_regex(term: SearchQueryTerm) -> re.Pattern:
+def _search_query_term_to_regex(term: SearchQueryTerm, flags: SearchFlag = SearchFlag(0), capture_glob=False) -> str:
+	# Inner logic for search_query_term_to_regex() and related functions
+
+	if not term.value.replace('*', '').strip():
+		return None # nothing to match
+
+	# Globs to regex
+	parts = []
+	for p in term.value.strip().strip('*').split('*'):
+		sub_parts = re.split('\\s+', p)
+		parts.append(r'\W+'.join(map(re.escape, sub_parts)))
+	regex = r'\S*'.join(parts)
+
+	# Add word delimiters to regex
+	if SEARCH_WHOLE_WORD in flags:
+		# Default is word boundaries, unless explicit glob or non-alpha char
+		if re.match(r'^\s*\w', term.value, re.U):
+			regex = r'\b' + regex
+
+		if re.search(r'\w\s*$', term.value, re.U):
+			regex = regex + r'\b'
+	elif '*' in term.value:
+		# Implicit word boundaries, like above but with exception for chinese
+		if re.match(r'^\s*\w', term.value, re.U) and not '\u4e00' <= term.value[0] <= '\u9fff':
+			regex = r'\b' + regex
+
+		if re.search(r'\w\s*$', term.value, re.U) and not '\u4e00' <= term.value[-1] <= '\u9fff':
+			regex = regex + r'\b'
+	else:
+		# Explicit word boundaries by whitespace, default is anywhere
+		if re.match(r'^\s+\w', term.value, re.U):
+			regex = r'\b' + regex
+
+		if re.search(r'\w\s+$', term.value, re.U):
+			regex = regex + r'\b'
+
+	if capture_glob:
+		if term.value.startswith('*'):
+			regex = r'\S*' + regex
+
+		if term.value.endswith('*'):
+			regex += r'\S*'
+
+	return regex
+
+
+def search_query_pagename_term_to_regex(term: SearchQueryTerm, flags: SearchFlag = SearchFlag(0)) -> re.Pattern|None:
 	'''Returns a regex object for a page name match of a L{SearchQueryTerm}
 
-	The following rules are applied:
-	  - a "*" optionally matches any character
-	  - a space " " matches any combination of whitespace
-	  - by default matches anywhere in the name, without word boundries, since page names can be CamelCase
-	  - a "*" at the start or the end does nothing but the default behavior
+	Behavior is equal to L{search_query_term_to_regex()} with these additional rules:
+	  - a "*" glob does not cross name segments, it does stop at the ":" separator
 	  - a ":" matches the start or end of a name segment
 	  - a "::" at the start matches start at the top-level of the notebook
 	  - a "::" at the end excludes sub-pages
 	  - a ":+" at the end gives sub-pages put excludes the parent page
 
 	@param term: a L{SearchQueryTerm}
-	@param returns: a C{re.Pattern} object
+	@param returns: a C{re.Pattern} object or C{None} if the pattern is invalid
 	'''
 	# NOTE: changes in above rules also need to be updated in the manual
+	regex = _search_query_term_to_regex(term, flags)
+	if not regex:
+		return None
 
-	# Globs to regex
-	parts = []
-	for p in term.value.strip().strip('*').split('*'):
-		sub_parts = re.split('\\s+', p) # use regex split to have empty match at start and end of piece
-		parts.append(r'\s+'.join(map(re.escape, sub_parts)))
-	regex = r'.*'.join(parts)
+	regex = regex.replace(r'\S*', r'[^\s:]*') # "*" should exclude ":" as well as whitespace
 
-	if term.value.startswith(' '):
-		regex = r'\s+' + regex
-	elif regex.startswith('::'):
+	if regex.startswith('::'):
 		regex = '^:?' + regex[2:]
 	elif regex.startswith(':'):
 		regex = '(^:?|:)' + regex[1:]
 
-	if term.value.endswith(' '):
-		regex = regex + r'\s+'
-	elif regex.endswith('::'):
+	if regex.endswith('::'):
 		regex = regex[:-2] + ':?$'
 	elif term.value.endswith(':+'):
 		regex = regex[:-3] + ':.+'
 	elif regex.endswith(':'):
 		regex = regex[:-1] + '(:|:?$)'
 
-	if term.kw_operator == OPERATOR_EQUAL:
+	if term.kw_operator == OPERATOR_EQUAL or SEARCH_CASE_SENSITIVE in flags:
 		# OPERATOR_EQUAL is interpreted as exact match, so case sensitive
 		return re.compile(regex, re.U)
 	else:
@@ -481,27 +582,27 @@ def search_query_pagename_term_to_regex(term: SearchQueryTerm) -> re.Pattern:
 search_tag_re = re.compile(r'^@[\w*]+@?$', re.U) #: Inteded to be used for implicit keyword parsing
 
 
-def search_query_tags_term_to_regex(term: SearchQueryTerm) -> re.Pattern:
+def search_query_tags_term_to_regex(term: SearchQueryTerm, flags: SearchFlag = SearchFlag(0)) -> re.Pattern|None:
 	'''Return a regex object for a tag name
 
-	The following rules are applied:
-
-	  - a "*" optionally matches any character
-	  - a "*" at the start or the end does nothing but the default behavior
+	Behavior is equal to L{search_query_term_to_regex()} with these additional rules:
 	  - if the term starts with a "@" it will only match from the start of the name
 	  - if the term ends with a "@" it will only match from the end of the name
+	  - tags are always case in-sensitive, so the "Match case" option does nothing
 
 	@param term: a L{SearchQueryTerm}
-	@param returns: a C{re.Pattern} object
+	@param returns: a C{re.Pattern} object or C{None} if the pattern is invalid
 	'''
-	startword = term.value.startswith('@')
-	endsword = term.value.endswith('@')
-	parts = term.value.strip('*').strip('@').split('*')
-	regex = r'.*'.join(map(re.escape, parts))
-	if startword:
-		regex = '\\b' + regex
-	if endsword:
-		regex = regex + '\\b'
+	regex = _search_query_term_to_regex(term, flags)
+	if not regex:
+		return None
+
+	if regex.startswith('@'):
+		regex = '\\b' + regex[1:]
+
+	if regex.endswith('@'):
+		regex = regex[:-1] + '\\b'
+
 	return re.compile(regex, re.U | re.I) # Tags are always case in-sensitive
 
 
