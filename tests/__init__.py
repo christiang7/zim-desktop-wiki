@@ -245,7 +245,7 @@ def verySlowTest(obj):
 
 MOCK_ALWAYS_MOCK = 'mock' #: Always choose mock folder, alwasy fast
 MOCK_DEFAULT_MOCK = 'default_mock' #: By default use mock, but sometimes at random use real fs or at --full
-MOCK_DEFAULT_REAL = 'default_real' #: By default use real fs, mock oly for --fast
+MOCK_DEFAULT_REAL = 'default_real' #: By default use real fs, mock only for --fast
 MOCK_ALWAYS_REAL = 'real' #: always use real fs -- not recommended unless test fails for mock
 
 import random
@@ -319,12 +319,14 @@ class TestCase(unittest.TestCase):
 		if mock == MOCK_ALWAYS_MOCK:
 			use_mock = True
 		elif mock == MOCK_ALWAYS_REAL:
+			if TEST_FS_MOCK == 'yes': # this is e.g. set together with TEST_SPEED = 'fast'
+				raise unittest.SkipTest('always uses real filesystem')
 			use_mock = False
 		else:
 			if TEST_FS_MOCK == 'default':
-				use_mock = (mock == MOCK_DEFAULT_MOCK)
+				use_mock = (mock == MOCK_DEFAULT_MOCK) # False for MOCK_DEFAULT_REAL
 			else:
-				use_mock = (TEST_FS_MOCK == 'yes')
+				use_mock = (TEST_FS_MOCK == 'yes') # Default overruled by explicit request
 
 		if use_mock:
 			from zim.newfs.mock import MockFolder

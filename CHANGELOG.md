@@ -5,6 +5,19 @@ Jaap Karssenberg <jaap.karssenberg@gmail.com>
 This branch is the Python rewrite and starts with version 0.42.
 Earlier version numbers for zim correspond to the Perl branch.
 
+##  0.77.0 - Thu 11 Jun 2026
+* Merge markdown support as source format for notebooks (experimental)
+* Allow multiple source formats in one notebook
+* Refactor page search to be extendable improve speed
+* Support options for 'case sensitive' and 'word boundaries' in page search
+* Let find match glob patterns like search
+* Add search query support for tasklist filtering
+* Add default page template to notebook properties
+* Add input for alternate text in Insert Image Dialog
+* Remove overruling window positioning
+* Fix latex templates for working with pdflatex, xelatex and lualatex
+* Fix bug with `_object_widgets.remove()`
+
 ##  0.76.3 - Fri 28 Mar 2025
 * Add seperator to template for new files
 * Fix spellcheck state at startup
