@@ -679,7 +679,7 @@ class Dumper(TextDumper):
 		if tag in (VERBATIM, VERBATIM_BLOCK):
 			return text
 		else:
-			return text.replace('*', '\\*')
+			return text.replace('*', '*')
 
 	def dump_indent(self, tag, attrib, strings):
 		if attrib and 'indent' in attrib:
