@@ -304,6 +304,8 @@ class TestConvertNotebookCommand(tests.TestCase):
 
 ## ExportCommand() is tested in tests/export.py
 
+## SearchCommand() is tested in tests./search.py
+
 import os
 
 class TestZimScript(tests.TestCase):
@@ -338,6 +340,14 @@ class TestZimScript(tests.TestCase):
 		data_dir.touch()
 		init_environment(folder.path)
 		self.assertEqual(os.environ['XDG_DATA_DIRS'], 'TEST' + os.pathsep + os.path.normpath(data_dir.path))
+
+		# Test with packaged dir in "_internal"
+		os.environ['XDG_DATA_DIRS'] = 'TEST'
+		int_data_dir = folder.folder('_internal/share')
+		int_data_dir.touch()
+		init_environment(folder.path)
+		self.assertEqual(os.environ['XDG_DATA_DIRS'], 'TEST' + os.pathsep + os.path.normpath(data_dir.path)
+				+ os.pathsep + os.path.normpath(int_data_dir.path))
 
 		# Setup file
 		file = folder.file('environ.ini')

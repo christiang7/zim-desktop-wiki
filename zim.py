@@ -21,7 +21,7 @@ if USED_PYTHON_VERSION < REQUIRED_MINIMUM_PYTHON_VERSION:
 
 
 def init_environment(installdir):
-	# Automatically set data dir for a virtualenv install
+	# Automatically set data dir for a virtualenv install - add to the front
 	if sys.prefix != sys.base_prefix:
 		zim_data_dir = os.path.join(sys.prefix, 'share')
 		if os.path.isdir(zim_data_dir):
@@ -40,14 +40,17 @@ def init_environment(installdir):
 		for k, v in env_config['Environment'].items():
 			os.environ[k] = _parse_environment_param(v, installdir)
 
-	# Set data dir specific for windows installer
-	data_dir = os.path.normpath(os.path.join(installdir, "share"))
-	if os.path.exists(data_dir):
-		dirs = os.environ.get("XDG_DATA_DIRS")
-		if dirs:
-			os.environ["XDG_DATA_DIRS"] = dirs + os.pathsep + data_dir
-		else:
-			os.environ["XDG_DATA_DIRS"] = data_dir
+	# Set data dir specific for windows installer - add to the end
+	for data_dir in (
+		os.path.normpath(os.path.join(installdir, "share")),
+		os.path.normpath(os.path.join(installdir, "_internal", "share")), # sys._MEIPASS as of PyInstaller v6.0
+	):
+		if os.path.exists(data_dir):
+			dirs = os.environ.get("XDG_DATA_DIRS")
+			if dirs:
+				os.environ["XDG_DATA_DIRS"] = dirs + os.pathsep + data_dir
+			else:
+				os.environ["XDG_DATA_DIRS"] = data_dir
 
 
 def _parse_environment_param(value, installdir):
@@ -62,6 +65,7 @@ def _parse_environment_param(value, installdir):
 
 	return os.pathsep.join(parts)
 
+
 def init_logging():
 	import logging
 
@@ -69,7 +73,10 @@ def init_logging():
 	# See http://www.py2exe.org/index.cgi/StderrLog
 	# Do the same for other platforms if not running from a terminal
 	py2exe = os.name == "nt" and (sys.argv[0].endswith('.exe') or sys.executable.endswith('pythonw.exe'))
-	if py2exe or not (sys.stdout.isatty() and sys.stderr.isatty()):
+	if py2exe or not (
+		sys.stdout and sys.stdout.isatty() and
+		sys.stderr and sys.stderr.isatty()
+	):
 		import zim
 		import zim.newfs
 		dir = zim.newfs.get_tmpdir()
@@ -102,13 +109,15 @@ def init_macOS():
 
 
 def main():
-	if getattr(sys, 'frozen', False):
-		# we are running in a bundle
-		installdir = sys._MEIPASS
+	# Run these functions before importing any application modules
+	if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'): # we are running in a bundle
+		if os.path.basename(sys._MEIPASS) == '_internal': # default as of PyInstaller v6.0
+			installdir = os.path.dirname(sys._MEIPASS)
+		else:
+			installdir = sys._MEIPASS
 	else:
 		installdir = os.path.dirname(os.path.abspath(__file__))
 
-	# Run these functions before importing any application modules
 	init_environment(installdir)
 	init_logging()
 	init_macOS()

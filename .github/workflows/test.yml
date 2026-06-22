@@ -1,14 +1,15 @@
 name: Tests
 
 on:
-  # Trigger the workflow on push or pull request, but only for the develop branch
   push:
     branches:
       - develop
+      - release
       - test_ci
   pull_request:
     branches:
       - develop
+      - release
       - test_ci
 
 jobs:
@@ -102,7 +103,7 @@ jobs:
       - name: Install system dependencies
         shell: msys2 {0}
         run: |
-          pacman -S --noconfirm git mingw-w64-x86_64-gtk3 mingw-w64-x86_64-python mingw-w64-x86_64-python-gobject mingw-w64-x86_64-python-setuptools
+          ./windows/install-msys2-requirements.sh
 
       - name: Configure git
         shell: msys2 {0}
