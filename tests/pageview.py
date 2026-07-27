@@ -1720,6 +1720,53 @@ Dusss
 			pass
 		self.assertBufferEqual(buffer, wantedpre)
 
+	def testNotAList(self):
+		input = '''\
+Dusss
+<li indent="0" style="bullet-list">\u2022 Foo
+\u2022 Bar
+</li><li indent="1" style="bullet-list">\u2022 Bar 1
+</li>
+sdfsfdsdf
+
+<li indent="1" style="bullet-list">\u2022 Bar 2
+\u2022 Bar 3
+</li><li indent="0" style="bullet-list">\u2022 Baz
+</li>Tja
+'''
+		buffer = self.get_buffer(input)
+		list = TextBufferList(buffer, 4)
+		self.assertIsNone(list.firstline)
+		self.assertIsNone(list.lastline)
+
+	def testRangeFromSelection(self):
+		input = '''\
+Dusss
+<li indent="0" style="bullet-list">\u2022 Foo
+\u2022 Bar
+</li><li indent="1" style="bullet-list">\u2022 Bar 1
+</li>
+sdfsfdsdf
+
+<li indent="1" style="bullet-list">\u2022 Bar 2
+\u2022 Bar 3
+</li><li indent="0" style="bullet-list">\u2022 Baz
+</li>Tja
+'''
+		buffer = self.get_buffer(input)
+
+		list = TextBufferList(buffer, 2, 6)
+		self.assertEqual(list.firstline, 1)
+		self.assertEqual(list.lastline, 3)
+
+		list = TextBufferList(buffer, 2, 7)
+		self.assertEqual(list.firstline, 1)
+		self.assertEqual(list.lastline, 9)
+
+		list = TextBufferList(buffer, 4, 7)
+		self.assertEqual(list.firstline, 7)
+		self.assertEqual(list.lastline, 9)
+
 
 class TestTextView(tests.TestCase, TextBufferTestCaseMixin):
 
@@ -2780,6 +2827,22 @@ Baz
 		pageview.hide_find()
 		self.assertFalse(pageview.edit_bar.get_property('visible'))
 		self.assertFalse(pageview.find_bar.get_property('visible'))
+
+	def testShowFindWithAndWithoutSelection(self):
+		pageview = setUpPageView(self.setUpNotebook(), text='test 123\n')
+		buffer = pageview.textview.get_buffer()
+
+		buffer.place_cursor(buffer.get_start_iter())
+		pageview.show_find()
+		self.assertEqual(pageview.find_bar.find_entry.get_text(), 'test')
+
+		buffer.select_range(*buffer.get_bounds())
+		pageview.show_find()
+		self.assertEqual(pageview.find_bar.find_entry.get_text(), 'test 123')
+
+		buffer.place_cursor(buffer.get_end_iter()) # without word selection, keep as is
+		pageview.show_find()
+		self.assertEqual(pageview.find_bar.find_entry.get_text(), 'test 123')
 
 
 class TestFormatActions(tests.TestCase, TextBufferTestCaseMixin):
